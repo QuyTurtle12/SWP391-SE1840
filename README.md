@@ -16,7 +16,7 @@
 ## <a name="_zbonwbblfjcc"></a>**2.3 Actor**
 
 |**No.**|**Actor**|**Description**|
-| :- | :- | :-: |
+| :- | :- | :- |
 |1|Admin|User who take responsible for managing managers|
 |2|Manager|User who take responsible for managing staffs|
 |3|Staff|User who interacting with customers|
@@ -24,7 +24,7 @@
 ### <a name="_bukxuss52tqa"></a>**Admin**
 
 |**No.**|**Use case**|**Description**|
-| :- | :-: | :-: |
+| :- | :-: | :- |
 |1\.|Add Manager|Create a new account for manager role|
 |2\.|Update Manager Info|Edit manager information, enable/disable manager account|
 |3\.|Login|Log in into the system as an administrative role|
@@ -33,7 +33,7 @@
 ### <a name="_q1ykqcnxjsj7"></a>**Manager**
 
 |**No.**|**Use case**|**Description**|
-| :- | :-: | :-: |
+| :- | :-: | :- |
 |1\.|Add Staff|Create a new account for manager role|
 |2\.|Update Staff Info|Edit staff information, enable/disable staff account|
 |3\.|Login|Log in into the system as a manager role|
@@ -47,7 +47,7 @@
 ### <a name="_ri3rlguyx5e8"></a>**Staff**
 
 |**No.**|**Use case**|**Description**|
-| :- | :-: | :-: |
+| :- | :-: | :- |
 |1\.|Add Item|Add a new item in the cart by scanning barcode or by inputting product code directly|
 |2\.|Delete Item|Remove item from the card|
 |3\.|Update Cart|Update item’s quantity in the card|
@@ -104,6 +104,3 @@
 + Step 1: Contact the staff to request returning product. (To facilitate the process, customer should provide warranty of the returning product)
 + Step 2: We will check the product’s warranty and product’s integrity then respond to the customer.
 + Step 3: We will perform a refund/replace procedure. (100% sold price)
-
-
-
