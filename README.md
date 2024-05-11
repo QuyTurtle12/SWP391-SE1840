@@ -58,6 +58,10 @@
 |8\.|Check out|Confirm the payment and change the stock|
 |9\.|Refund|Reclaim the product that customer had bought from the store before. |
 |10\.|View Product Info|View product information such as name, price, stock, weight,...|
+|11\. |View Order List|View list of order|
+|12\.|View Order Info|View order’s properties|
+|13\.|Search Order|Search order based on customer’s phone number and order ID.|
+|14\.|Update Order|Edit order info (status, delivery date).|
 ## <a name="_iybf9vkh6owx"></a>**2.5 Statistics**
 - ### <a name="_5ug0a6x246xj"></a>**Dashboard Statistics**
 - #### <a name="_btr78ysm3c8j"></a>Total Revenue.
@@ -80,7 +84,71 @@
   - Phone Number.
   - Email.
   - Date of Birth.
-## <a name="_q7fi7kbl5rz"></a>**2.6 Others**
+- ### <a name="_houm7xmm2mdn"></a>**Order Info:**
+  - Order ID.
+  - Customer Name.
+  - Phone Number.
+  - Gender.
+  - Delivery Address.
+  - Payment Method.
+  - Payment Status.(Paid/Unpaid)
+  - Order Date Time.
+  - Delivery Date Time.
+  - Delivery Status.
+  - List of purchased products.
++ Name.
++ Quantity.
++ Price. (Individual Price \* Quantity)
+- Delivery Cost. (Based on delivery policy)
+- Sale Promotion. (optional)
+- Total Cost. (Sum of Product’s Price)
+## <a name="_g8a9n8m112do"></a>**2.6 Order Management**
+- ### <a name="_mimgxbjzj5ae"></a>**Order Process:**
+- #### <a name="_hy2o9g397qwx"></a>**Create order at store:**
+  - Step 1: Input Customer Information.
+  + Name.(Required)
+  + Phone Number.(Required)
+  + Gender.
+- Step 2: Check out
++ Choose payment method: cash, momo.
++ Issue company invoice.(optional)
++ Perform payment.
+- Step 3 (Optional): Customers want to deliver to a specific address.
++ Input delivery address.
+- #### <a name="_z59el25dbj0l"></a>**Create order through phone:**
+  - Step 1: Check product stock.
+- Step 2: Input Customer Information.
+  + Name.(Required)
+  + Phone Number.(Required)
+  + Gender.
+- Step 3: Choose the receive method.
++ Delivery.
++ At the store. (Choose branch address)
+- Step 4: Delivery Method.
++ ` `Input delivery address
++ Note.(optional)
++ Issue company invoice.(optional)
+- Step 4.5: At the store Method.
++ Choose a city/province and district based on the given list.
++ Choose a branch.
++ If not any branch available on the location then show the statement “No stores are available on this location.”
++ Note.(optional)
++ Issue company invoice.(optional)
+- Step 5: Check out. (Only delivery method)
++ COD. (cash on delivery)
+- ### <a name="_8nch2bsz9psj"></a>**Note:**
+  - Staff can only update Delivery Date and Order Status.
+  - When Order Status changes to Finished Delivery, payment method must update to Paid.
+## <a name="_dywnadfm98r1"></a>**2.7 Delivery Management**
+- ### <a name="_7tqjamujqkrq"></a>**There are 5 stages of product delivery process:**
+  - Stage 1: Contact Delivery Unit.
+  - Stage 2: Prepare Product.
+  - Stage 3: Transfer Product To Delivery Unit.
+  - Stage 4: Deliver Product.
+  - Stage 5: Finished Delivery.
+  - Stage 5.5: Delivered Failed.
+- If stage 4 fails, the product will be restocked and the order will be changed to “Delivered Failed” status. 
+## <a name="_q7fi7kbl5rz"></a>**2.8. Staff Management**
 - 1 manager manages 3 counters.
 
 # <a name="_peiwz1qxl442"></a>**3.Policy:**
@@ -104,3 +172,26 @@
 + Step 1: Contact the staff to request returning product. (To facilitate the process, customer should provide warranty of the returning product)
 + Step 2: We will check the product’s warranty and product’s integrity then respond to the customer.
 + Step 3: We will perform a refund/replace procedure. (100% sold price)
+## <a name="_5qfy5eirmo3o"></a>**3.4 Delivery Policy**
+
+|**Distance**|**Expected Delivery Time**|**Delivery Charge**|
+| :-: | :-: | :-: |
+|Below 20 km in HCM|Same day or next day|<p>First 2 km: 18.000 VND</p><p>Above 2 km: 5.000 VND/ km</p>|
+|Below 20 km in other locations|From 1-3 days|<p>First 2 km: 20.000 VND</p><p>Above 2 km: 5.000 VND/ km</p>|
+|Above 20 km|From 2-7 days|5\.000 VND/km|
+
+
+- The distance calculated from the nearest store branch where the product is available.
+- Time may vary depending on the location.
+- In case the order costs above 20 million VND, delivery charge will be free but customers need to pay in deposit.
+
+  |**Order Cost**|**Deposit Rule**|
+  | :-: | :-: |
+  |Between 20 million VND - 50 million VND |30%|
+  |From 50 million VND - 100 million VND|50%|
+  |Above 100 million VND|70%|
+
+- If customers have any complaints in any processes, please call the number 1800 XX XX XX in time between 08:00 to 21:00 (holiday included).
+- Time solving the complaints will be from 2-7 working days.
+
+
