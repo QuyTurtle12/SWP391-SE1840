@@ -16,41 +16,50 @@
 ## <a name="_zbonwbblfjcc"></a>**2.3 Actor**
 
 |**No.**|**Actor**|**Description**|
-| :- | :- | :- |
-|1|Admin|User who take responsible for managing managers|
-|2|Manager|User who take responsible for managing staffs|
+| :- | :- | :-: |
+|1|Admin|Admin is a person who logged in the “Jewelry Sale System At The Store” System as “admin” role. Admin is the person who manages all managers activities and monitors the dashboard.|
+|2|Manager|Manager is a person who logged in the “Jewelry Sale System At The Store” System as “manager” role. Manager is the person who manages all staff, products, and promotion.|
 |3|Staff|User who interacting with customers|
 ## <a name="_u6aap33vz8g8"></a>**2.4 List of Feature:**
 ### <a name="_bukxuss52tqa"></a>**Admin**
 
 |**No.**|**Use case**|**Description**|
-| :- | :-: | :- |
+| :- | :-: | :-: |
 |1\.|Add Manager|Create a new account for manager role|
 |2\.|Update Manager Info|Edit manager information, enable/disable manager account|
 |3\.|Login|Log in into the system as an administrative role|
 |4\.|View Dashboard|View dashboard statistics in an interval of time|
+|5\.|View Manager List|View list of managers.|
+|6\.|View Manager Info|View manager detailed info.|
 
 ### <a name="_q1ykqcnxjsj7"></a>**Manager**
 
 |**No.**|**Use case**|**Description**|
-| :- | :-: | :- |
+| :- | :-: | :-: |
 |1\.|Add Staff|Create a new account for manager role|
 |2\.|Update Staff Info|Edit staff information, enable/disable staff account|
 |3\.|Login|Log in into the system as a manager role|
-|4\.|Add Accessory|Add new accessory into product list|
-|5\.|Delete Accessory |Delete accessory in product list|
-|6\.|Update Accessory|Edit accessory info in product list|
+|4\.|Add Product|Add new product into product list|
+|5\.|Delete Product |Delete product in product list|
+|6\.|Update Product|Edit product info in product list|
 |7\.|View Product List|View list of product (name, price, stock) available in store|
 |8\.|View Product Info|View product’s specified info such as name, price, stock, weight,...|
 |9\.|View Counter Info|View the revenue and staff info of the counter under the management of the manager|
-|10\.|Display Accessory|Display accessory info on external screen|
+|10\.|Display Product|Display product info on external screen|
+|11\.|Create Counter|Assign staff to a new counter.|
+|12\.|Update Counter|Edit staff information in the counter.|
+|13\.|Add Promotion|Add promotion code + price for deduction + started date + ended date|
+|14\.|Delete Promotion|Delete promotion code|
+|15\.|View Promotion List|View list of valid/invalid promotion code|
+|16\.|View Promotion Request|View the list of promotions request .|
+|17\.|Accept/Refuse Promotion Request|Accept/Refuse promotion to apply for the invoice|
 ### <a name="_ri3rlguyx5e8"></a>**Staff**
 
 |**No.**|**Use case**|**Description**|
-| :- | :-: | :- |
+| :- | :-: | :-: |
 |1\.|Add Item|Add a new item in the cart by scanning barcode or by inputting product code directly|
-|2\.|Delete Item|Remove item from the card|
-|3\.|Update Cart|Update item’s quantity in the card|
+|2\.|Delete Item|Remove item from the cart|
+|3\.|Update Cart|Update item’s quantity in the cart|
 |4\.|Login|Log in into the system as a staff role|
 |5\.|View Cart|<p>View the product in the cart and total price. </p><p>- ***Price of product*** = historical cost \*  gold price ratio.</p><p>- ***Historical cost*** = (Gold price at current time \* product weight) + manufacture price + stone price.</p>|
 |6\.|Print Receipt|Print receipt for customer after payment|
@@ -62,28 +71,29 @@
 |12\.|View Order Info|View order’s properties|
 |13\.|Search Order|Search order based on customer’s phone number and order ID.|
 |14\.|Update Order|Edit order info (status, delivery date).|
+|15\.|Request Promotion|The staff sent promotions request to the manager.|
+|16\.|View Customer Info|View customer info + their point|
+|17\.|Search Customer|Search customer info base on phone number|
 ## <a name="_iybf9vkh6owx"></a>**2.5 Statistics**
 - ### <a name="_5ug0a6x246xj"></a>**Dashboard Statistics**
 - #### <a name="_btr78ysm3c8j"></a>Total Revenue.
 - ### <a name="_n5jjyx9dwkvz"></a>**Accessory Statistic**
+  - #### <a name="_6tco4dynj5cl"></a>Product ID
   - #### <a name="_iktey6otpcci"></a>Product Name.
   - Price.
   - Stock.
-  - Weight.
-  - Main Stone.
-  - Sub Stone.
-  - Number of Main Stone.
-  - Number of Sub Stone.
-  - Brand.
-  - Cut.
+  - Description.(Weight, Main Stone, Sub Stone, Number of Main Stone, Number of Sub Stone, Brand, Cut)
   - Gender.
-- ### <a name="_e4q3kbu77li"></a>**Staff/Manager Info**
+- ### <a name="_e4q3kbu77li"></a>**Staff/Manager/Customer Info**
+  - User ID.
   - Full Name.
   - Address.
   - Role.
   - Phone Number.
   - Email.
   - Date of Birth.
+  - Gender.
+  - Point. (Customer only)
 - ### <a name="_houm7xmm2mdn"></a>**Order Info:**
   - Order ID.
   - Customer Name.
@@ -95,7 +105,7 @@
   - Order Date Time.
   - Delivery Date Time.
   - Delivery Status.
-  - List of purchased products.
+  - List of purchased products:
 + Name.
 + Quantity.
 + Price. (Individual Price \* Quantity)
@@ -185,11 +195,11 @@
 - Time may vary depending on the location.
 - In case the order costs above 20 million VND, delivery charge will be free but customers need to pay in deposit.
 
-  |**Order Cost**|**Deposit Rule**|
-  | :-: | :-: |
-  |Between 20 million VND - 50 million VND |30%|
-  |From 50 million VND - 100 million VND|50%|
-  |Above 100 million VND|70%|
+  |**Order Cost**|**Deposit Rule**||
+  | :-: | :-: | :- |
+  |Between 20 million VND - 50 million VND |30%||
+  |From 50 million VND - 100 million VND|50%||
+  |Above 100 million VND|70%||
 
 - If customers have any complaints in any processes, please call the number 1800 XX XX XX in time between 08:00 to 21:00 (holiday included).
 - Time solving the complaints will be from 2-7 working days.
