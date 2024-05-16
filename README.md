@@ -58,7 +58,7 @@
 |12\.|Delete Promotion|Delete promotion code|
 |13\.|View Promotion List|View list of valid/invalid promotion code|
 |14\.|View Promotion Request|View the list of promotions request|
-|15\.|Accept/Refuse Promotion Request|Accept/Refuse promotion to apply for the invoice|
+|15\.|Enable/Disable Promotion Request|Enable/Disable promotion to apply for the invoice|
 |16\.|View Staff List|View list of staff|
 |17\.|View Staff Info|View staff detail info|
 ### <a name="_ri3rlguyx5e8"></a>**Staff**
@@ -78,11 +78,10 @@
 |11\.|View Order Info|View order’s properties|
 |12\.|Search Order|Search order based on customer’s phone number and order ID.|
 |13\.|Update Order|Edit order info (status, delivery date).|
-|14\.|Request Promotion|The staff sent promotions request to the manager.|
-|15\.|View Customer Info|View customer info + their point|
-|16\.|Search Customer|Search customer info base on phone number|
-|17\.|View Product List|View list of Product.|
-|18\.|Change Counter Status|Announce to customers that this counter is unoccupied/occupied. |
+|14\.|View Customer Info|View customer info + their point|
+|15\.|Search Customer|Search customer info base on phone number|
+|16\.|View Product List|View list of Product.|
+|17\.|Change Counter Status|Announce to customers that this counter is unoccupied/occupied. |
 ## <a name="_iybf9vkh6owx"></a>**2.5 Statistics**
 - ### <a name="_5ug0a6x246xj"></a>**Dashboard Statistics**
 - #### <a name="_btr78ysm3c8j"></a>Total Revenue.
