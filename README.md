@@ -116,6 +116,11 @@
 + Price. (Individual Price \* Quantity)
 - Sale Promotion. (optional)
 - Total Cost. (Sum of Product’s Price)
+- ### <a name="_w2701h3dc4aq"></a>**Promotion Info:**
+  - Promotion ID.
+  - Description.
+  - Discount Rate.
+  - Status.
 ## <a name="_g8a9n8m112do"></a>**2.6 Order Management**
 - ### <a name="_mimgxbjzj5ae"></a>**Order Process:**
 - #### <a name="_hy2o9g397qwx"></a>**Create order at store:**
@@ -127,13 +132,9 @@
 + Choose payment method: cash, momo.
 + Issue company invoice.(optional)
 + Perform payment.
-- Step 3 (Optional): Customers want to deliver to a specific address.
-+ Input delivery address.
-### <a name="_8nch2bsz9psj"></a>**Note:**
-- Staff can only update Delivery Date and Order Status.
-- When Order Status changes to Finished Delivery, payment method must update to Paid.
 ## <a name="_q7fi7kbl5rz"></a>**2.7. Staff Management**
 - 1 manager manages 3 counters.
+- Manager can check the revenue of each counter and each staff member.
 
 # <a name="_peiwz1qxl442"></a>**3.Policy:**
 ## <a name="_q6hg64meqm2a"></a>**3.1 Points Policy**
@@ -141,10 +142,11 @@
 - Points can be used in various activities such as discounts.
 - The point will be printed within the receipt in a form of code. (User will input the code into their account gift code feature or in web gift code page)
 ## <a name="_c225aics878e"></a>**3.2 Discount Policy**
-- ### <a name="_uocvu7v7jcv2"></a>**Discount Money = Discount during promotion (optional) + Discount policy (optional) + Discount money per point  (optional)**
+- ### <a name="_uocvu7v7jcv2"></a>**Discount Money = Discount during sale promotion (optional) + Discount for customer(optional) + Discount money per point  (optional)**
+- 2 types of discount: 
++ Discount during sale promotion.
++ Discount for customers.
 - 1 point = 100.000 vnd discount.
-
-**Note:** For customers who can be affected by discount policy need approval of the manager before applying the discount into invoice.
 ## <a name="_teq3mxl6k6qv"></a>**3.2 Purchasing Policy**
 - For women’s accessory + normal stone, Shop will only buy the real gold part. 
 - Reclaim the jewels which customers had bought with a percentage of sold price.
