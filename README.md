@@ -80,8 +80,9 @@
 |13\.|Update Order|Edit order info (status, delivery date).|
 |14\.|View Customer Info|View customer info + their point|
 |15\.|Search Customer|Search customer info base on phone number|
-|16\.|View Product List|View list of Product.|
-|17\.|Change Counter Status|Announce to customers that this counter is unoccupied/occupied. |
+|16\.|View Customer List|View List of Customer|
+|17\.|View Product List|View list of Product.|
+|18\.|Change Counter Status|Announce to customers that this counter is unoccupied/occupied. |
 ## <a name="_iybf9vkh6owx"></a>**2.5 Statistics**
 - ### <a name="_5ug0a6x246xj"></a>**Dashboard Statistics**
 - #### <a name="_btr78ysm3c8j"></a>Total Revenue.
