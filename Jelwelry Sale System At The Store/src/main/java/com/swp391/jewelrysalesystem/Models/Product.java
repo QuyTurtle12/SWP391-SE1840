@@ -11,6 +11,7 @@ public class Product {
     private String name;
     private double price;
     private double refundPrice;
+    private String description;
     private String barcode;
     private double goldWeight;
     private double laborCost;
