@@ -1,4 +1,4 @@
-package com.swp391.jewelrysalesystem.Models;
+package com.swp391.jewelrysalesystem.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
