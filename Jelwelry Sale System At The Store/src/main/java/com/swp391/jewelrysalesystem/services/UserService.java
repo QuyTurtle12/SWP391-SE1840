@@ -6,8 +6,11 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.cloud.FirestoreClient;
-
+import com.google.gson.Gson;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
@@ -18,13 +21,18 @@ import com.google.cloud.firestore.QuerySnapshot;
 import com.swp391.jewelrysalesystem.models.User;;
 
 @Service
-public class UserService {
-    public String login(User user) {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
-        return "";
+public class UserService implements IUserService {
+    private String uid = null;
+
+    public String login(String idToken) throws  FirebaseAuthException, InterruptedException, ExecutionException{
+        FirebaseToken dedcodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+        String uid = dedcodedToken.getUid();
+        this.uid = uid;
+        return uid;
     }
 
-    public User getUser(String userId) throws InterruptedException, ExecutionException {
+    //Get user data base on uid
+    public User getUserData(String userId) throws InterruptedException, ExecutionException {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         DocumentReference documentReference = dbFirestore.collection("user").document(userId);
         
@@ -45,7 +53,7 @@ public class UserService {
         return null;
     }
 
-    public String getUsers() {
+    public String getUserList() {
         try {
             Firestore dbFirestore = FirestoreClient.getFirestore();
             QuerySnapshot querySnapshot = dbFirestore.collection("user").get().get();

@@ -17,5 +17,4 @@ public class User {
     private String contactInfo;
     private int counterID;
     private String status;
-
 }
