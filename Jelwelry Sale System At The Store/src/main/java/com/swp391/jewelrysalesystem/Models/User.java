@@ -10,11 +10,10 @@ public class User {
     private int ID;
     private String role;
     private String fullName;
-    private String userName;
     private String password;
     private String email;
     private String gender;
     private String contactInfo;
     private int counterID;
-    private String status;
+    private Boolean status;
 }

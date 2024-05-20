@@ -8,17 +8,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.util.concurrent.ExecutionError;
-import com.swp391.jewelrysalesystem.services.UserService;
-
+import com.swp391.jewelrysalesystem.services.IUserService;
 import com.swp391.jewelrysalesystem.models.User;;
 
 
 @RestController
 public class CRUDController {
-    public UserService userService;
+    public IUserService userService;
 
     @Autowired
-    public CRUDController(UserService userService) {
+    public CRUDController(IUserService userService) {
         this.userService = userService;
     }
 
