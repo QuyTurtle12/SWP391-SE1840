@@ -12,7 +12,7 @@
 ### <a name="_s9krq3x2ti5"></a>(Phần mềm bán hàng trang sức tại cửa hàng)
 
 ## <a name="_1edxs1g18lnh"></a>**2.2 Purpose of The System:**
-- ### <a name="_czpvqcxywgaj"></a>Creating a platform to support the staff to interact with customers easier.
+This project's goal is to make a system that can help shops whose main category is jewelry or accessories to be able to sell products, and manage staff.
 ## <a name="_zbonwbblfjcc"></a>**2.3 Actor**
 
 |**No.**|**Actor**|**Description**|
@@ -26,19 +26,19 @@
 
 |**No.**|**Use case**|**Description**|
 | :- | :-: | :-: |
-|1\.|Login|Log in into the system as an administrative role|
-|2\.|Logout|Log out of the system.|
+|1\.|Login|Log in into the system as a specific role by email, password|
+|2\.|Logout|Log out the system|
 
 ### <a name="_bukxuss52tqa"></a>**Admin**
 
 |**No.**|**Use case**|**Description**|
 | :- | :-: | :-: |
 |1\.|Add Manager|Create a new account for manager role|
-|2\.|Update Manager Info|Edit manager information, enable/disable manager account|
-|3\.|View Dashboard|View dashboard statistics in an interval of time|
-|4\.|View Manager List|View list of managers.|
-|5\.|View Manager Info|View manager detailed info.|
-|6\.|Edit Gold Price Ratio (optional)|Change the gold price ratio.|
+|2\.|Update Manager Info|Edit manager information|
+|3\.|Change Manager Status|enable/disable manager account status|
+|4\.|View Dashboard|View dashboard statistics in an interval of time|
+|5\.|View Manager List|View list of managers.|
+|6\.|View Manager Info|View manager detailed info.|
 
 ### <a name="_q1ykqcnxjsj7"></a>**Manager**
 
