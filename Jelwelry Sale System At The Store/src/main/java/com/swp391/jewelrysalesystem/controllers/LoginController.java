@@ -11,20 +11,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
-
-
 @RestController
 public class LoginController {
     public IUserService userService;
 
     @Autowired
-    public LoginController(IUserService userService){
+    public LoginController(IUserService userService) {
         this.userService = userService;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody LoginRequest loginRequest) throws InterruptedException, ExecutionError {
+    public ResponseEntity<User> login(@RequestBody LoginRequest loginRequest)
+            throws InterruptedException, ExecutionError {
         try {
             String idToken = loginRequest.getIdToken();
             String uid = userService.login(idToken);

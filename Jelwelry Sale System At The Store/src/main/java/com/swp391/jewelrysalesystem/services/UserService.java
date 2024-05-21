@@ -23,22 +23,22 @@ import com.swp391.jewelrysalesystem.models.User;;
 public class UserService implements IUserService {
     private String uid = null;
 
-    public String login(String idToken) throws  FirebaseAuthException, InterruptedException, ExecutionException{
+    public String login(String idToken) throws FirebaseAuthException, InterruptedException, ExecutionException {
         FirebaseToken dedcodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
         String uid = dedcodedToken.getUid();
         this.uid = uid;
         return uid;
     }
 
-    //Get user data base on uid
+    // Get user data base on uid
     public User getUserData(String userId) throws InterruptedException, ExecutionException {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         DocumentReference documentReference = dbFirestore.collection("user").document(userId);
-        
+
         try {
             ApiFuture<DocumentSnapshot> future = documentReference.get();
             DocumentSnapshot document = future.get();
-            
+
             if (document.exists()) {
                 return document.toObject(User.class);
             } else {
@@ -65,5 +65,48 @@ public class UserService implements IUserService {
             e.printStackTrace();
             return "Error: " + e.getMessage();
         }
+    }
+
+    @Override
+    public User saveUser(User user) {
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        DocumentReference documentReference = dbFirestore.collection("user").document(String.valueOf(user.getID()));
+
+        ApiFuture<com.google.cloud.firestore.WriteResult> future = documentReference.set(user);
+        try {
+            future.get();
+            return user;
+        } catch (InterruptedException | ExecutionException e) {
+            System.err.println("Error saving user document: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public User changeManagerStatus(int ID) {
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        DocumentReference documentReference = dbFirestore.collection("user").document(String.valueOf(ID));
+
+        try {
+            ApiFuture<DocumentSnapshot> future = documentReference.get();
+            DocumentSnapshot document = future.get();
+
+            if (document.exists()) {
+                User user = document.toObject(User.class);
+                if (user != null) {
+                    user.setStatus(!user.getStatus()); // Toggle status
+                    documentReference.set(user); // Update the user document
+                    return user;
+                }
+            } else {
+                System.out.println("User document with ID " + ID + " does not exist.");
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            System.err.println("Error changing user status: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }
