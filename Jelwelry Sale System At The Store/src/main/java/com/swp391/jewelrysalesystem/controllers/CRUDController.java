@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.util.concurrent.ExecutionError;
 import com.swp391.jewelrysalesystem.services.IUserService;
-import com.swp391.jewelrysalesystem.models.User;;
+import com.swp391.jewelrysalesystem.models.User;
 
 
 @RestController

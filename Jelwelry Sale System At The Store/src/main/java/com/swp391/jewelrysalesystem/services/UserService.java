@@ -1,5 +1,6 @@
 package com.swp391.jewelrysalesystem.services;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -10,10 +11,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.cloud.FirestoreClient;
+import com.google.protobuf.Api;
 import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.Query;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 
@@ -65,5 +69,51 @@ public class UserService implements IUserService {
             e.printStackTrace();
             return "Error: " + e.getMessage();
         }
+    }
+
+    @Override
+    public User getUserByUserID(int userID) throws InterruptedException, ExecutionException {
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        CollectionReference users = dbFirestore.collection("user");
+
+        //Create a query to get a specific user ID
+        Query query = users.whereEqualTo("ID", userID);
+
+        //Retrieve query results
+        ApiFuture<QuerySnapshot> querySnapshot = query.get();
+
+        List<User> userList = querySnapshot.get().toObjects(User.class);
+
+        if (userList.isEmpty()) {
+            System.out.println("User document with userID" + userID + "does not exist");
+            return null;
+        } else {
+            return userList.get(0);
+        }
+    }
+
+    @Override
+    public List<User> getUserByUserRole(String role) throws InterruptedException, ExecutionException {
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        CollectionReference users = dbFirestore.collection("user");
+
+        //Create a query to get users who have role that you want
+        Query query = users.whereEqualTo("role", role);
+
+        //Retrieve query results
+        ApiFuture<QuerySnapshot> querySnapshot = query.get();
+
+        try {
+            return querySnapshot.get().toObjects(User.class);
+        } catch (InterruptedException | ExecutionException e) {
+            System.err.println("Error retrieving users by role: " + e.getMessage());
+            throw e;  
+        } catch (Exception e){
+            // Log unexpected exceptions
+            System.err.println("Unexpected error: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Unexpected error occurred while retrieving users by role", e);
+        }
+        
     }
 }
