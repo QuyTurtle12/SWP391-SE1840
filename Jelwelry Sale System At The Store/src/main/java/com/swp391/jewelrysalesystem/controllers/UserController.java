@@ -34,12 +34,13 @@ public class UserController {
         this.userService = userService;
     }
 
-     @PostMapping("/register")
-    public User addManager(
+     @PostMapping("{role}/register")
+    public User addUser(
             @RequestParam int ID,
             @RequestParam String fullName,
             @RequestParam String gender,
             @RequestParam String email,
+            @PathVariable String role,
             @RequestParam String password,
             @RequestParam String contactInfo,
             @RequestParam int counterID) {
@@ -52,14 +53,14 @@ public class UserController {
         newManager.setGender(gender);
         newManager.setContactInfo(contactInfo);
         newManager.setCounterID(counterID);
-        newManager.setRole("MANAGER");
+        newManager.setRole(role);
         newManager.setStatus(true);
 
         return userService.saveUser(newManager);
     }
 
-        @PutMapping("/update-info")
-    public User updateManagerInfo(
+        @PutMapping("{role}/update-info")
+    public User updateUserInfo(
             @RequestParam int ID,
             @RequestParam String fullName,
             @RequestParam String gender,
@@ -77,13 +78,13 @@ public class UserController {
 
             return userService.saveUser(existingManager);
         } else {
-            throw new RuntimeException("Manager with ID " + ID + " not found.");
+             throw new RuntimeException("Manager with ID " + ID + " not found.");
         }
     }
 
-    @PutMapping("/change-status")
-    public User changeManagerStatus(@RequestParam int ID) {
-        return userService.changeManagerStatus(ID);
+    @PutMapping("{role}/change-status")
+    public User changeUserStatus(@RequestParam int ID) {
+        return userService.changeUserStatus(ID);
     }
 
     @GetMapping("/dashboard")
@@ -93,7 +94,7 @@ public class UserController {
         return new RedirectView(dashboardUrl);
     }
     
-    @GetMapping("/list/role/{role}")
+    @GetMapping("{role}/list")
     public ResponseEntity<List<User>> getUserListByRole(@PathVariable String role) {
         try {
             List<User> users = userService.getUserByUserRole(role);
@@ -108,8 +109,8 @@ public class UserController {
         }
     }
     
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getUserByUserID(@PathVariable String id) {
+    @GetMapping("/getUser")
+    public ResponseEntity<User> getUserByUserID(@RequestParam String id) {
         try {
             User user = userService.getUserByUserID(Integer.parseInt(id));
             if (user != null) {

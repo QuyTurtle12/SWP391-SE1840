@@ -76,7 +76,7 @@ public class UserService implements IUserService {
         CollectionReference users = dbFirestore.collection("user");
 
         //Create a query to get a specific user ID
-        Query query = users.whereEqualTo("ID", userID);
+        Query query = users.whereEqualTo("id", userID);
 
         //Retrieve query results
         ApiFuture<QuerySnapshot> querySnapshot = query.get();
@@ -108,7 +108,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public User changeManagerStatus(int ID) {
+    public User changeUserStatus(int ID) {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         DocumentReference documentReference = dbFirestore.collection("user").document(String.valueOf(ID));
 

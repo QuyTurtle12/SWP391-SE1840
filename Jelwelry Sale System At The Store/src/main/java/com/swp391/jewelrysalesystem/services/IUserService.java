@@ -17,5 +17,5 @@ public interface IUserService {
 
     User saveUser(User user);
 
-    User changeManagerStatus(int id);
+    User changeUserStatus(int id);
 }
