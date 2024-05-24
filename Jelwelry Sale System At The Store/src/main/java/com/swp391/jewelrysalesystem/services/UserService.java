@@ -1,6 +1,6 @@
 package com.swp391.jewelrysalesystem.services;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -75,10 +75,10 @@ public class UserService implements IUserService {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         CollectionReference users = dbFirestore.collection("user");
 
-        //Create a query to get a specific user ID
+        // Create a query to get a specific user ID
         Query query = users.whereEqualTo("id", userID);
 
-        //Retrieve query results
+        // Retrieve query results
         ApiFuture<QuerySnapshot> querySnapshot = query.get();
 
         List<User> userList = querySnapshot.get().toObjects(User.class);
@@ -133,29 +133,64 @@ public class UserService implements IUserService {
 
         return null;
     }
-    
+
     @Override
     public List<User> getUserByUserRole(String role) throws InterruptedException, ExecutionException {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         CollectionReference users = dbFirestore.collection("user");
 
-        //Create a query to get users who have role that you want
+        // Create a query to get users who have role that you want
         Query query = users.whereEqualTo("role", role);
 
-        //Retrieve query results
+        // Retrieve query results
         ApiFuture<QuerySnapshot> querySnapshot = query.get();
 
         try {
             return querySnapshot.get().toObjects(User.class);
         } catch (InterruptedException | ExecutionException e) {
             System.err.println("Error retrieving users by role: " + e.getMessage());
-            throw e;  
-        } catch (Exception e){
+            throw e;
+        } catch (Exception e) {
             // Log unexpected exceptions
             System.err.println("Unexpected error: " + e.getMessage());
             e.printStackTrace();
             throw new RuntimeException("Unexpected error occurred while retrieving users by role", e);
         }
-        
+
+    }
+
+    @Override
+    public List<User> searchUser(String input, String filter, List<User> userList) {
+
+        List<User> newUserList = new ArrayList<>();
+        switch (filter) {
+            case "ByName":
+                for (User user : userList) {
+                    if (user.getFullName().toLowerCase().trim().contains(input.toLowerCase())) {
+                        newUserList.add(user);
+                    }
+                }
+
+                break;
+            case "ByCounterID":
+                for (User user : userList) {
+                    if (user.getCounterID() == Integer.parseInt(input)) {
+                        newUserList.add(user);
+                    }
+                }
+
+                break;
+            case "ByStatus":
+                for (User user : userList) {
+                    if (user.getStatus().toString().toLowerCase().equals(input.toLowerCase())) {
+                        newUserList.add(user);
+                    }
+                }
+
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid filter: " + filter);
+        }
+        return newUserList;
     }
 }

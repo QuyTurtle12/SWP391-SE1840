@@ -12,12 +12,11 @@ public class Product {
     private double price;
     private double refundPrice;
     private String description;
-    private String barcode;
     private double goldWeight;
     private double laborCost;
     private double stoneCost;
     private int stock;
     private int promotionID;
     private String category;
-    private boolean status;
+    private Boolean status;
 }

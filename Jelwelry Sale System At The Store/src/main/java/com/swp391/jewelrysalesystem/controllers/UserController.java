@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-
 import com.swp391.jewelrysalesystem.models.User;
 import com.swp391.jewelrysalesystem.services.IUserService;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,9 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-
-
-
 @RestController
 @RequestMapping("/api/account")
 public class UserController {
@@ -30,11 +25,11 @@ public class UserController {
     private IUserService userService;
 
     @Autowired
-    public UserController(IUserService userService){
+    public UserController(IUserService userService) {
         this.userService = userService;
     }
 
-     @PostMapping("{role}/register")
+    @PostMapping("/{role}/register")
     public User addUser(
             @RequestParam int ID,
             @RequestParam String fullName,
@@ -45,21 +40,21 @@ public class UserController {
             @RequestParam String contactInfo,
             @RequestParam int counterID) {
 
-        User newManager = new User();
-        newManager.setID(ID);
-        newManager.setFullName(fullName);
-        newManager.setEmail(email);
-        newManager.setPassword(password);
-        newManager.setGender(gender);
-        newManager.setContactInfo(contactInfo);
-        newManager.setCounterID(counterID);
-        newManager.setRole(role);
-        newManager.setStatus(true);
+        User newUser = new User();
+        newUser.setID(ID);
+        newUser.setFullName(fullName);
+        newUser.setEmail(email);
+        newUser.setPassword(password);
+        newUser.setGender(gender);
+        newUser.setContactInfo(contactInfo);
+        newUser.setCounterID(counterID);
+        newUser.setRole(role);
+        newUser.setStatus(true);
 
-        return userService.saveUser(newManager);
+        return userService.saveUser(newUser);
     }
 
-        @PutMapping("{role}/update-info")
+    @PutMapping("/{role}/update-info")
     public User updateUserInfo(
             @RequestParam int ID,
             @RequestParam String fullName,
@@ -68,21 +63,21 @@ public class UserController {
             @RequestParam int counterID)
             throws InterruptedException, ExecutionException {
 
-        User existingManager = userService.getUserData(String.valueOf(ID));
+        User existingUser = userService.getUserByUserID(ID);
 
-        if (existingManager != null) {
-            existingManager.setFullName(fullName);
-            existingManager.setGender(gender);
-            existingManager.setContactInfo(contactInfo);
-            existingManager.setCounterID(counterID);
+        if (existingUser != null) {
+            existingUser.setFullName(fullName);
+            existingUser.setGender(gender);
+            existingUser.setContactInfo(contactInfo);
+            existingUser.setCounterID(counterID);
 
-            return userService.saveUser(existingManager);
+            return userService.saveUser(existingUser);
         } else {
-             throw new RuntimeException("Manager with ID " + ID + " not found.");
+            throw new RuntimeException("Manager with ID " + ID + " not found.");
         }
     }
 
-    @PutMapping("{role}/change-status")
+    @PutMapping("/{role}/change-status")
     public User changeUserStatus(@RequestParam int ID) {
         return userService.changeUserStatus(ID);
     }
@@ -93,14 +88,14 @@ public class UserController {
         String dashboardUrl = "localhost:8080/dashboard";
         return new RedirectView(dashboardUrl);
     }
-    
-    @GetMapping("{role}/list")
+
+    @GetMapping("/{role}/list")
     public ResponseEntity<List<User>> getUserListByRole(@PathVariable String role) {
         try {
             List<User> users = userService.getUserByUserRole(role);
-            if (users !=null && !users.isEmpty()) {
+            if (users != null && !users.isEmpty()) {
                 return ResponseEntity.ok(users);
-            } else{
+            } else {
                 return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
             }
         } catch (InterruptedException | ExecutionException e) {
@@ -108,14 +103,14 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
         }
     }
-    
+
     @GetMapping("/getUser")
     public ResponseEntity<User> getUserByUserID(@RequestParam String id) {
         try {
             User user = userService.getUserByUserID(Integer.parseInt(id));
             if (user != null) {
                 return ResponseEntity.ok(user);
-            } else{
+            } else {
                 return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
             }
         } catch (InterruptedException | ExecutionException e) {
@@ -123,5 +118,25 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
         }
     }
-    
+
+    //Search by name, status, or counter ID
+    @GetMapping("/{role}/list/searchUser")
+    public ResponseEntity<List<User>> searchUser(
+            @PathVariable String role,
+            @RequestParam String input,
+            @RequestParam String filter) {
+        try {
+            List<User> users = userService.getUserByUserRole(role);
+            List<User> searchedUserList = userService.searchUser(input, filter, users);
+            if (users != null && !users.isEmpty()) {
+                return ResponseEntity.ok(searchedUserList);
+            } else {
+                return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
 }

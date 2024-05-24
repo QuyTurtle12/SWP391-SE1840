@@ -12,10 +12,14 @@ public interface IUserService {
     User getUserData(String userId) throws InterruptedException, ExecutionException;
 
     String getUserList();
+
     User getUserByUserID(int userID) throws InterruptedException, ExecutionException;
+
     List<User> getUserByUserRole(String role) throws InterruptedException, ExecutionException;
 
     User saveUser(User user);
 
     User changeUserStatus(int id);
+
+    List<User> searchUser(String input, String filter, List<User> userList);
 }
