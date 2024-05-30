@@ -139,8 +139,20 @@ public class UserService implements IUserService {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         CollectionReference users = dbFirestore.collection("user");
 
+        int roleID = 0;
+        switch (role) {
+            case "MANAGER":
+                roleID = 2;
+                break;
+            case "STAFF":
+                roleID = 1;
+                break;
+            default:
+            throw new IllegalArgumentException("Invalid role: " + role);
+        }
+
         // Create a query to get users who have role that you want
-        Query query = users.whereEqualTo("role", role);
+        Query query = users.whereEqualTo("roleID", roleID);
 
         // Retrieve query results
         ApiFuture<QuerySnapshot> querySnapshot = query.get();
@@ -188,6 +200,13 @@ public class UserService implements IUserService {
                 }
 
                 break;
+
+            case "ByPhoneNum":
+                for (User user : userList) {
+                    if (user.getContactInfo().toLowerCase().trim().contains(input.toLowerCase())) {
+                        newUserList.add(user);
+                    }
+                }
             default:
                 throw new IllegalArgumentException("Invalid filter: " + filter);
         }

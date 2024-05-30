@@ -12,57 +12,61 @@
 ### <a name="_s9krq3x2ti5"></a>(Phần mềm bán hàng trang sức tại cửa hàng)
 
 ## <a name="_1edxs1g18lnh"></a>**2.2 Purpose of The System:**
-- ### <a name="_czpvqcxywgaj"></a>Creating a platform to support the staff to interact with customers easier.
+This project's goal is to make a system that can help shops whose main category is jewelry or accessories to be able to sell products, and manage staff.
 ## <a name="_zbonwbblfjcc"></a>**2.3 Actor**
 
 |**No.**|**Actor**|**Description**|
 | :- | :- | :-: |
-|0\.|Registered User|Registered User is a person who has registered into the system. A Registered User is the person who can log in the system to get a role and work according to that role.|
-|1|Admin|Admin is a person who logged in the “Jewelry Sale System At The Store” System as “admin” role. Admin is the person who manages all managers activities and monitors the dashboard.|
-|2|Manager|Manager is a person who logged in the “Jewelry Sale System At The Store” System as “manager” role. Manager is the person who manages all staff, products, and promotion.|
-|3|Staff|User who interacting with customers|
+|0\.|Guest|Guest is a person who hasn't logged in the system. Guest's main job is access to the system to get a role.|
+|1|Registered User|Registered User is a person who has logged into the system. A Registered User is a person who can log out the system.|
+|2|Admin|Admin is a person who logged in the “Jewelry Sale System At The Store” System as “admin” role. Admin is the person who manages all managers activities and monitors the dashboard.|
+|3|Manager|Manager is a person who logged in the “Jewelry Sale System At The Store” System as “manager” role. Manager is the person who manages all staff, product, and promotion.|
+|4|Staff|User who manages customer’s cart and supports customers during the purchasing process.|
 ## <a name="_u6aap33vz8g8"></a>**2.4 List of Feature:**
 ### <a name="_eomx89kv76oz"></a>**Registered User**
 
 |**No.**|**Use case**|**Description**|
 | :- | :-: | :-: |
-|1\.|Login|Log in into the system as an administrative role|
-|2\.|Logout|Log out of the system.|
+|1\.|Login|Log in into the system as a specific role by email, password|
+|2\.|Logout|Log out the system|
 
 ### <a name="_bukxuss52tqa"></a>**Admin**
 
 |**No.**|**Use case**|**Description**|
 | :- | :-: | :-: |
 |1\.|Add Manager|Create a new account for manager role|
-|2\.|Update Manager Info|Edit manager information, enable/disable manager account|
-|3\.|View Dashboard|View dashboard statistics in an interval of time|
-|4\.|View Manager List|View list of managers.|
-|5\.|View Manager Info|View manager detailed info.|
-|6\.|Edit Gold Price Ratio (optional)|Change the gold price ratio.|
+|2\.|Update Manager Info|Edit manager information|
+|3\.|Change Manager Status|enable/disable manager account status|
+|4\.|View Dashboard|View dashboard statistics in an interval of time|
+|5\.|View Manager List|View list of managers.|
+|6\.|View Manager Info|View manager detailed info.|
+|7\.|Search Manager|Search manager by name, status, counter ID, phone number|
 
 ### <a name="_q1ykqcnxjsj7"></a>**Manager**
 
 |**No.**|**Use case**|**Description**|
 | :- | :-: | :-: |
-|1\.|Add Staff|Create a new account for manager role|
-|2\.|Update Staff Info|Edit staff information, enable/disable staff account|
-|3\.|Add Product|Add new product into product list|
-|4\.|Delete Product |Delete product in product list|
-|5\.|Update Product|Edit product info in product list|
-|6\.|View Product List|View list of product (name, price, stock) available in store|
-|7\.|View Product Info|View product’s specified info such as name, price, stock, weight,...|
-|8\.|View Counter Info|View the revenue and staff info of the counter under the management of the manager|
-|9\.|Display Gold Price Chart|Display product info on external screen|
-|10\.|Update Counter|Edit staff information in the counter.|
-|11\.|Add Promotion|Add promotion code + price for deduction + started date + ended date|
-|12\.|Delete Promotion|Delete promotion code|
-|13\.|View Promotion List|View list of valid/invalid promotion code|
-|14\.|View Promotion Request|View the list of promotions request|
-|15\.|Enable/Disable Promotion Request|Enable/Disable promotion to apply for the invoice|
-|16\.|View Staff List|View list of staff|
-|17\.|View Staff Info|View staff detail info|
-|18\.|Search Staff|Search staff info by phone number |
-|19\.|Search Product|Search product by product ID, name,...|
+|1|Add Staff|Create a new account for staff role|
+|2|View Staff List|View list of staff|
+|3|View Staff Info|View staff detail info|
+|4|Search Staff|Search staff info by phone number, name, status, counter ID|
+|5|Update Staff Info|Edit staff information, enable/disable staff account|
+|6|Change Staff Status|Change staff status (enable/disable) in staff account|
+|7|Add Product|Create a new product |
+|8|View Product List|View list of product (name, price, stock) available in store|
+|9|View Product Info|View product’s specified info such as name, price, stock, weight,...|
+|10|Search Product|Search product by product ID, name,...|
+|11|Update Product|Edit product info in product list|
+|12|Change Product Status|Change product status (enable/disable) in product list|
+|13|View Counter Info|View the revenue and staff info of the counter under the management of the manager|
+|14|Create Counter|Create a new counter|
+|15|Delete Counter|Remove a counter, including its info|
+|16|View List of Counter|View a list of counters|
+|17|Add Promotion|Add promotion code + price for deduction + started date + ended date|
+|18|View Promotion List|View list of valid/invalid promotion code|
+|19|Update Promotion|Change promotion info|
+|20|Change Promotion Status|enable/disable promotion status|
+|21|Search Promotion|Search promotion by name, status|
 ### <a name="_ri3rlguyx5e8"></a>**Staff**
 
 |**No.**|**Use case**|**Description**|
@@ -97,7 +101,6 @@
   - Refund Price.
   - Stock.
   - Description.(Weight, Main Stone, Sub Stone, Number of Main Stone, Number of Sub Stone, Brand, Cut)
-  - Barcode.
   - Labor Cost.
   - Stone Cost.
   - Promotion ID.
@@ -111,7 +114,6 @@
   - Role. 
   - Phone Number.
   - Email.
-  - Date of Birth.
   - Gender.
   - Point. (Customer only)
 - ### <a name="_houm7xmm2mdn"></a>**Order/Refund Info:**
@@ -132,6 +134,12 @@
   - Description.
   - Discount Rate.
   - Status.
+- ### <a name="_e2agfmkngnh7"></a>**Cart Info:**
+  - ProductID.
+  - Product Name.
+  - Amount.
+  - Price.
+  - Total Price. (Sum of each product’s price)
 ## <a name="_g8a9n8m112do"></a>**2.6 Order Management**
 - ### <a name="_mimgxbjzj5ae"></a>**Order Process:**
 - #### <a name="_hy2o9g397qwx"></a>**Create order at store:**

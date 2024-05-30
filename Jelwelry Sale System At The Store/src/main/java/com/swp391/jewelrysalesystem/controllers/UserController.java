@@ -39,7 +39,18 @@ public class UserController {
             @RequestParam String password,
             @RequestParam String contactInfo,
             @RequestParam int counterID) {
-
+        
+        int roleID = 0;
+        switch (role) {
+            case "MANAGER":
+                roleID = 2;
+                break;
+            case "STAFF":
+                roleID = 1;
+                break;
+            default:
+            throw new IllegalArgumentException("Invalid role: " + role);
+        }
         User newUser = new User();
         newUser.setID(ID);
         newUser.setFullName(fullName);
@@ -48,7 +59,7 @@ public class UserController {
         newUser.setGender(gender);
         newUser.setContactInfo(contactInfo);
         newUser.setCounterID(counterID);
-        newUser.setRole(role);
+        newUser.setRoleID(roleID);
         newUser.setStatus(true);
 
         return userService.saveUser(newUser);
@@ -73,7 +84,7 @@ public class UserController {
 
             return userService.saveUser(existingUser);
         } else {
-            throw new RuntimeException("Manager with ID " + ID + " not found.");
+            throw new RuntimeException("User with ID " + ID + " not found.");
         }
     }
 
@@ -119,7 +130,7 @@ public class UserController {
         }
     }
 
-    //Search by name, status, or counter ID
+    //Search by name, status, counter ID, contactInfo
     @GetMapping("/{role}/list/searchUser")
     public ResponseEntity<List<User>> searchUser(
             @PathVariable String role,

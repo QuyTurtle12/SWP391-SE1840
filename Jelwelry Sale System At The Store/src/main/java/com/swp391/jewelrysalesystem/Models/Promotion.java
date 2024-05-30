@@ -10,5 +10,5 @@ public class Promotion {
     private int ID;
     private String description;
     private double discountRate;
-    private boolean status;
+    private Boolean status;
 }
