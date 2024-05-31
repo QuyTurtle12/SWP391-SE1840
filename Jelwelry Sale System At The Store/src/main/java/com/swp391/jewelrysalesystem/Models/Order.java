@@ -13,6 +13,7 @@ public class Order {
     private LocalDateTime date;
     private int staffID;
     private int counterID;
+    private int customerID;
     private double totalPrice;
-    private int coupon; //Promotion in form of code
+    private double discountApplied;
 }

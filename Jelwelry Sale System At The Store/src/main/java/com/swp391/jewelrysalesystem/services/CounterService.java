@@ -94,4 +94,28 @@ public class CounterService implements ICounterService {
         return null;
     }
 
+    @Override
+    public Counter changeStatus(int ID) {
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        DocumentReference counterRef = dbFirestore.collection("counter").document(String.valueOf(ID));
+
+        try {
+            ApiFuture<DocumentSnapshot> future = counterRef.get();
+            DocumentSnapshot document = future.get();
+
+            if (document.exists()) {
+                Counter counter = document.toObject(Counter.class);
+                if (counter != null) {
+                    counter.setStatus(!counter.getStatus());
+                    counterRef.set(counter);
+                    return counter;
+                }
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            System.err.println("Error retrieving counter: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
 }

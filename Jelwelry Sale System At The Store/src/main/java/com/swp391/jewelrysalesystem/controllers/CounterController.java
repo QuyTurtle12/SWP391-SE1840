@@ -15,6 +15,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 
 @RestController
@@ -32,6 +36,7 @@ public class CounterController {
         Counter newCounter = new Counter();
         newCounter.setID(id);
         newCounter.setSale(0); //VND
+        newCounter.setStatus(true);
 
         return counterService.saveCounter(newCounter);
     }
@@ -39,6 +44,11 @@ public class CounterController {
     @PostMapping("/counter/delete")
     public void deleteCounter(@RequestParam int id) {
         counterService.removeCounter(id);
+    }
+
+    @PutMapping("/counter/{id}/change-status")
+    public Counter changeCounterStatus(@PathVariable int id) {
+        return counterService.changeStatus(id);
     }
 
     @GetMapping("/counter/list")

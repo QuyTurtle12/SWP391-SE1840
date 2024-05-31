@@ -9,4 +9,5 @@ import lombok.Setter;
 public class Counter {
     private int ID;
     private int sale;
+    private Boolean status;
 }

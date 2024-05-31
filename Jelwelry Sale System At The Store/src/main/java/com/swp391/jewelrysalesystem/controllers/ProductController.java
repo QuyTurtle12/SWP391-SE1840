@@ -1,32 +1,20 @@
 package com.swp391.jewelrysalesystem.controllers;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
-import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatusCode;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.swp391.jewelrysalesystem.models.Product;
 import com.swp391.jewelrysalesystem.services.IProductService;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
-
-
 
 @RestController
 @RequestMapping("/api/product")
 public class ProductController {
 
-    private IProductService productService;
+    private final IProductService productService;
 
     @Autowired
     public ProductController(IProductService productService) {
@@ -34,7 +22,7 @@ public class ProductController {
     }
 
     @PostMapping("/add")
-    public Product addProduct(
+    public ResponseEntity<Product> addProduct(
         @RequestParam int ID,
         @RequestParam String name,
         @RequestParam double price,
@@ -46,26 +34,18 @@ public class ProductController {
         @RequestParam int stock,
         @RequestParam String category,
         @RequestParam int promotionID) {
-        
-        Product newProduct = new Product();
-        newProduct.setID(ID);
-        newProduct.setName(name);
-        newProduct.setPrice(price);
-        newProduct.setRefundPrice(refundPrice);
-        newProduct.setDescription(description);
-        newProduct.setGoldWeight(goldWeight);
-        newProduct.setLaborCost(laborCost);
-        newProduct.setStoneCost(stoneCost);
-        newProduct.setStock(stock);
-        newProduct.setCategory(category);
-        newProduct.setStatus(true);
-        newProduct.setPromotionID(promotionID);
-        
-        return productService.saveProduct(newProduct);
+
+        try {
+            Product newProduct = new Product(ID, name, price, refundPrice, description, goldWeight, laborCost, stoneCost, stock, promotionID, category, true);
+            Product savedProduct = productService.saveProduct(newProduct);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @PutMapping("/{ID}/update-info")
-    public Product updateProductInfo(
+    public ResponseEntity<Product> updateProductInfo(
         @PathVariable int ID,
         @RequestParam String name,
         @RequestParam double price,
@@ -76,12 +56,14 @@ public class ProductController {
         @RequestParam double stoneCost,
         @RequestParam int stock,
         @RequestParam String category,
-        @RequestParam int promotionID)
-            throws InterruptedException, ExecutionException {
+        @RequestParam int promotionID) {
 
-        Product existingProduct = productService.getProductByID(ID);
+        try {
+            Product existingProduct = productService.getProductByID(ID);
+            if (existingProduct == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
 
-        if (existingProduct != null) {
             existingProduct.setName(name);
             existingProduct.setPrice(price);
             existingProduct.setRefundPrice(refundPrice);
@@ -93,113 +75,100 @@ public class ProductController {
             existingProduct.setCategory(category);
             existingProduct.setPromotionID(promotionID);
 
-            return productService.saveProduct(existingProduct);
-        } else {
-            throw new RuntimeException("Product with ID " + ID + " not found.");
+            Product updatedProduct = productService.saveProduct(existingProduct);
+            return ResponseEntity.ok(updatedProduct);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<Product>> getProductList(){
+    public ResponseEntity<List<Product>> getProductList() {
         try {
-
             List<Product> productList = productService.getProductList();
-            if (!productList.isEmpty()) {
-                return ResponseEntity.ok(productList);
-            } else {
-                return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
+            if (productList.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.ok(productList);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     @GetMapping("/{ID}/info")
     public ResponseEntity<Product> getProduct(@PathVariable int ID) {
         try {
             Product product = productService.getProductByID(ID);
-            if (product != null) {
-                return ResponseEntity.ok(product);
-            } else {
-                return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
+            if (product == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.ok(product);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    @PutMapping("/{ID}/change-status") 
-    public Product changeProductStatus(@PathVariable int ID) throws InterruptedException, ExecutionException {
-        return productService.changeProductStatus(ID);
+    @PutMapping("/{ID}/change-status")
+    public ResponseEntity<Product> changeProductStatus(@PathVariable int ID) {
+        try {
+            Product product = productService.changeProductStatus(ID);
+            if (product == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+            return ResponseEntity.ok(product);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
-    //Search by name, status, or category
     @GetMapping("/list/search")
     public ResponseEntity<List<Product>> searchProduct(
-        @RequestParam String input, 
+        @RequestParam String input,
         @RequestParam String filter) {
-        try {
-            List<Product> productList = productService.getProductList();
-            productList = productService.searchProduct(input, filter, productList);
 
-            if (!productList.isEmpty()) {
-                return ResponseEntity.ok(productList);
-            } else {
-                return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
+        try {
+            List<Product> productList = productService.searchProduct(input, filter, productService.getProductList());
+            if (productList.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.ok(productList);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
-    //Sort by Alphabet, or Price
-    //Sort Order are asc (stand for ascending), desc (stand for descending)
+
     @GetMapping("/list/sort")
     public ResponseEntity<List<Product>> sortProductList(
         @RequestParam String filter,
         @RequestParam String sortOrder) {
+
         try {
-            List<Product> productList = productService.getProductList();
-            productList = productService.sortProduct(filter, sortOrder, productList);
-
-            if (!productList.isEmpty()) {
-                return ResponseEntity.ok(productList);
-            } else {
-                return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
+            List<Product> productList = productService.sortProduct(filter, sortOrder, productService.getProductList());
+            if (productList.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
-        } catch (InterruptedException | ExecutionException e) {
-            
-            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.ok(productList);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-
     }
-    
-    //Search by name, status, or category
-    //Sort by Alphabet, or Price
-    //Sort Order are asc (stand for ascending), desc (stand for descending)
+
     @GetMapping("/list/search/sort")
     public ResponseEntity<List<Product>> sortSearchedProduct(
-        @RequestParam String input, 
+        @RequestParam String input,
         @RequestParam String filter,
         @RequestParam String sortFilter,
         @RequestParam String sortOrder) {
-        try {
-            List<Product> productList = productService.getProductList();
-            productList = productService.searchProduct(input, filter, productList);
 
+        try {
+            List<Product> productList = productService.searchProduct(input, filter, productService.getProductList());
             productList = productService.sortProduct(sortFilter, sortOrder, productList);
-            if (!productList.isEmpty()) {
-                return ResponseEntity.ok(productList);
-            } else {
-                return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
+            if (productList.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.ok(productList);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
 }

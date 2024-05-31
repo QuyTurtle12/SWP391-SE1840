@@ -12,4 +12,6 @@ public interface ICounterService {
     List<Counter> getCountersList();
 
     Counter getCounter(int ID);
+
+    Counter changeStatus(int ID);
 }
