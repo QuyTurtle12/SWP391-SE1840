@@ -3,7 +3,9 @@ package com.swp391.jewelrysalesystem.models;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter @Setter
+@Getter
+@Setter
 public class LoginRequest {
-    private String idToken;
+    private String email;
+    private String password;
 }

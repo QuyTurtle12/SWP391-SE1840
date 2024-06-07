@@ -20,9 +20,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-
-
-
 @RestController
 @RequestMapping("/api/account")
 public class UserController {
@@ -30,11 +27,11 @@ public class UserController {
     private IUserService userService;
 
     @Autowired
-    public UserController(IUserService userService){
+    public UserController(IUserService userService) {
         this.userService = userService;
     }
 
-     @PostMapping("{role}/register")
+    @PostMapping("{role}/register")
     public User addUser(
             @RequestParam int ID,
             @RequestParam String fullName,
@@ -59,7 +56,7 @@ public class UserController {
         return userService.saveUser(newManager);
     }
 
-        @PutMapping("{role}/update-info")
+    @PutMapping("{role}/update-info")
     public User updateUserInfo(
             @RequestParam int ID,
             @RequestParam String fullName,
@@ -78,7 +75,7 @@ public class UserController {
 
             return userService.saveUser(existingManager);
         } else {
-             throw new RuntimeException("Manager with ID " + ID + " not found.");
+            throw new RuntimeException("Manager with ID " + ID + " not found.");
         }
     }
 
@@ -93,14 +90,14 @@ public class UserController {
         String dashboardUrl = "localhost:8080/dashboard";
         return new RedirectView(dashboardUrl);
     }
-    
+
     @GetMapping("{role}/list")
     public ResponseEntity<List<User>> getUserListByRole(@PathVariable String role) {
         try {
             List<User> users = userService.getUserByUserRole(role);
-            if (users !=null && !users.isEmpty()) {
+            if (users != null && !users.isEmpty()) {
                 return ResponseEntity.ok(users);
-            } else{
+            } else {
                 return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
             }
         } catch (InterruptedException | ExecutionException e) {
@@ -108,14 +105,14 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
         }
     }
-    
+
     @GetMapping("/getUser")
     public ResponseEntity<User> getUserByUserID(@RequestParam String id) {
         try {
             User user = userService.getUserByUserID(Integer.parseInt(id));
             if (user != null) {
                 return ResponseEntity.ok(user);
-            } else{
+            } else {
                 return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
             }
         } catch (InterruptedException | ExecutionException e) {
@@ -123,5 +120,5 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
         }
     }
-    
+
 }

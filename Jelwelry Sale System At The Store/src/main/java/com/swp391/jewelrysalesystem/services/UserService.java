@@ -1,6 +1,5 @@
 package com.swp391.jewelrysalesystem.services;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -75,10 +74,10 @@ public class UserService implements IUserService {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         CollectionReference users = dbFirestore.collection("user");
 
-        //Create a query to get a specific user ID
+        // Create a query to get a specific user ID
         Query query = users.whereEqualTo("id", userID);
 
-        //Retrieve query results
+        // Retrieve query results
         ApiFuture<QuerySnapshot> querySnapshot = query.get();
 
         List<User> userList = querySnapshot.get().toObjects(User.class);
@@ -95,6 +94,9 @@ public class UserService implements IUserService {
     public User saveUser(User user) {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         DocumentReference documentReference = dbFirestore.collection("user").document(String.valueOf(user.getID()));
+
+        // Hash the password before saving
+        user.setPassword(PasswordUtil.hashPassword(user.getPassword()));
 
         ApiFuture<com.google.cloud.firestore.WriteResult> future = documentReference.set(user);
         try {
@@ -133,29 +135,60 @@ public class UserService implements IUserService {
 
         return null;
     }
-    
+
     @Override
     public List<User> getUserByUserRole(String role) throws InterruptedException, ExecutionException {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         CollectionReference users = dbFirestore.collection("user");
 
-        //Create a query to get users who have role that you want
+        // Create a query to get users who have role that you want
         Query query = users.whereEqualTo("role", role);
 
-        //Retrieve query results
+        // Retrieve query results
         ApiFuture<QuerySnapshot> querySnapshot = query.get();
 
         try {
             return querySnapshot.get().toObjects(User.class);
         } catch (InterruptedException | ExecutionException e) {
             System.err.println("Error retrieving users by role: " + e.getMessage());
-            throw e;  
-        } catch (Exception e){
+            throw e;
+        } catch (Exception e) {
             // Log unexpected exceptions
             System.err.println("Unexpected error: " + e.getMessage());
             e.printStackTrace();
             throw new RuntimeException("Unexpected error occurred while retrieving users by role", e);
         }
-        
+
     }
+
+    public User authenticateUser(String email, String password) {
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        try {
+            ApiFuture<QuerySnapshot> future = dbFirestore.collection("user")
+                    .whereEqualTo("email", email)
+                    .limit(1)
+                    .get();
+
+            List<QueryDocumentSnapshot> documents = future.get().getDocuments();
+            if (!documents.isEmpty()) {
+                User user = documents.get(0).toObject(User.class);
+                // Verify the password
+                if (PasswordUtil.verifyPassword(password, user.getPassword())) {
+                    return user;
+                } else {
+                    System.out.println("Password does not match for user with email: " + email);
+                    return null;
+                }
+            } else {
+                System.out.println("No user found with the email: " + email);
+                return null;
+            }
+        } catch (Exception e) {
+            System.err.println("Error authenticating user: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
 }

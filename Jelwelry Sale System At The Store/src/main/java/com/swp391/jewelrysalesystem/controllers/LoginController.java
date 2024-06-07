@@ -21,24 +21,17 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody LoginRequest loginRequest)
-            throws InterruptedException, ExecutionError {
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         try {
-            String idToken = loginRequest.getIdToken();
-            String uid = userService.login(idToken);
-            if (uid != null) {
-                User userData = userService.getUserData(uid);
-                if (userData != null) {
-                    return ResponseEntity.ok(userData);
-                } else {
-                    return ResponseEntity.notFound().build();
-                }
+            User authenticatedUser = userService.authenticateUser(loginRequest.getEmail(), loginRequest.getPassword());
+            if (authenticatedUser != null) {
+                return ResponseEntity.ok(authenticatedUser);
             } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed");
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
         }
     }
+
 }

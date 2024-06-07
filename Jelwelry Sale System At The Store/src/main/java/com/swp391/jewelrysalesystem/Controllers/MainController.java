@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.context.annotation.ComponentScan;
 
-@SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
+@SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
 @ComponentScan(basePackages = "com.swp391.jewelrysalesystem")
 @RestController
 public class MainController {
