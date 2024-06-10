@@ -81,7 +81,7 @@ public class UserController {
             existingUser.setGender(gender);
             existingUser.setContactInfo(contactInfo);
             existingUser.setCounterID(counterID);
-
+            
             return userService.saveUser(existingUser);
         } else {
             throw new RuntimeException("User with ID " + ID + " not found.");
