@@ -3,6 +3,7 @@ package com.swp391.jewelrysalesystem.services;
 import java.util.List;
 
 import com.swp391.jewelrysalesystem.models.Order;
+import com.swp391.jewelrysalesystem.models.OrderDTO;
 
 public interface IOrderService {
     List<Order> getOrderList();
@@ -13,5 +14,5 @@ public interface IOrderService {
 
     Order saveOrder(Order order);
 
-
+    OrderDTO saveOrderDTO(OrderDTO orderDTO);
 }

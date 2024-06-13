@@ -16,6 +16,7 @@ import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteResult;
 import com.google.firebase.cloud.FirestoreClient;
 import com.swp391.jewelrysalesystem.models.Order;
+import com.swp391.jewelrysalesystem.models.OrderDTO;
 
 @Service
 public class OrderService implements IOrderService{
@@ -92,10 +93,11 @@ public class OrderService implements IOrderService{
     @Override
     public Order saveOrder(Order order) {
         Firestore dbFirestore = FirestoreClient.getFirestore();
-        DocumentReference orderRef = dbFirestore.collection("order").document(String.valueOf(order.getID()));
+        DocumentReference documentReference = dbFirestore.collection("order")
+                .document(String.valueOf(order.getID()));
 
         try {
-            ApiFuture<WriteResult> future = orderRef.set(order);
+            ApiFuture<WriteResult> future = documentReference.set(order);
             future.get();
             return order;
         } catch (InterruptedException | ExecutionException e) {
@@ -104,4 +106,22 @@ public class OrderService implements IOrderService{
             return null;
         }
     }
+
+    @Override
+    public OrderDTO saveOrderDTO(OrderDTO orderDTO) {
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        DocumentReference orderRef = dbFirestore.collection("orderDTO").document(String.valueOf(orderDTO.getOrderID()));
+
+        try {
+            ApiFuture<WriteResult> future = orderRef.set(orderDTO);
+            future.get();
+            return orderDTO;
+        } catch (InterruptedException | ExecutionException e) {
+            System.err.println("Error saving orderDTO document: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    
 }

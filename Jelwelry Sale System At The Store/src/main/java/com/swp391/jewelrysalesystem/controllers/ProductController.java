@@ -33,10 +33,11 @@ public class ProductController {
         @RequestParam double stoneCost,
         @RequestParam int stock,
         @RequestParam String category,
+        @RequestParam String img,
         @RequestParam int promotionID) {
 
         try {
-            Product newProduct = new Product(ID, name, price, refundPrice, description, goldWeight, laborCost, stoneCost, stock, promotionID, category, true);
+            Product newProduct = new Product(ID, img, name, price, refundPrice, description, goldWeight, laborCost, stoneCost, stock, promotionID, category, true);
             Product savedProduct = productService.saveProduct(newProduct);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
         } catch (Exception e) {

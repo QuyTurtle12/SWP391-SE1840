@@ -8,6 +8,7 @@ import lombok.Setter;
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class Product {
     private int ID;
+    private String img;
     private String name;
     private double price;
     private double refundPrice;
