@@ -27,8 +27,16 @@ public class CartController {
 
     @PostMapping("/add")
     public String addItem(@RequestBody Product product, @RequestParam int quantity, @RequestParam double price) {
-        cartService.addItem(product, quantity, price);
-        return "Item added to cart";
+        if (product.getStock() > 0) {
+            if (quantity <= product.getStock()) {
+                cartService.addItem(product, quantity, price);
+                return "Item added to cart";
+            } else {
+                return "Not enough quantity in stock";
+            }
+        } else {
+            return "This item is out of stock";
+        }
     }
 
     @DeleteMapping("/delete")
@@ -39,8 +47,12 @@ public class CartController {
 
     @PostMapping("/update")
     public String updateCart(@RequestBody Product product, @RequestParam int quantity) {
-        cartService.updateCart(product, quantity);
-        return "Cart updated";
+        if (quantity <= product.getStock()) {
+            cartService.updateCart(product, quantity);
+            return "Cart updated";
+        } else {
+            return "Not enough quantity in stock";
+        }
     }
 
     @GetMapping("/view")
