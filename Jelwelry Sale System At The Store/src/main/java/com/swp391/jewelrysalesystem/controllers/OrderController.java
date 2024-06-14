@@ -1,6 +1,5 @@
 package com.swp391.jewelrysalesystem.controllers;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.cloud.Timestamp;
 import com.swp391.jewelrysalesystem.models.CartItem;
 import com.swp391.jewelrysalesystem.models.Order;
 import com.swp391.jewelrysalesystem.models.OrderDTO;
-import com.swp391.jewelrysalesystem.models.Product;
 import com.swp391.jewelrysalesystem.services.IOrderService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,8 +42,7 @@ public class OrderController {
                              @RequestParam double discountApplied) {
         Order newOrder = new Order();
         newOrder.setID(orderID);
-        //newOrder.setDate(LocalDateTime.now());
-        newOrder.setDate(null);
+        newOrder.setDate(Timestamp.now());
         newOrder.setStaffID(staffID);
         newOrder.setCounterID(counterID);
         newOrder.setCustomerID(customerID);

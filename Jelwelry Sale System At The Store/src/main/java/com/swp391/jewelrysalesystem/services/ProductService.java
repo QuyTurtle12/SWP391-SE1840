@@ -16,6 +16,7 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.Query;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
+import com.google.cloud.firestore.WriteResult;
 import com.google.firebase.cloud.FirestoreClient;
 import com.swp391.jewelrysalesystem.models.Product;
 
@@ -23,19 +24,19 @@ import com.swp391.jewelrysalesystem.models.Product;
 public class ProductService implements IProductService {
 
     @Override
-    public Product saveProduct(Product product) {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
-        DocumentReference documentReference = dbFirestore.collection("product")
-                .document(String.valueOf(product.getID()));
-
-        ApiFuture<com.google.cloud.firestore.WriteResult> future = documentReference.set(product);
+    public boolean saveProduct(Product product) {
         try {
-            future.get();
-            return product;
-        } catch (InterruptedException | ExecutionException e) {
-            System.err.println("Error saving product document: " + e.getMessage());
-            e.printStackTrace();
-            return null;
+            Firestore dbFirestore = FirestoreClient.getFirestore();
+            DocumentReference documentReference = dbFirestore.collection("product")
+                    .document(String.valueOf(product.getID()));
+
+            ApiFuture<com.google.cloud.firestore.WriteResult> future = documentReference.set(product);
+                future.get();
+                return true;
+            } catch (InterruptedException | ExecutionException e) {
+                System.err.println("Error saving product document: " + e.getMessage());
+                e.printStackTrace();
+                return false;
         }
     }
 
@@ -160,7 +161,34 @@ public class ProductService implements IProductService {
         }
         
         return sortedProductList;
+    }   
+
+    @Override
+    public boolean deleteProduct(int ID) {
+        Firestore dbdFirestore = FirestoreClient.getFirestore();
+        DocumentReference productRef = dbdFirestore.collection("product").document(String.valueOf(ID));
+
+        try {
+            ApiFuture<WriteResult> future = productRef.delete();
+            future.get();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
-    
+    @Override
+    public boolean isNotNullProduct(int ID) {
+        try {
+            if (getProductByID(ID) != null) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

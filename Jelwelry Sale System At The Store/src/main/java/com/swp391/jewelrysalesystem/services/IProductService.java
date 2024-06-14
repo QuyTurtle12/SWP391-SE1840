@@ -6,7 +6,7 @@ import java.util.concurrent.ExecutionException;
 import com.swp391.jewelrysalesystem.models.Product;
 
 public interface IProductService {
-    Product saveProduct(Product product);
+    boolean saveProduct(Product product);
 
     Product getProductByID(int ID) throws InterruptedException, ExecutionException;
 
@@ -17,4 +17,8 @@ public interface IProductService {
     List<Product> searchProduct(String input, String filter, List<Product> productList);
 
     List<Product> sortProduct(String filter, String sortOrder, List<Product> productList);
+
+    boolean deleteProduct(int ID);
+
+    boolean isNotNullProduct(int ID);
 }

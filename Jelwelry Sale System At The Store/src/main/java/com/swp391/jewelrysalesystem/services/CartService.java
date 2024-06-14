@@ -32,6 +32,13 @@ public class CartService implements ICartService {
         }
     }
 
+    public double totalPriceCal(List<CartItem> cart){
+        double totalPrice = 0;
+        for (CartItem cartItem : cart) {
+            totalPrice += cartItem.getPrice() * cartItem.getQuantity();
+        }
+        return totalPrice; 
+    }
     @Override
     public List<CartItem> viewCart() {
         return cartItems;

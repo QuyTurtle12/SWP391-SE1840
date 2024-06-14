@@ -110,7 +110,8 @@ public class OrderService implements IOrderService{
     @Override
     public OrderDTO saveOrderDTO(OrderDTO orderDTO) {
         Firestore dbFirestore = FirestoreClient.getFirestore();
-        DocumentReference orderRef = dbFirestore.collection("orderDTO").document(String.valueOf(orderDTO.getOrderID()));
+        DocumentReference orderRef = dbFirestore.collection("order").document(String.valueOf(orderDTO.getOrderID()))
+        .collection("orderDTO").document(String.valueOf(orderDTO.getProductID()));
 
         try {
             ApiFuture<WriteResult> future = orderRef.set(orderDTO);
@@ -123,5 +124,4 @@ public class OrderService implements IOrderService{
         }
     }
 
-    
 }
