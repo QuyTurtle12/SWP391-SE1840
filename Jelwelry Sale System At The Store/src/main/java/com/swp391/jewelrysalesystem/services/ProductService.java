@@ -54,7 +54,7 @@ public class ProductService implements IProductService {
         List<Product> productList = querySnapshot.get().toObjects(Product.class);
 
         if (productList.isEmpty()) {
-            System.out.println("User document with productID" + ID + "does not exist");
+            System.out.println("User document with productID " + ID + " does not exist");
             return null;
         } else {
             return productList.get(0);
@@ -191,4 +191,6 @@ public class ProductService implements IProductService {
             return false;
         }
     }
+
+    
 }

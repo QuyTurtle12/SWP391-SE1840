@@ -1,7 +1,10 @@
 package com.swp391.jewelrysalesystem.controllers;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,27 +28,28 @@ public class ProductController {
 
     @PostMapping("/product/add")
     public ResponseEntity<Product> addProduct(
-        @RequestParam int ID,
-        @RequestParam String name,
-        @RequestParam double price,
-        @RequestParam double refundPrice,
-        @RequestParam String description,
-        @RequestParam double goldWeight,
-        @RequestParam double laborCost,
-        @RequestParam double stoneCost,
-        @RequestParam int stock,
-        @RequestParam String category,
-        @RequestParam String img,
-        @RequestParam int promotionID) {
+            @RequestParam int ID,
+            @RequestParam String name,
+            @RequestParam double price,
+            @RequestParam double refundPrice,
+            @RequestParam String description,
+            @RequestParam double goldWeight,
+            @RequestParam double laborCost,
+            @RequestParam double stoneCost,
+            @RequestParam int stock,
+            @RequestParam String category,
+            @RequestParam String img,
+            @RequestParam int promotionID) {
 
         try {
-            Product newProduct = new Product(ID, img, name, price, refundPrice, description, goldWeight, laborCost, stoneCost, stock, promotionID, category, true);
+            Product newProduct = new Product(ID, img, name, price, refundPrice, description, goldWeight, laborCost,
+                    stoneCost, stock, promotionID, category, true);
             if (productService.saveProduct(newProduct)) {
                 return ResponseEntity.status(HttpStatus.CREATED).build();
             } else {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
-            
+
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -53,31 +57,68 @@ public class ProductController {
 
     @PostMapping("/v2/products")
     public ResponseEntity<String> addProductV2(
-        @RequestParam int ID,
-        @RequestParam String name,
-        @RequestParam double price,
-        @RequestParam double refundPrice,
-        @RequestParam String description,
-        @RequestParam double goldWeight,
-        @RequestParam double laborCost,
-        @RequestParam double stoneCost,
-        @RequestParam int stock,
-        @RequestParam String category,
-        @RequestParam String img,
-        @RequestParam int promotionID) {
-        
+            @RequestParam int ID,
+            @RequestParam String name,
+            @RequestParam double price,
+            @RequestParam double refundPrice,
+            @RequestParam String description,
+            @RequestParam double goldWeight,
+            @RequestParam double laborCost,
+            @RequestParam double stoneCost,
+            @RequestParam int stock,
+            @RequestParam String category,
+            @RequestParam String img,
+            @RequestParam int promotionID) {
+
         try {
-            if (productService.isNotNullProduct(ID)) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("Duplicated ID");
+            // Check for blank or null product name
+            if (name.isBlank() || name.equals(null)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Name cannot not be empty");
             }
 
-            Product newProduct = new Product(ID, img, name, price, refundPrice, description, goldWeight, laborCost, stoneCost, stock, promotionID, category, true);
+            // Check for duplicate ID
+            if (productService.isNotNullProduct(ID)) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Duplicate ID");
+            }
+
+            // Check for negative product price
+            if (price < 0) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Price cannot be negative");
+            }
+
+            // Check for negative product refund price
+            if (refundPrice < 0) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Refund price cannot be negative");
+            }
+
+            // Check for negative gold weight
+            if (goldWeight < 0) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Gold weight cannot be negative");
+            }
+
+            // Check for negative labor cost
+            if (laborCost < 0) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Labor cost cannot be negative");
+            }
+
+            // Check for negative stone cost
+            if (stoneCost < 0) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Stone cost cannot be negative");
+            }
+
+            // Check for negative stock
+            if (stock < 0) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Stock cannot be negative");
+            }
+
+            Product newProduct = new Product(ID, img, name, price, refundPrice, description, goldWeight, laborCost,
+                    stoneCost, stock, promotionID, category, true);
             if (productService.saveProduct(newProduct)) {
                 return ResponseEntity.status(HttpStatus.CREATED).build();
             } else {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
-            
+
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -85,18 +126,18 @@ public class ProductController {
 
     @PutMapping("/product/{ID}/update-info")
     public ResponseEntity<Product> updateProductInfo(
-        @PathVariable int ID,
-        @RequestParam String name,
-        @RequestParam double price,
-        @RequestParam double refundPrice,
-        @RequestParam String description,
-        @RequestParam double goldWeight,
-        @RequestParam double laborCost,
-        @RequestParam double stoneCost,
-        @RequestParam int stock,
-        @RequestParam String category,
-        @RequestParam String img,
-        @RequestParam int promotionID) {
+            @PathVariable int ID,
+            @RequestParam String name,
+            @RequestParam double price,
+            @RequestParam double refundPrice,
+            @RequestParam String description,
+            @RequestParam double goldWeight,
+            @RequestParam double laborCost,
+            @RequestParam double stoneCost,
+            @RequestParam int stock,
+            @RequestParam String category,
+            @RequestParam String img,
+            @RequestParam int promotionID) {
 
         try {
             Product existingProduct = productService.getProductByID(ID);
@@ -121,32 +162,69 @@ public class ProductController {
             } else {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
-            
+
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     @PutMapping("/v2/products/{ID}")
-    public ResponseEntity<Product> updateProductInfoV2(
-        @PathVariable int ID,
-        @RequestParam String name,
-        @RequestParam double price,
-        @RequestParam double refundPrice,
-        @RequestParam String description,
-        @RequestParam double goldWeight,
-        @RequestParam double laborCost,
-        @RequestParam double stoneCost,
-        @RequestParam int stock,
-        @RequestParam String category,
-        @RequestParam String img,
-        @RequestParam int promotionID) {
+    public ResponseEntity<String> updateProductInfoV2(
+            @PathVariable int ID,
+            @RequestParam String name,
+            @RequestParam double price,
+            @RequestParam double refundPrice,
+            @RequestParam String description,
+            @RequestParam double goldWeight,
+            @RequestParam double laborCost,
+            @RequestParam double stoneCost,
+            @RequestParam int stock,
+            @RequestParam String category,
+            @RequestParam String img,
+            @RequestParam int promotionID) {
 
         try {
-            Product existingProduct = productService.getProductByID(ID);
-            if (existingProduct == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            // Check for not existed ID
+            if (!productService.isNotNullProduct(ID)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product ID " + ID + " is not existed!");
             }
+
+            // Check for negative product price
+            if (price < 0) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Price cannot be negative");
+            }
+
+            // Check for negative product refund price
+            if (refundPrice < 0) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Refund price cannot be negative");
+            }
+
+            // Check for negative gold weight
+            if (goldWeight < 0) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Gold weight cannot be negative");
+            }
+
+            // Check for negative labor cost
+            if (laborCost < 0) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Labor cost cannot be negative");
+            }
+
+            // Check for negative stone cost
+            if (stoneCost < 0) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Stone cost cannot be negative");
+            }
+
+            // Check for negative stock
+            if (stock < 0) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Stock cannot be negative");
+            }
+
+            // Check if the img URL is valid
+            if (!isValidImageUrl(img)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid image URL");
+            }
+
+            Product existingProduct = productService.getProductByID(ID);
 
             existingProduct.setName(name);
             existingProduct.setImg(img);
@@ -161,7 +239,7 @@ public class ProductController {
             existingProduct.setPromotionID(promotionID);
 
             if (productService.saveProduct(existingProduct)) {
-                return ResponseEntity.ok(existingProduct);
+                return ResponseEntity.ok().build();
             } else {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
@@ -171,9 +249,11 @@ public class ProductController {
     }
 
     @DeleteMapping("/v2/products/{ID}")
-    public ResponseEntity<String> deleteProduct(@PathVariable int ID){
+    public ResponseEntity<String> deleteProduct(@PathVariable int ID) {
         if (productService.isNotNullProduct(ID)) {
-            return productService.deleteProduct(ID)?ResponseEntity.ok("Delete Successfully"):ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failing to delete product ID: " + ID);
+            return productService.deleteProduct(ID) ? ResponseEntity.ok("Delete Successfully")
+                    : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body("Failing to delete product ID: " + ID);
         } else {
             ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -245,7 +325,6 @@ public class ProductController {
         }
     }
 
-    
     @PutMapping("/v2/products/{ID}/status")
     public ResponseEntity<Product> changeProductStatusV2(@PathVariable int ID) {
         try {
@@ -261,8 +340,8 @@ public class ProductController {
 
     @GetMapping("/product/list/search")
     public ResponseEntity<List<Product>> searchProduct(
-        @RequestParam String input,
-        @RequestParam String filter) {
+            @RequestParam String input,
+            @RequestParam String filter) {
 
         try {
             List<Product> productList = productService.searchProduct(input, filter, productService.getProductList());
@@ -277,8 +356,8 @@ public class ProductController {
 
     @GetMapping("/v2/products/search")
     public ResponseEntity<List<Product>> searchProductv2(
-        @RequestParam String input,
-        @RequestParam String filter) {
+            @RequestParam String input,
+            @RequestParam String filter) {
 
         try {
             List<Product> productList = productService.searchProduct(input, filter, productService.getProductList());
@@ -293,8 +372,8 @@ public class ProductController {
 
     @GetMapping("/product/list/sort")
     public ResponseEntity<List<Product>> sortProductList(
-        @RequestParam String filter,
-        @RequestParam String sortOrder) {
+            @RequestParam String filter,
+            @RequestParam String sortOrder) {
 
         try {
             List<Product> productList = productService.sortProduct(filter, sortOrder, productService.getProductList());
@@ -309,8 +388,8 @@ public class ProductController {
 
     @GetMapping("/v2/products/sort")
     public ResponseEntity<List<Product>> sortProductListV2(
-        @RequestParam String filter,
-        @RequestParam String sortOrder) {
+            @RequestParam String filter,
+            @RequestParam String sortOrder) {
 
         try {
             List<Product> productList = productService.sortProduct(filter, sortOrder, productService.getProductList());
@@ -323,13 +402,12 @@ public class ProductController {
         }
     }
 
-
     @GetMapping("/product/list/search/sort")
     public ResponseEntity<List<Product>> sortSearchedProduct(
-        @RequestParam String input,
-        @RequestParam String filter,
-        @RequestParam String sortFilter,
-        @RequestParam String sortOrder) {
+            @RequestParam String input,
+            @RequestParam String filter,
+            @RequestParam String sortFilter,
+            @RequestParam String sortOrder) {
 
         try {
             List<Product> productList = productService.searchProduct(input, filter, productService.getProductList());
@@ -345,10 +423,10 @@ public class ProductController {
 
     @GetMapping("/v2/products/search/sort")
     public ResponseEntity<List<Product>> sortSearchedProductV2(
-        @RequestParam String input,
-        @RequestParam String filter,
-        @RequestParam String sortFilter,
-        @RequestParam String sortOrder) {
+            @RequestParam String input,
+            @RequestParam String filter,
+            @RequestParam String sortFilter,
+            @RequestParam String sortOrder) {
 
         try {
             List<Product> productList = productService.searchProduct(input, filter, productService.getProductList());
@@ -359,6 +437,25 @@ public class ProductController {
             return ResponseEntity.ok(productList);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    private boolean isValidImageUrl(String url) {
+        // Regular expression to check URL format
+        String urlPattern = "^(https?|ftp)://[^\\s/$.?#].[^\\s]*$";
+        if (!Pattern.compile(urlPattern).matcher(url).matches()) {
+            return false;
+        }
+
+        try {
+            URL imageUrl = new URL(url);
+            HttpURLConnection connection = (HttpURLConnection) imageUrl.openConnection();
+            connection.setRequestMethod("HEAD");
+            connection.connect();
+            String contentType = connection.getContentType();
+            return contentType.startsWith("image/");
+        } catch (Exception e) {
+            return false;
         }
     }
 }
