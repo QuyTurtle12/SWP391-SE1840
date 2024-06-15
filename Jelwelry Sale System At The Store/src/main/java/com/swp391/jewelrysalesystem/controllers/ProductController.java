@@ -71,42 +71,38 @@ public class ProductController {
             @RequestParam int promotionID) {
 
         try {
-            // Check for blank or null product name
             if (name.isBlank() || name.equals(null)) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Name cannot not be empty");
             }
 
-            // Check for duplicate ID
+            if (category.isBlank() || category.equals(null)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("category cannot not be empty");
+            }
+
             if (productService.isNotNullProduct(ID)) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("Duplicate ID");
             }
 
-            // Check for negative product price
             if (price < 0) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Price cannot be negative");
             }
 
-            // Check for negative product refund price
             if (refundPrice < 0) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Refund price cannot be negative");
             }
 
-            // Check for negative gold weight
             if (goldWeight < 0) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Gold weight cannot be negative");
             }
 
-            // Check for negative labor cost
             if (laborCost < 0) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Labor cost cannot be negative");
             }
 
-            // Check for negative stone cost
             if (stoneCost < 0) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Stone cost cannot be negative");
             }
 
-            // Check for negative stock
             if (stock < 0) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Stock cannot be negative");
             }
@@ -184,42 +180,42 @@ public class ProductController {
             @RequestParam int promotionID) {
 
         try {
-            // Check for not existed ID
+            if (name.isBlank() || name.equals(null)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Name cannot not be empty");
+            }
+
+            if (category.isBlank() || category.equals(null)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("category cannot not be empty");
+            }
+            
             if (!productService.isNotNullProduct(ID)) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product ID " + ID + " is not existed!");
             }
 
-            // Check for negative product price
             if (price < 0) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Price cannot be negative");
             }
 
-            // Check for negative product refund price
             if (refundPrice < 0) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Refund price cannot be negative");
             }
 
-            // Check for negative gold weight
             if (goldWeight < 0) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Gold weight cannot be negative");
             }
 
-            // Check for negative labor cost
             if (laborCost < 0) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Labor cost cannot be negative");
             }
 
-            // Check for negative stone cost
             if (stoneCost < 0) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Stone cost cannot be negative");
             }
 
-            // Check for negative stock
             if (stock < 0) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Stock cannot be negative");
             }
 
-            // Check if the img URL is valid
             if (!isValidImageUrl(img)) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid image URL");
             }

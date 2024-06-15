@@ -92,23 +92,23 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public User saveUser(User user) {
+    public boolean saveUser(User user) {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         DocumentReference documentReference = dbFirestore.collection("user").document(String.valueOf(user.getID()));
 
         ApiFuture<com.google.cloud.firestore.WriteResult> future = documentReference.set(user);
         try {
             future.get();
-            return user;
+            return true;
         } catch (InterruptedException | ExecutionException e) {
             System.err.println("Error saving user document: " + e.getMessage());
             e.printStackTrace();
-            return null;
+            return false;
         }
     }
 
     @Override
-    public User changeUserStatus(int ID) {
+    public boolean changeUserStatus(int ID) {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         DocumentReference documentReference = dbFirestore.collection("user").document(String.valueOf(ID));
 
@@ -121,17 +121,18 @@ public class UserService implements IUserService {
                 if (user != null) {
                     user.setStatus(!user.getStatus()); // Toggle status
                     documentReference.set(user); // Update the user document
-                    return user;
+                    return true;
                 }
             } else {
                 System.out.println("User document with ID " + ID + " does not exist.");
+                return false;
             }
         } catch (InterruptedException | ExecutionException e) {
             System.err.println("Error changing user status: " + e.getMessage());
             e.printStackTrace();
+            return false;
         }
-
-        return null;
+        return false;
     }
 
     @Override
@@ -212,4 +213,61 @@ public class UserService implements IUserService {
         }
         return newUserList;
     }
+
+    @Override
+    public boolean isNotNullUser(int ID) {
+        try {
+            return getUserByUserID(ID) != null ? true : false;
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    @Override
+    public boolean isNotExistedPhoneNum(int ID, String contactInfo) {
+        try {
+            User firstUser = getUserByUserID(ID);
+            User secondUser = getUserByUserPhone(contactInfo);
+
+            if (firstUser == null || secondUser == null) {
+                return true;
+            }
+            if (firstUser.getID() == secondUser.getID()) {
+                return true;
+            }
+            return false;
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public User getUserByUserPhone(String contactInfo) throws InterruptedException, ExecutionException {
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        CollectionReference users = dbFirestore.collection("user");
+
+        Query query = users.whereEqualTo("contactInfo", contactInfo);
+
+        ApiFuture<QuerySnapshot> querySnapshot = query.get();
+
+        try {
+            List<User> userList = querySnapshot.get().toObjects(User.class);
+            if (!userList.isEmpty()) {
+                return userList.get(0);
+            } else {
+                return null; // or throw an exception if you want to handle no user found scenario
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            System.err.println("Error retrieving users by role: " + e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            System.err.println("Unexpected error: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Unexpected error occurred while retrieving users by contactInfo", e);
+        }
+
+    }
+
 }

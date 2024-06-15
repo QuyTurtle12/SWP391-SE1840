@@ -21,18 +21,19 @@ import com.swp391.jewelrysalesystem.models.Promotion;
 public class PromotionService implements IPromotionService {
 
     @Override
-    public Promotion savePromotion(Promotion promotion) {
+    public boolean savePromotion(Promotion promotion) {
         Firestore dbFirestore = FirestoreClient.getFirestore();
-        DocumentReference documentReference = dbFirestore.collection("promotion").document(String.valueOf(promotion.getID()));
+        DocumentReference documentReference = dbFirestore.collection("promotion")
+                .document(String.valueOf(promotion.getID()));
 
         ApiFuture<WriteResult> future = documentReference.set(promotion);
         try {
             future.get();
-            return promotion;
+            return true;
         } catch (InterruptedException | ExecutionException e) {
             System.err.println("Error saving promotion document: " + e.getMessage());
             e.printStackTrace();
-            return null;
+            return false;
         }
     }
 
@@ -48,7 +49,7 @@ public class PromotionService implements IPromotionService {
             List<Promotion> promotionList = new ArrayList<>();
             for (QueryDocumentSnapshot document : promotions) {
                 promotionList.add(document.toObject(Promotion.class));
-            } 
+            }
             return promotionList;
         } catch (InterruptedException | ExecutionException e) {
             System.err.println("Error retrieving promotion list: " + e.getMessage());
@@ -58,7 +59,7 @@ public class PromotionService implements IPromotionService {
     }
 
     @Override
-    public Promotion changePromotionStatus(int ID) {
+    public boolean changePromotionStatus(int ID) {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         DocumentReference promotionRef = dbFirestore.collection("promotion").document(String.valueOf(ID));
 
@@ -66,20 +67,18 @@ public class PromotionService implements IPromotionService {
             ApiFuture<DocumentSnapshot> future = promotionRef.get();
             DocumentSnapshot documentSnapshot = future.get();
 
-            if (documentSnapshot.exists()) {
-                Promotion promotion = documentSnapshot.toObject(Promotion.class);
-                if (promotion != null) {
-                    promotion.setStatus(!promotion.getStatus());
-                    promotionRef.set(promotion);
-                    return promotion;
-                }
+            Promotion promotion = documentSnapshot.toObject(Promotion.class);
+            if (promotion != null) {
+                promotion.setStatus(!promotion.getStatus());
+                promotionRef.set(promotion);
+                return true;
             }
+            return false;
         } catch (InterruptedException | ExecutionException e) {
             System.err.println("Error changing promotion status: " + e.getMessage());
             e.printStackTrace();
+            return false;
         }
-
-        return null;
     }
 
     @Override
@@ -125,6 +124,14 @@ public class PromotionService implements IPromotionService {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public boolean isNotNullPromotion(int ID) {
+        if (getPromotion(ID) == null) {
+            return false;
+        }
+        return true;
     }
 
 }

@@ -17,9 +17,15 @@ public interface IUserService {
 
     List<User> getUserByUserRole(String role) throws InterruptedException, ExecutionException;
 
-    User saveUser(User user);
+    User getUserByUserPhone(String contactInfo) throws InterruptedException, ExecutionException;
 
-    User changeUserStatus(int id);
+    boolean saveUser(User user);
+
+    boolean changeUserStatus(int id);
 
     List<User> searchUser(String input, String filter, List<User> userList);
+
+    boolean isNotNullUser(int ID);
+
+    boolean isNotExistedPhoneNum(int ID, String contactInfo);
 }

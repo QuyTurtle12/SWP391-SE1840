@@ -56,9 +56,8 @@ public class ProductService implements IProductService {
         if (productList.isEmpty()) {
             System.out.println("User document with productID " + ID + " does not exist");
             return null;
-        } else {
+        } 
             return productList.get(0);
-        }
     }
 
     @Override
