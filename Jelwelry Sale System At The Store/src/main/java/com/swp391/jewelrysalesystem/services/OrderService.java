@@ -132,5 +132,22 @@ public class OrderService implements IOrderService{
         return true;
     }
 
+    @Override
+    public boolean isNotNullStaff(int ID) {
+        UserService userService = new UserService();
+        return userService.isNotNullUser(ID);
+    }
+
+    @Override
+    public boolean isNotNullCounter(int ID) {
+        CounterService counterService = new CounterService();
+        return counterService.isNotNullCounter(ID);
+    }
+
+    @Override
+    public boolean isNotNullCustomer(int ID) {
+        CustomerService customerService = new CustomerService();
+        return customerService.isNotNullCustomer(ID);
+    }
     
 }

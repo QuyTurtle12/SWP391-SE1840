@@ -99,4 +99,9 @@ public class CustomerService implements ICustomerService {
         }
         return searchedCustomerList;
     }
+
+    @Override
+    public boolean isNotNullCustomer(int ID) {
+        return getCustomer(ID) != null ? true : false;
+    }
 }

@@ -64,20 +64,19 @@ public class CartController {
         return cartService.viewCart();
     }
 
-    //Old endpoints version bellow here
+    //Old endpoints version below here
     @PostMapping("/add")
     public String addItem(@RequestBody Product product, @RequestParam int quantity, @RequestParam double price) {
-        if (product.getStock() > 0) {
-            if (quantity <= product.getStock()) {
-
-                cartService.addItem(product, quantity, price);
-                return "Item added to cart";
-            } else {
-                return "Not enough quantity in stock";
-            }
-        } else {
+        if (product.getStock() < 0) {
             return "This item is out of stock";
         }
+        
+        if (quantity > product.getStock()) {
+            return "Not enough quantity in stock";
+        } 
+
+        cartService.addItem(product, quantity, price);
+        return "Item added to cart";
     }
 
     @DeleteMapping("/delete")

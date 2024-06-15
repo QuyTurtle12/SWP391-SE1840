@@ -41,8 +41,21 @@ public class OrderController {
                              @RequestParam double discountApplied) {
 
         if (orderService.isNotNullOrder(orderID)) {
-            return ResponseEntity.status(HttpStatus.SC_CONFLICT).body("Promotion ID " + orderID +" is existing");
+            return ResponseEntity.status(HttpStatus.SC_CONFLICT).body("Order ID " + orderID +" is existing");
         }
+
+        if (!orderService.isNotNullStaff(staffID)) {
+            return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body("Staff ID " + staffID +" is not existing");
+        }
+
+        if (!orderService.isNotNullCustomer(customerID)) {
+            return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body("Customer ID " + customerID +" is not existing");
+        }
+
+        if (!orderService.isNotNullCounter(counterID)) {
+            return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body("Counter ID " + counterID +" is not existing");
+        }
+
 
         Order newOrder = new Order();
         newOrder.setID(orderID);
@@ -75,11 +88,11 @@ public class OrderController {
         try {
             List<Order> orderList = orderService.getOrderList();
 
-            if (orderList != null && !orderList.isEmpty()) {
-                return ResponseEntity.ok(orderList);
-            } else {
-                return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
+            if (orderList == null && orderList.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null); 
             }
+
+            return ResponseEntity.ok(orderList);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
@@ -91,11 +104,11 @@ public class OrderController {
         try {
             Order order = orderService.getOrder(id);
 
-            if (order != null) {
-                return ResponseEntity.ok(order);
-            } else {
+            if (order == null) {
                 return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
             }
+
+            return ResponseEntity.ok(order);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
@@ -109,18 +122,19 @@ public class OrderController {
         try {
             List<Order> orderList = orderService.searchOrderList(input, filter, orderService.getOrderList());
 
-            if (orderList != null && !orderList.isEmpty()) {
-                return ResponseEntity.ok(orderList);
-            } else {
+            if (orderList == null && orderList.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
+                
             }
+
+            return ResponseEntity.ok(orderList);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
-    
+
     //Old endpoints version are below here
     @PostMapping("/order/createOrder")
     public String createOrder(@RequestBody List<CartItem> cart,

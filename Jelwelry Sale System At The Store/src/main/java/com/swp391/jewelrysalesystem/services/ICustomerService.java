@@ -12,4 +12,6 @@ public interface ICustomerService {
     Customer getCustomer(int ID);
 
     List<Customer> searchCustomerList(String input, String filter, List<Customer> customerList);
+
+    boolean isNotNullCustomer(int ID);
 }

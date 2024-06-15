@@ -5,13 +5,15 @@ import java.util.List;
 import com.swp391.jewelrysalesystem.models.Counter;
 
 public interface ICounterService {
-    Counter saveCounter(Counter counter);
+    boolean saveCounter(Counter counter);
 
-    void removeCounter(int ID);
+    boolean removeCounter(int ID);
     
     List<Counter> getCountersList();
 
     Counter getCounter(int ID);
 
-    Counter changeStatus(int ID);
+    boolean changeStatus(int ID);
+
+    boolean isNotNullCounter(int ID);
 }

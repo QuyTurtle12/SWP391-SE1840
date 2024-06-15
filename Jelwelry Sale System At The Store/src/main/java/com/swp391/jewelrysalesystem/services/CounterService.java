@@ -22,7 +22,7 @@ import com.swp391.jewelrysalesystem.models.Promotion;
 public class CounterService implements ICounterService {
 
     @Override
-    public Counter saveCounter(Counter counter) {
+    public boolean saveCounter(Counter counter) {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         DocumentReference documentReference = dbFirestore.collection("counter")
                 .document(String.valueOf(counter.getID()));
@@ -30,16 +30,16 @@ public class CounterService implements ICounterService {
         ApiFuture<WriteResult> future = documentReference.set(counter);
         try {
             future.get();
-            return counter;
+            return true;
         } catch (InterruptedException | ExecutionException e) {
             System.err.println("Error saving counter document: " + e.getMessage());
             e.printStackTrace();
+            return false;
         }
-        return null;
     }
 
     @Override
-    public void removeCounter(int ID) {
+    public boolean removeCounter(int ID) {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         DocumentReference documentReference = dbFirestore.collection("counter").document(String.valueOf(ID));
 
@@ -47,9 +47,11 @@ public class CounterService implements ICounterService {
         try {
             future.get();
             System.out.println("Counter with ID " + ID + " has been deleted.");
+            return true;
         } catch (InterruptedException | ExecutionException e) {
             System.err.println("Error deleting counter document: " + e.getMessage());
             e.printStackTrace();
+            return false;
         }
     }
 
@@ -95,7 +97,7 @@ public class CounterService implements ICounterService {
     }
 
     @Override
-    public Counter changeStatus(int ID) {
+    public boolean changeStatus(int ID) {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         DocumentReference counterRef = dbFirestore.collection("counter").document(String.valueOf(ID));
 
@@ -108,14 +110,20 @@ public class CounterService implements ICounterService {
                 if (counter != null) {
                     counter.setStatus(!counter.getStatus());
                     counterRef.set(counter);
-                    return counter;
+                    return true;
                 }
             }
+            return false;
         } catch (InterruptedException | ExecutionException e) {
             System.err.println("Error retrieving counter: " + e.getMessage());
             e.printStackTrace();
+            return false;
         }
-        return null;
+    }
+
+    @Override
+    public boolean isNotNullCounter(int ID) {
+        return getCounter(ID) != null ? true : false;
     }
     
 }
