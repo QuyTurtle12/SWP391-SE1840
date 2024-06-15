@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/api/order")
+@RequestMapping("/api")
 public class OrderController {
     private IOrderService orderService;
 
@@ -31,8 +31,98 @@ public class OrderController {
     public OrderController(IOrderService orderService){
         this.orderService = orderService;
     }
+    @PostMapping("/v2/orders")
+    public ResponseEntity<String> createOrderV2(@RequestBody List<CartItem> cart,
+                             @RequestParam double totalPrice,
+                             @RequestParam int orderID,
+                             @RequestParam int staffID,
+                             @RequestParam int counterID,
+                             @RequestParam int customerID,
+                             @RequestParam double discountApplied) {
 
-    @PostMapping("/createOrder")
+        if (orderService.isNotNullOrder(orderID)) {
+            return ResponseEntity.status(HttpStatus.SC_CONFLICT).body("Promotion ID " + orderID +" is existing");
+        }
+
+        Order newOrder = new Order();
+        newOrder.setID(orderID);
+        newOrder.setDate(Timestamp.now());
+        newOrder.setStaffID(staffID);
+        newOrder.setCounterID(counterID);
+        newOrder.setCustomerID(customerID);
+        newOrder.setTotalPrice(totalPrice);
+        newOrder.setDiscountApplied(discountApplied);
+        try {
+            orderService.saveOrder(newOrder);
+            List<OrderDTO> orderDTOs = new ArrayList<>();
+            for (CartItem item : cart) {
+                OrderDTO orderDTO = new OrderDTO();
+                orderDTO.setOrderID(newOrder.getID());
+                orderDTO.setProductID(item.getProduct().getID());
+                orderDTO.setAmount(item.getQuantity());
+                orderDTOs.add(orderDTO);
+                orderService.saveOrderDTO(orderDTO);
+            }
+            return ResponseEntity.ok().body("Create order Successfully");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body("Error creating an order");
+        }
+    }
+
+    @GetMapping("/v2/orders")
+    public ResponseEntity<List<Order>> getOrderListV2() {
+        try {
+            List<Order> orderList = orderService.getOrderList();
+
+            if (orderList != null && !orderList.isEmpty()) {
+                return ResponseEntity.ok(orderList);
+            } else {
+                return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+    
+    @GetMapping("/v2/orders/order")
+    public ResponseEntity<Order> getOrderV2(@RequestParam int id) {
+        try {
+            Order order = orderService.getOrder(id);
+
+            if (order != null) {
+                return ResponseEntity.ok(order);
+            } else {
+                return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @GetMapping("/v2/orders/search")
+    public ResponseEntity<List<Order>> searchOrderListV2(
+        @RequestParam String input,
+        @RequestParam String filter) {
+        try {
+            List<Order> orderList = orderService.searchOrderList(input, filter, orderService.getOrderList());
+
+            if (orderList != null && !orderList.isEmpty()) {
+                return ResponseEntity.ok(orderList);
+            } else {
+                return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    
+    //Old endpoints version are below here
+    @PostMapping("/order/createOrder")
     public String createOrder(@RequestBody List<CartItem> cart,
                              @RequestParam double totalPrice,
                              @RequestParam int orderID,
@@ -67,7 +157,7 @@ public class OrderController {
     }
     
 
-    @GetMapping("/list")
+    @GetMapping("/order/list")
     public ResponseEntity<List<Order>> getOrderList() {
         try {
             List<Order> orderList = orderService.getOrderList();
@@ -83,8 +173,8 @@ public class OrderController {
         }
     }
     
-    @GetMapping("/get")
-    public ResponseEntity<Order> getOrderList(@RequestParam int id) {
+    @GetMapping("/order/get")
+    public ResponseEntity<Order> getOrder(@RequestParam int id) {
         try {
             Order order = orderService.getOrder(id);
 
@@ -99,7 +189,7 @@ public class OrderController {
         }
     }
 
-    @GetMapping("/list/search")
+    @GetMapping("/order/list/search")
     public ResponseEntity<List<Order>> searchOrderList(
         @RequestParam String input,
         @RequestParam String filter) {

@@ -15,4 +15,6 @@ public interface IOrderService {
     Order saveOrder(Order order);
 
     OrderDTO saveOrderDTO(OrderDTO orderDTO);
+
+    boolean isNotNullOrder(int ID);
 }

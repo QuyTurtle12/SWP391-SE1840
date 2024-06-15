@@ -124,4 +124,13 @@ public class OrderService implements IOrderService{
         }
     }
 
+    @Override
+    public boolean isNotNullOrder(int ID) {
+        if (getOrder(ID) == null) {
+            return false;
+        }
+        return true;
+    }
+
+    
 }

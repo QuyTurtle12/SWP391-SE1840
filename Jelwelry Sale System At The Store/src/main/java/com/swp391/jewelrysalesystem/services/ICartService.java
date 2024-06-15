@@ -13,4 +13,6 @@ public interface ICartService {
     public void updateCart(Product product, int newQuantity);
 
     public List<CartItem> viewCart();
+
+    public void updatePriceOfEachProduct();
 }

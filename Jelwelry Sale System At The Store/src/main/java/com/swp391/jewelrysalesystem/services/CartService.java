@@ -41,7 +41,15 @@ public class CartService implements ICartService {
     }
     @Override
     public List<CartItem> viewCart() {
+        updatePriceOfEachProduct();
         return cartItems;
+    }
+
+    @Override
+    public void updatePriceOfEachProduct() {
+        for (CartItem cartItem : cartItems) {
+            cartItem.setPrice(cartItem.getQuantity() * cartItem.getProduct().getPrice());
+        }
     }
 
 }
