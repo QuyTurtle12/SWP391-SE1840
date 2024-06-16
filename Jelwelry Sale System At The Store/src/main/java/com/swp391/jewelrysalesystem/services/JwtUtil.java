@@ -22,7 +22,9 @@ public class JwtUtil {
     }
 
     public Date extractExpiration(String token) {
-        return new Date((Long) extractAllClaims(token).get("exp"));
+        // Cast the expiration claim to a Number and convert to a Long
+        Number expiration = (Number) extractAllClaims(token).get("exp");
+        return new Date(expiration.longValue() * 1000); // Convert seconds to milliseconds
     }
 
     public <T> T extractClaim(String token, String claim) {

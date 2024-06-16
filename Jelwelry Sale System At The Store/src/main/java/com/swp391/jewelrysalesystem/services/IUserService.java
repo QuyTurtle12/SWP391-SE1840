@@ -27,4 +27,6 @@ public interface IUserService {
     boolean isNotNullUser(int ID);
 
     boolean isNotExistedPhoneNum(int ID, String contactInfo);
+
+    boolean registerUser(User user);
 }

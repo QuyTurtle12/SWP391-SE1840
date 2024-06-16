@@ -13,8 +13,6 @@ import java.util.List;
 import com.swp391.jewelrysalesystem.models.User;
 import com.swp391.jewelrysalesystem.services.IUserService;
 
-import ch.qos.logback.core.joran.conditional.IfAction;
-
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,24 +41,26 @@ public class UserController {
             @RequestParam String password,
             @RequestParam String contactInfo,
             @RequestParam int counterID) {
-        
-        if (contactInfo.length() < 10 || contactInfo.length() >11) {
+
+        if (contactInfo.length() < 10 || contactInfo.length() > 11) {
             return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body("Phone Number must be in range 10 - 11");
         }
         if (userService.isNotNullUser(ID) || !userService.isNotExistedPhoneNum(ID, contactInfo)) {
-            return ResponseEntity.status(HttpStatus.SC_CONFLICT).body("This user has been existed! Please, check ID or contact info");
+            return ResponseEntity.status(HttpStatus.SC_CONFLICT)
+                    .body("This user has been existed! Please, check ID or contact info");
         }
 
         if (fullName.isBlank() || fullName.equals(null)) {
-            return  ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body("Full name cannot be empty!");
+            return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body("Full name cannot be empty!");
         }
 
         if (!gender.equals("Male") && !gender.equals("Female") && !gender.equals("Other")) {
-            return  ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body("Incorrect gender format.");
+            return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body("Incorrect gender format.");
         }
 
         if (!isValidEmail(email)) {
-            return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body("Email must end with @gmail.com or @yahoo.com");
+            return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST)
+                    .body("Email must end with @gmail.com or @yahoo.com");
         }
 
         if (password.isBlank() || password.equals(null)) {
@@ -68,7 +68,7 @@ public class UserController {
         }
 
         if (contactInfo.isBlank() || contactInfo.equals(null)) {
-            return  ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body("Contact Info cannot be empty!");
+            return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body("Contact Info cannot be empty!");
         }
 
         int roleID = 0;
@@ -93,7 +93,7 @@ public class UserController {
         newUser.setRoleID(roleID);
         newUser.setStatus(true);
 
-        return userService.saveUser(newUser) ? ResponseEntity.status(HttpStatus.SC_CREATED).build()
+        return userService.registerUser(newUser) ? ResponseEntity.status(HttpStatus.SC_CREATED).build()
                 : ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body("Error saving a user!");
     }
 
@@ -122,7 +122,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body("Contact Info cannot be empty!");
         }
 
-        if (contactInfo.length() < 10 || contactInfo.length() >11) {
+        if (contactInfo.length() < 10 || contactInfo.length() > 11) {
             return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body("Phone Number must be in range 10 - 11");
         }
 
@@ -148,7 +148,7 @@ public class UserController {
         }
 
         return userService.changeUserStatus(ID) ? ResponseEntity.ok().build()
-            : ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body("Error changing user status");
+                : ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body("Error changing user status");
     }
 
     @GetMapping("v2/accounts/dashboard")
@@ -160,16 +160,16 @@ public class UserController {
     @GetMapping("v2/accounts/{role}")
     public ResponseEntity<List<User>> getUserListByRoleV2(@PathVariable String role) {
         try {
-            if (role.equals("MANAGER")|| role.equals("STAFF")) {
+            if (role.equals("MANAGER") || role.equals("STAFF")) {
                 List<User> users = userService.getUserByUserRole(role);
-                if (users == null && users.isEmpty()){
+                if (users == null && users.isEmpty()) {
                     return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).build();
                 }
-                    return ResponseEntity.ok(users);
+                return ResponseEntity.ok(users);
             } else {
                 return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).build();
             }
-            
+
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).build();

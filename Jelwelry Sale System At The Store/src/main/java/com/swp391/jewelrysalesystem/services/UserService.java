@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,13 +26,16 @@ import com.swp391.jewelrysalesystem.models.User;;
 @Service
 public class UserService implements IUserService {
 
-    public User getUserByEmailAndPassword(String email, String password)
-            throws InterruptedException, ExecutionException {
+    @Autowired
+    private PasswordService passwordService;
+
+    // Method to get a user by email
+    public User getUserByEmail(String email) throws InterruptedException, ExecutionException {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         CollectionReference users = dbFirestore.collection("user");
 
-        // Create a query to get the user with the specified email and password
-        Query query = users.whereEqualTo("email", email).whereEqualTo("password", password);
+        // Create a query to get the user with the specified email
+        Query query = users.whereEqualTo("email", email);
 
         // Retrieve query results
         ApiFuture<QuerySnapshot> querySnapshot = query.get();
@@ -42,6 +46,32 @@ public class UserService implements IUserService {
             return null;
         } else {
             return userList.get(0);
+        }
+    }
+
+    public User getUserByEmailAndPassword(String email, String rawPassword)
+            throws InterruptedException, ExecutionException {
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        CollectionReference users = dbFirestore.collection("user");
+
+        // Create a query to get the user with the specified Email
+        Query query = users.whereEqualTo("email", email);
+
+        // Retrieve query results
+        ApiFuture<QuerySnapshot> querySnapshot = query.get();
+        List<User> userList = querySnapshot.get().toObjects(User.class);
+
+        if (userList.isEmpty()) {
+            System.out.println("No user found with email " + email);
+            return null;
+        } else {
+            User user = userList.get(0);
+            if (passwordService.verifyPassword(rawPassword, user.getPassword())) {
+                return user;
+            } else {
+                System.out.println("Invalid password for email " + email);
+                return null;
+            }
         }
     }
 
@@ -106,6 +136,7 @@ public class UserService implements IUserService {
     @Override
     public boolean saveUser(User user) {
         Firestore dbFirestore = FirestoreClient.getFirestore();
+        user.setPassword(passwordService.hashPassword(user.getPassword()));
         DocumentReference documentReference = dbFirestore.collection("user").document(String.valueOf(user.getID()));
 
         ApiFuture<com.google.cloud.firestore.WriteResult> future = documentReference.set(user);
@@ -280,6 +311,23 @@ public class UserService implements IUserService {
             throw new RuntimeException("Unexpected error occurred while retrieving users by contactInfo", e);
         }
 
+    }
+
+    // Function to register a new user with hashed password
+    public boolean registerUser(User user) {
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        user.setPassword(passwordService.hashPassword(user.getPassword()));
+        DocumentReference documentReference = dbFirestore.collection("user").document(String.valueOf(user.getID()));
+
+        ApiFuture<com.google.cloud.firestore.WriteResult> future = documentReference.set(user);
+        try {
+            future.get();
+            return true;
+        } catch (InterruptedException | ExecutionException e) {
+            System.err.println("Error saving user document: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
     }
 
 }
