@@ -22,7 +22,7 @@ public class CartController {
     private ICartService cartService;
 
     @Autowired
-    public CartController(ICartService cartService){
+    public CartController(ICartService cartService) {
         this.cartService = cartService;
     }
 
@@ -32,7 +32,7 @@ public class CartController {
         double price = product.getPrice();
         if (product.getStock() > 0) {
             if (quantity <= product.getStock()) {
-                
+
                 cartService.addItem(product, quantity, price);
                 return "Item added to cart";
             } else {
@@ -64,16 +64,16 @@ public class CartController {
         return cartService.viewCart();
     }
 
-    //Old endpoints version below here
+    // Old endpoints version below here
     @PostMapping("/add")
     public String addItem(@RequestBody Product product, @RequestParam int quantity, @RequestParam double price) {
         if (product.getStock() < 0) {
             return "This item is out of stock";
         }
-        
+
         if (quantity > product.getStock()) {
             return "Not enough quantity in stock";
-        } 
+        }
 
         cartService.addItem(product, quantity, price);
         return "Item added to cart";

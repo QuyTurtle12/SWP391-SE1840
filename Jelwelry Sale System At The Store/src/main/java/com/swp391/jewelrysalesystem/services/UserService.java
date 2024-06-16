@@ -24,13 +24,25 @@ import com.swp391.jewelrysalesystem.models.User;;
 
 @Service
 public class UserService implements IUserService {
-    private String uid = null;
 
-    public String login(String idToken) throws FirebaseAuthException, InterruptedException, ExecutionException {
-        FirebaseToken dedcodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
-        String uid = dedcodedToken.getUid();
-        this.uid = uid;
-        return uid;
+    public User getUserByEmailAndPassword(String email, String password)
+            throws InterruptedException, ExecutionException {
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        CollectionReference users = dbFirestore.collection("user");
+
+        // Create a query to get the user with the specified email and password
+        Query query = users.whereEqualTo("email", email).whereEqualTo("password", password);
+
+        // Retrieve query results
+        ApiFuture<QuerySnapshot> querySnapshot = query.get();
+        List<User> userList = querySnapshot.get().toObjects(User.class);
+
+        if (userList.isEmpty()) {
+            System.out.println("No user found with email " + email);
+            return null;
+        } else {
+            return userList.get(0);
+        }
     }
 
     // Get user data base on uid
@@ -149,7 +161,7 @@ public class UserService implements IUserService {
                 roleID = 1;
                 break;
             default:
-            throw new IllegalArgumentException("Invalid role: " + role);
+                throw new IllegalArgumentException("Invalid role: " + role);
         }
 
         // Create a query to get users who have role that you want
@@ -223,7 +235,7 @@ public class UserService implements IUserService {
             return false;
         }
     }
-    
+
     @Override
     public boolean isNotExistedPhoneNum(int ID, String contactInfo) {
         try {
