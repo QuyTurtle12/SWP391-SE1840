@@ -45,6 +45,7 @@ public class UserController {
         if (contactInfo.length() < 10 || contactInfo.length() > 11) {
             return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body("Phone Number must be in range 10 - 11");
         }
+        
         if (userService.isNotNullUser(ID) || !userService.isNotExistedPhoneNum(ID, contactInfo)) {
             return ResponseEntity.status(HttpStatus.SC_CONFLICT)
                     .body("This user has been existed! Please, check ID or contact info");

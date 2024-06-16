@@ -274,7 +274,7 @@ public class UserService implements IUserService {
             User secondUser = getUserByUserPhone(contactInfo);
 
             if (firstUser == null || secondUser == null) {
-                return true;
+                return false;
             }
             if (firstUser.getID() == secondUser.getID()) {
                 return true;
