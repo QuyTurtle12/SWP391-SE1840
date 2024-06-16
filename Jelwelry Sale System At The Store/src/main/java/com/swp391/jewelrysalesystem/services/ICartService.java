@@ -15,4 +15,6 @@ public interface ICartService {
     public List<CartItem> viewCart();
 
     public void updatePriceOfEachProduct();
+
+    public boolean clearCart();
 }

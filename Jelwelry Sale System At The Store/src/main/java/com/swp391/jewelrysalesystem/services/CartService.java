@@ -14,7 +14,23 @@ public class CartService implements ICartService {
 
     @Override
     public void addItem(Product product, int quantity, double price) {
-        cartItems.add(new CartItem(product, quantity, price));
+        int count = 0;
+        int index = 0;
+        for (CartItem cartItem : cartItems) {
+            if (product.getID() == cartItem.getProduct().getID()) {
+                count = 1;
+                break;
+            }
+            index++;
+        }
+        
+        
+        if (count == 1) {
+            int currentProductQuantity = cartItems.get(index).getQuantity();
+            cartItems.get(index).setQuantity(currentProductQuantity + 1);
+        } else {
+            cartItems.add(new CartItem(product, quantity, price));
+        }
     }
 
     @Override
@@ -50,6 +66,12 @@ public class CartService implements ICartService {
         for (CartItem cartItem : cartItems) {
             cartItem.setPrice(cartItem.getQuantity() * cartItem.getProduct().getPrice());
         }
+    }
+
+    @Override
+    public boolean clearCart() {
+        cartItems.clear();;
+        return true;
     }
 
 }

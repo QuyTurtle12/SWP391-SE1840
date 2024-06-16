@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.swp391.jewelrysalesystem.models.CartItem;
 import com.swp391.jewelrysalesystem.models.Product;
 import com.swp391.jewelrysalesystem.services.ICartService;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 @RestController
 @RequestMapping("/cart")
@@ -32,7 +34,7 @@ public class CartController {
         double price = product.getPrice();
         if (product.getStock() > 0) {
             if (quantity <= product.getStock()) {
-
+                
                 cartService.addItem(product, quantity, price);
                 return "Item added to cart";
             } else {
@@ -64,6 +66,12 @@ public class CartController {
         return cartService.viewCart();
     }
 
+    @PutMapping("/clear")
+    public String clearCart() {
+        return cartService.clearCart() ? "Clear Cart Successfully" : "Error clearing cart";
+    }
+
+    
     // Old endpoints version below here
     @PostMapping("/add")
     public String addItem(@RequestBody Product product, @RequestParam int quantity, @RequestParam double price) {
