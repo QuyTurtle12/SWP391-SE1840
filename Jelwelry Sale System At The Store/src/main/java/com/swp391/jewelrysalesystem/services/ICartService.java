@@ -8,9 +8,9 @@ import com.swp391.jewelrysalesystem.models.Product;
 public interface ICartService {
     public void addItem(Product product, int quantity, double price);
 
-    public void deleteItem(Product product);
+     public void deleteItem(int productID);
 
-    public void updateCart(Product product, int newQuantity);
+    public boolean updateCart(Product product, int newQuantity);
 
     public List<CartItem> viewCart();
 

@@ -1,6 +1,7 @@
 package com.swp391.jewelrysalesystem.services;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -34,18 +35,25 @@ public class CartService implements ICartService {
     }
 
     @Override
-    public void deleteItem(Product product) {
-        cartItems.removeIf(item -> item.getProduct().getID() == product.getID());
+    public void deleteItem(int productID) {
+        Iterator<CartItem> iterator = cartItems.iterator();
+        while (iterator.hasNext()) {
+            CartItem cartItem = iterator.next();
+            if (cartItem.getProduct().getID() == productID) {
+                iterator.remove(); // Xóa cartItem khỏi danh sách cartItems
+            }
+        }
     }
 
     @Override
-    public void updateCart(Product product, int newQuantity) {
+    public boolean updateCart(Product product, int newQuantity) {
         for (CartItem item : cartItems) {
             if (item.getProduct().getID() == product.getID()) {
                 item.setQuantity(newQuantity);
-                break;
+                return true;
             }
         }
+        return false;
     }
 
     public double totalPriceCal(List<CartItem> cart){

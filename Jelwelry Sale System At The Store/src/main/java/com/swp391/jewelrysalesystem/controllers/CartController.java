@@ -46,19 +46,22 @@ public class CartController {
     }
 
     @DeleteMapping("")
-    public String deleteItemV2(@RequestBody Product product) {
-        cartService.deleteItem(product);
+    public String deleteItemV2(@RequestParam int productID) {
+        cartService.deleteItem(productID);
         return "Item removed from cart";
     }
 
     @PutMapping("")
     public String updateCartV2(@RequestBody Product product, @RequestParam int quantity) {
-        if (quantity <= product.getStock()) {
-            cartService.updateCart(product, quantity);
-            return "Cart updated";
-        } else {
+        if (quantity > product.getStock()) {
             return "Not enough quantity in stock";
         }
+
+        if (cartService.updateCart(product, quantity)) {
+            return "Cart updated";
+        }
+        
+        return "Error updating cart";
     }
 
     @GetMapping("")
@@ -85,12 +88,6 @@ public class CartController {
 
         cartService.addItem(product, quantity, price);
         return "Item added to cart";
-    }
-
-    @DeleteMapping("/delete")
-    public String deleteItem(@RequestBody Product product) {
-        cartService.deleteItem(product);
-        return "Item removed from cart";
     }
 
     @PostMapping("/update")
