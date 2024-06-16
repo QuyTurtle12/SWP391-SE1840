@@ -4,12 +4,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.context.annotation.ComponentScan;
 
-@SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
+@SpringBootApplication(exclude = { SecurityAutoConfiguration.class, DataSourceAutoConfiguration.class })
+
 @ComponentScan(basePackages = "com.swp391.jewelrysalesystem")
 @RestController
 public class MainController {

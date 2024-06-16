@@ -11,9 +11,13 @@ import com.swp391.jewelrysalesystem.models.User;
 import com.swp391.jewelrysalesystem.services.JwtUtil;
 import com.swp391.jewelrysalesystem.services.UserService;
 
+import java.util.logging.Logger;
+
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+    private static final Logger LOGGER = Logger.getLogger(AuthController.class.getName());
+
     @Autowired
     private AuthenticationManager authenticationManager;
 
@@ -30,13 +34,16 @@ public class AuthController {
             User user = userService.getUserByEmailAndPassword(authenticationRequest.getEmail(),
                     authenticationRequest.getPassword());
             if (user == null) {
+                LOGGER.warning("Authentication failed for user: " + authenticationRequest.getEmail());
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthenticationResponse(null, 500));
             }
 
             // Generate JWT token
             final String jwt = jwtUtil.generateToken(user.getEmail());
+            LOGGER.info("JWT Token generated for user: " + authenticationRequest.getEmail());
             return ResponseEntity.ok(new AuthenticationResponse(jwt, 200));
         } catch (Exception e) {
+            LOGGER.severe("Exception during authentication: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthenticationResponse(null, 500));
         }
     }
