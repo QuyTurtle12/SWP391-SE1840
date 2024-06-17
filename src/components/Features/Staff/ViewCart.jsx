@@ -84,7 +84,17 @@ function ViewCart() {
     setCart(updatedCart); // Update the cart state with the updated quantity
     calculateSubtotal(updatedCart); // Recalculate subtotal based on updated quantities
   };
-
+  const handleUpdateQuantity = (cart, newQuantity) => {
+    axios
+      .put(`http://localhost:8080/cart?quantity=${newQuantity}`, { cart })
+      .then((response) => {
+        console.log("Quantity updated successfully"+ newQuantity);
+        fetchCartData(); // Fetch updated cart data after update
+      })
+      .catch((error) => {
+        console.error("Error updating quantity", error);
+      });
+  };
   const handleRemoveItem = (productID) => {
     axios
       .delete(`http://localhost:8080/cart?productID=${productID}`)
@@ -96,17 +106,7 @@ function ViewCart() {
         console.error("Error removing product", error);
       });
   };
-  const handleUpdateQuantity = (item, newQuantity) => {
-    axios
-      .put(`http://localhost:8080/cart?quantity=${newQuantity}`, { item })
-      .then((response) => {
-        console.log("Quantity updated successfully"+ newQuantity);
-        fetchCartData(); // Fetch updated cart data after update
-      })
-      .catch((error) => {
-        console.error("Error updating quantity", error);
-      });
-  };
+  
 
   return (
     <div className="bg-tiffany h-screen py-8">
