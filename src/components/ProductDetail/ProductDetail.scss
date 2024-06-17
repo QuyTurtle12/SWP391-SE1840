@@ -1,0 +1,52 @@
+// src/ProductDetail.scss
+
+.product-detail {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    background: linear-gradient(to bottom, #f2f2f2, #fff);
+  
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #333;
+    }
+  
+    img {
+      width: 100%;
+      height: auto;
+      max-width: 400px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+    }
+  
+    p {
+      font-size: 1rem;
+      color: #666;
+      margin-bottom: 10px;
+  
+      &:last-of-type {
+        margin-bottom: 20px;
+      }
+    }
+  
+    button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      color: #fff;
+      background-color: #007bff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+  
+      &:hover {
+        background-color: #0056b3;
+      }
+    }
+  }
+  

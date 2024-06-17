@@ -1,0 +1,47 @@
+@import '../../sass/common.scss';
+
+.login {
+    background-color: $primary-color !important;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: url('../asset/login1.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+
+    .login__form {
+        background-color: #fff;
+        min-height: 250px;
+        min-width: 25vw;
+        display: flex;
+        flex-direction: column;
+        padding: 25px 5vw;
+        border-radius: 10px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 25px;
+      font-weight: 500 !important;
+    }
+
+    .login-input {
+        .MuiTextField-root {
+            width: 25vw;
+        }
+
+        margin-bottom: 20px;
+    }
+
+    .btn-login {
+        margin-top: 20px;
+        background-color: $primary-color !important;
+        margin-bottom: 30px;
+    }
+}
