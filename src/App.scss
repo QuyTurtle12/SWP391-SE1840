@@ -1,0 +1,26 @@
+@import './sass/common.scss';
+
+* {
+  font-family: 'Open Sans', sans-serif !important;
+}
+
+p {
+  margin: 0;
+  padding: 0;
+}
+
+body, #root, .App {
+  margin: 0;
+  padding: 0;
+}
+
+.App {
+  background-color: $primary-color;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+
+  .container {
+    flex: 1;
+  }
+}
