@@ -27,7 +27,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/api/**","/cart/**").permitAll() // Allow access to auth endpoints
+                        .requestMatchers("/api/auth/**","/api/**","/cart/**").permitAll() // Allow access to auth endpoints
                         .anyRequest().authenticated()) // Secure other endpoints
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 

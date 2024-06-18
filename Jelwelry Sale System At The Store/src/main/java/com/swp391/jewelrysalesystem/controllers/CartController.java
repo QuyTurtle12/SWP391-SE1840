@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.swp391.jewelrysalesystem.models.CartItem;
 import com.swp391.jewelrysalesystem.models.Product;
 import com.swp391.jewelrysalesystem.services.ICartService;
+import com.swp391.jewelrysalesystem.services.ProductService;
+
 import org.springframework.web.bind.annotation.PathVariable;
 
 
@@ -52,7 +54,15 @@ public class CartController {
     }
 
     @PutMapping("")
-    public String updateCartV2(@RequestBody Product product, @RequestParam int quantity) {
+    public String updateCartV2(@RequestParam int productID, @RequestParam int quantity) {
+
+        Product product = null;
+        try {
+            product = new ProductService().getProductByID(productID);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         if (quantity > product.getStock()) {
             return "Not enough quantity in stock";
         }
@@ -60,7 +70,7 @@ public class CartController {
         if (cartService.updateCart(product, quantity)) {
             return "Cart updated";
         }
-        
+
         return "Error updating cart";
     }
 

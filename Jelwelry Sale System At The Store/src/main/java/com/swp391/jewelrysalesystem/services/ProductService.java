@@ -115,7 +115,7 @@ public class ProductService implements IProductService {
                 break;
             case "ByCategory":
                 for (Product product: productList){
-                    if (product.getCategory().toLowerCase().equals(input.toLowerCase())) {
+                    if (product.getCategoryID() == Integer.parseInt(input)) {
                         newProductList.add(product);
                     }
                 }

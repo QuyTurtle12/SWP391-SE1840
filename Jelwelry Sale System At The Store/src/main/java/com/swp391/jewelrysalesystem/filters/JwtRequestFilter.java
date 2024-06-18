@@ -50,7 +50,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             User user = null;
             try {
-                user = userService.getUserByEmail(email);
+                user = userService.getUserByField(email, "email", "user");
                 LOGGER.info("User retrieved: " + (user != null ? user.getEmail() : "null"));
             } catch (InterruptedException | ExecutionException e) {
                 LOGGER.severe("Error retrieving user by email: " + e.getMessage());

@@ -16,7 +16,6 @@ import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteResult;
 import com.google.firebase.cloud.FirestoreClient;
 import com.swp391.jewelrysalesystem.models.Counter;
-import com.swp391.jewelrysalesystem.models.Promotion;
 
 @Service
 public class CounterService implements ICounterService {

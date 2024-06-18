@@ -1,22 +1,20 @@
 package com.swp391.jewelrysalesystem.services;
 
 import java.util.concurrent.ExecutionException;
+
 import java.util.List;
 
-import com.google.firebase.auth.FirebaseAuthException;
 import com.swp391.jewelrysalesystem.models.User;
 
 public interface IUserService {
 
-    User getUserData(String userId) throws InterruptedException, ExecutionException;
+    User getUserByField(String value, String field, String collection) throws InterruptedException, ExecutionException;
 
-    String getUserList();
+    User getUserByField(int value, String field, String collection) throws InterruptedException, ExecutionException;
 
-    User getUserByUserID(int userID) throws InterruptedException, ExecutionException;
+    List<User> getUserListByField(String value, String field, String collection) throws InterruptedException, ExecutionException;
 
-    List<User> getUserByUserRole(String role) throws InterruptedException, ExecutionException;
-
-    User getUserByUserPhone(String contactInfo) throws InterruptedException, ExecutionException;
+    List<User> getUserListByField(int value, String field, String collection) throws InterruptedException, ExecutionException;
 
     boolean saveUser(User user);
 
@@ -26,7 +24,15 @@ public interface IUserService {
 
     boolean isNotNullUser(int ID);
 
-    boolean isNotExistedPhoneNum(int ID, String contactInfo);
+    boolean isNotExistedPhoneNum(String contactInfo);
+
+    boolean isMyPhoneNum(int ID, String contactInfo);
 
     boolean registerUser(User user);
+
+    boolean isNotExistedEmail(String email);
+
+    boolean isMyEmail(int ID, String email);
+
+    String isGeneralValidated(String fullName, String gender, String contactInfo, int counterID);
 }

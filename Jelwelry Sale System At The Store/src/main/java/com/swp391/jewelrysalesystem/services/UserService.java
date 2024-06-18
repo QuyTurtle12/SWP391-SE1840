@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
+import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -21,7 +23,9 @@ import com.google.cloud.firestore.Query;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 
-import com.swp391.jewelrysalesystem.models.User;;
+import com.swp391.jewelrysalesystem.models.User;
+
+import lombok.val;;
 
 @Service
 public class UserService implements IUserService {
@@ -29,25 +33,7 @@ public class UserService implements IUserService {
     @Autowired
     private PasswordService passwordService;
 
-    // Method to get a user by email
-    public User getUserByEmail(String email) throws InterruptedException, ExecutionException {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
-        CollectionReference users = dbFirestore.collection("user");
 
-        // Create a query to get the user with the specified email
-        Query query = users.whereEqualTo("email", email);
-
-        // Retrieve query results
-        ApiFuture<QuerySnapshot> querySnapshot = query.get();
-        List<User> userList = querySnapshot.get().toObjects(User.class);
-
-        if (userList.isEmpty()) {
-            System.out.println("No user found with email " + email);
-            return null;
-        } else {
-            return userList.get(0);
-        }
-    }
 
     public User getUserByEmailAndPassword(String email, String rawPassword)
             throws InterruptedException, ExecutionException {
@@ -72,64 +58,6 @@ public class UserService implements IUserService {
                 System.out.println("Invalid password for email " + email);
                 return null;
             }
-        }
-    }
-
-    // Get user data base on uid
-    public User getUserData(String userId) throws InterruptedException, ExecutionException {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
-        DocumentReference documentReference = dbFirestore.collection("user").document(userId);
-
-        try {
-            ApiFuture<DocumentSnapshot> future = documentReference.get();
-            DocumentSnapshot document = future.get();
-
-            if (document.exists()) {
-                return document.toObject(User.class);
-            } else {
-                System.out.println("User document with ID " + userId + " does not exist.");
-            }
-        } catch (InterruptedException | ExecutionException e) {
-            System.err.println("Error retrieving user document: " + e.getMessage());
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    public String getUserList() {
-        try {
-            Firestore dbFirestore = FirestoreClient.getFirestore();
-            QuerySnapshot querySnapshot = dbFirestore.collection("user").get().get();
-            List<String> documents = querySnapshot.getDocuments().stream()
-                    .map(QueryDocumentSnapshot::getData)
-                    .map(Object::toString)
-                    .collect(Collectors.toList());
-            return documents.toString();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "Error: " + e.getMessage();
-        }
-    }
-
-    @Override
-    public User getUserByUserID(int userID) throws InterruptedException, ExecutionException {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
-        CollectionReference users = dbFirestore.collection("user");
-
-        // Create a query to get a specific user ID
-        Query query = users.whereEqualTo("id", userID);
-
-        // Retrieve query results
-        ApiFuture<QuerySnapshot> querySnapshot = query.get();
-
-        List<User> userList = querySnapshot.get().toObjects(User.class);
-
-        if (userList.isEmpty()) {
-            System.out.println("User document with userID" + userID + "does not exist");
-            return null;
-        } else {
-            return userList.get(0);
         }
     }
 
@@ -179,43 +107,6 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public List<User> getUserByUserRole(String role) throws InterruptedException, ExecutionException {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
-        CollectionReference users = dbFirestore.collection("user");
-
-        int roleID = 0;
-        switch (role) {
-            case "MANAGER":
-                roleID = 2;
-                break;
-            case "STAFF":
-                roleID = 1;
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid role: " + role);
-        }
-
-        // Create a query to get users who have role that you want
-        Query query = users.whereEqualTo("roleID", roleID);
-
-        // Retrieve query results
-        ApiFuture<QuerySnapshot> querySnapshot = query.get();
-
-        try {
-            return querySnapshot.get().toObjects(User.class);
-        } catch (InterruptedException | ExecutionException e) {
-            System.err.println("Error retrieving users by role: " + e.getMessage());
-            throw e;
-        } catch (Exception e) {
-            // Log unexpected exceptions
-            System.err.println("Unexpected error: " + e.getMessage());
-            e.printStackTrace();
-            throw new RuntimeException("Unexpected error occurred while retrieving users by role", e);
-        }
-
-    }
-
-    @Override
     public List<User> searchUser(String input, String filter, List<User> userList) {
 
         List<User> newUserList = new ArrayList<>();
@@ -260,7 +151,7 @@ public class UserService implements IUserService {
     @Override
     public boolean isNotNullUser(int ID) {
         try {
-            return getUserByUserID(ID) != null ? true : false;
+            return getUserByField(ID, "id", "user") != null ? true : false;
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             return false;
@@ -268,17 +159,14 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public boolean isNotExistedPhoneNum(int ID, String contactInfo) {
+    public boolean isNotExistedPhoneNum(String contactInfo) {
         try {
-            User firstUser = getUserByUserID(ID);
-            User secondUser = getUserByUserPhone(contactInfo);
+            User existedPhoneNum = getUserByField(contactInfo, "contactInfo", "user");
 
-            if (firstUser == null || secondUser == null) {
-                return false;
-            }
-            if (firstUser.getID() == secondUser.getID()) {
+            if (existedPhoneNum == null) {
                 return true;
             }
+            
             return false;
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
@@ -286,32 +174,7 @@ public class UserService implements IUserService {
         }
     }
 
-    @Override
-    public User getUserByUserPhone(String contactInfo) throws InterruptedException, ExecutionException {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
-        CollectionReference users = dbFirestore.collection("user");
 
-        Query query = users.whereEqualTo("contactInfo", contactInfo);
-
-        ApiFuture<QuerySnapshot> querySnapshot = query.get();
-
-        try {
-            List<User> userList = querySnapshot.get().toObjects(User.class);
-            if (!userList.isEmpty()) {
-                return userList.get(0);
-            } else {
-                return null; // or throw an exception if you want to handle no user found scenario
-            }
-        } catch (InterruptedException | ExecutionException e) {
-            System.err.println("Error retrieving users by role: " + e.getMessage());
-            throw e;
-        } catch (Exception e) {
-            System.err.println("Unexpected error: " + e.getMessage());
-            e.printStackTrace();
-            throw new RuntimeException("Unexpected error occurred while retrieving users by contactInfo", e);
-        }
-
-    }
 
     // Function to register a new user with hashed password
     public boolean registerUser(User user) {
@@ -329,5 +192,219 @@ public class UserService implements IUserService {
             return false;
         }
     }
+
+    @Override
+    public boolean isMyPhoneNum(int ID, String contactInfo) {
+        try {
+            User userWithThisPhoneNum = getUserByField(contactInfo, "contactInfo", "user");
+            User user = getUserByField(ID, "id", "user");
+
+            if (user == null && userWithThisPhoneNum != null) {
+                return false;
+            }
+
+            if (user != null && userWithThisPhoneNum != null) {
+                if (user.getID() == userWithThisPhoneNum.getID()) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean isNotExistedEmail(String email) {
+        try {
+            User userWithThisEmail = getUserByField(email, "email", "user");
+
+            if (userWithThisEmail == null) {
+                return true;
+            }
+            
+            return false;
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isMyEmail(int ID, String email) {
+        try {
+            User userWithThisEmail = getUserByField(email, "email", "user");
+            User user = getUserByField(ID, "id", "user");
+
+            if (user == null && userWithThisEmail != null) {
+                return false;
+            }
+
+            if (user != null && userWithThisEmail != null) {
+                if (user.getID() == userWithThisEmail.getID()) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public User getUserByField(String value, String field, String collection)
+            throws InterruptedException, ExecutionException {
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        CollectionReference users = dbFirestore.collection(collection);
+
+        Query query = users.whereEqualTo(field, value);
+
+        ApiFuture<QuerySnapshot> querySnapshot = query.get();
+
+        try {
+            List<User> userList = querySnapshot.get().toObjects(User.class);
+            if (!userList.isEmpty()) {
+                return userList.get(0);
+            } else {
+                return null;
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            System.err.println("Error retrieving users by : " + field + " " + e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            System.err.println("Unexpected error: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Unexpected error occurred while retrieving users by contactInfo", e);
+        }
+    }
+
+    @Override
+    public User getUserByField(int value, String field, String collection)
+            throws InterruptedException, ExecutionException {
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        CollectionReference users = dbFirestore.collection(collection);
+
+        Query query = users.whereEqualTo(field, value);
+        
+        // Retrieve query results
+        ApiFuture<QuerySnapshot> querySnapshot = query.get();
+
+        try {
+            List<User> userList = querySnapshot.get().toObjects(User.class);
+            if (!userList.isEmpty()) {
+                return userList.get(0);
+            } else {
+                return null;
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            System.err.println("Error retrieving users by : " + field + " " + e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            System.err.println("Unexpected error: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Unexpected error occurred while retrieving users by contactInfo", e);
+        }
+    }
+
+    @Override
+    public List<User> getUserListByField(String value, String field, String collection)
+            throws InterruptedException, ExecutionException {
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        CollectionReference users = dbFirestore.collection(collection);
+
+        Query query = null;
+        if (field.equals("roleID")) {
+            int roleID = getRoleID(value);
+            query = users.whereEqualTo(field, roleID);
+        } else {
+            query = users.whereEqualTo(field, value);
+        }
+        
+        // Retrieve query results
+        ApiFuture<QuerySnapshot> querySnapshot = query.get();
+
+        try {
+            return querySnapshot.get().toObjects(User.class);
+        } catch (InterruptedException | ExecutionException e) {
+            System.err.println("Error retrieving users by role: " + e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            System.err.println("Unexpected error: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Unexpected error occurred while retrieving users by role", e);
+        }
+    }
+
+    public int getRoleID(String roleName){
+        switch (roleName) {
+            case "ADMIN":
+                return 3;
+            case "MANAGER":
+                return 2;
+            case "STAFF":
+                return 1;
+            default:
+                throw new IllegalArgumentException("Invalid role: " + roleName);
+        }
+    }
+
+    @Override
+    public List<User> getUserListByField(int value, String field, String collection)
+            throws InterruptedException, ExecutionException {
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        CollectionReference users = dbFirestore.collection(collection);
+
+
+        Query query = users.whereEqualTo(field, value);
+
+        // Retrieve query results
+        ApiFuture<QuerySnapshot> querySnapshot = query.get();
+
+        try {
+            return querySnapshot.get().toObjects(User.class);
+        } catch (InterruptedException | ExecutionException e) {
+            System.err.println("Error retrieving users by role: " + e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            System.err.println("Unexpected error: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Unexpected error occurred while retrieving users by role", e);
+        }
+    }
+
+    @Override
+    public String isGeneralValidated(String fullName, String gender, String contactInfo, int counterID) {
+
+        if (fullName.isBlank() || fullName.equals(null)) {
+            return "Full name cannot be empty!";
+        }
+
+        if (!gender.equals("Male") && !gender.equals("Female") && !gender.equals("Other")) {
+            return "Incorrect gender format.";
+        }
+
+        if (contactInfo.isBlank() || contactInfo.equals(null)) {
+            return "Contact Info cannot be empty!";
+        }
+
+        if (contactInfo.length() < 10 || contactInfo.length() > 11) {
+            return "Phone Number must be in range 10 - 11";
+        }
+
+        if (!new CounterService().isNotNullCounter(counterID)) {
+            return "Invalid counter ID";
+        }
+        return null;
+    }
+
 
 }

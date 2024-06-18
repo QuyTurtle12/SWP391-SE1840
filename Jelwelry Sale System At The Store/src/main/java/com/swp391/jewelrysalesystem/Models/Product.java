@@ -18,6 +18,6 @@ public class Product {
     private double stoneCost;
     private int stock;
     private int promotionID;
-    private String category;
+    private int categoryID;
     private Boolean status;
 }

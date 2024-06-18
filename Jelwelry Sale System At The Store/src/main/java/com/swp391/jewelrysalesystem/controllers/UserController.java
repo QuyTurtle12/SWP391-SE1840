@@ -41,22 +41,10 @@ public class UserController {
             @RequestParam String password,
             @RequestParam String contactInfo,
             @RequestParam int counterID) {
-
-        if (contactInfo.length() < 10 || contactInfo.length() > 11) {
-            return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body("Phone Number must be in range 10 - 11");
-        }
         
-        if (userService.isNotNullUser(ID) || !userService.isNotExistedPhoneNum(ID, contactInfo)) {
+        if (userService.isNotNullUser(ID) || !userService.isNotExistedPhoneNum(contactInfo) || !userService.isNotExistedEmail(email)) {
             return ResponseEntity.status(HttpStatus.SC_CONFLICT)
-                    .body("This user has been existed! Please, check ID or contact info");
-        }
-
-        if (fullName.isBlank() || fullName.equals(null)) {
-            return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body("Full name cannot be empty!");
-        }
-
-        if (!gender.equals("Male") && !gender.equals("Female") && !gender.equals("Other")) {
-            return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body("Incorrect gender format.");
+                    .body("This user has been existed! Please, check ID or contact info or email");
         }
 
         if (!isValidEmail(email)) {
@@ -68,10 +56,11 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body("Password cannot be empty!");
         }
 
-        if (contactInfo.isBlank() || contactInfo.equals(null)) {
-            return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body("Contact Info cannot be empty!");
+        String error =  userService.isGeneralValidated(fullName, gender, contactInfo, counterID);
+        if (error != null) {
+            return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body(error);
         }
-
+        
         int roleID = 0;
         switch (role) {
             case "MANAGER":
@@ -106,32 +95,23 @@ public class UserController {
             @RequestParam String contactInfo,
             @RequestParam int counterID)
             throws InterruptedException, ExecutionException {
-
+        
         if (!userService.isNotNullUser(ID)) {
-            return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body("This user does not exist!");
+            return ResponseEntity.status(HttpStatus.SC_CONFLICT)
+                    .body("This user is not existing");
         }
 
-        if (fullName.isBlank() || fullName.equals(null)) {
-            return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body("Full name cannot be empty!");
+        if (!userService.isNotExistedPhoneNum(contactInfo) && !userService.isMyPhoneNum(ID, contactInfo)) {
+            return ResponseEntity.status(HttpStatus.SC_CONFLICT)
+                    .body("This phone number has been registered");
         }
 
-        if (!gender.equals("Male") && !gender.equals("Female") && !gender.equals("Other")) {
-            return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body("Incorrect gender format.");
+        String error =  userService.isGeneralValidated(fullName, gender, contactInfo, counterID);
+        if (error != null) {
+            return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body(error);
         }
 
-        if (contactInfo.isBlank() || contactInfo.equals(null)) {
-            return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body("Contact Info cannot be empty!");
-        }
-
-        if (contactInfo.length() < 10 || contactInfo.length() > 11) {
-            return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body("Phone Number must be in range 10 - 11");
-        }
-
-        if (!userService.isNotExistedPhoneNum(ID, contactInfo)) {
-            return ResponseEntity.status(HttpStatus.SC_CONFLICT).body("This contact info has been existed!");
-        }
-
-        User existingUser = userService.getUserByUserID(ID);
+        User existingUser = userService.getUserByField(ID, "id", "user");
 
         existingUser.setFullName(fullName);
         existingUser.setGender(gender);
@@ -162,7 +142,7 @@ public class UserController {
     public ResponseEntity<List<User>> getUserListByRoleV2(@PathVariable String role) {
         try {
             if (role.equals("MANAGER") || role.equals("STAFF")) {
-                List<User> users = userService.getUserByUserRole(role);
+                List<User> users = userService.getUserListByField(role, "roleID", "user");
                 if (users == null && users.isEmpty()) {
                     return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).build();
                 }
@@ -178,9 +158,9 @@ public class UserController {
     }
 
     @GetMapping("v2/accounts/user")
-    public ResponseEntity<User> getUserByUserIDV2(@RequestParam String id) {
+    public ResponseEntity<User> getUserByUserIDV2(@RequestParam int id) {
         try {
-            User user = userService.getUserByUserID(Integer.parseInt(id));
+            User user = userService.getUserByField(id, "id", "user");
             if (user == null) {
                 return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).build();
             }
@@ -198,7 +178,7 @@ public class UserController {
             @RequestParam String input,
             @RequestParam String filter) {
         try {
-            List<User> users = userService.getUserByUserRole(role);
+            List<User> users = userService.getUserListByField(role, "roleID", "user");
             List<User> searchedUserList = userService.searchUser(input, filter, users);
             if (users != null && !users.isEmpty()) {
                 return ResponseEntity.ok(searchedUserList);
@@ -264,7 +244,7 @@ public class UserController {
             @RequestParam int counterID)
             throws InterruptedException, ExecutionException {
 
-        User existingUser = userService.getUserByUserID(ID);
+        User existingUser = userService.getUserByField(ID, "id", "user");
 
         if (existingUser != null) {
             existingUser.setFullName(fullName);
@@ -294,7 +274,7 @@ public class UserController {
     @GetMapping("/account/{role}/list")
     public ResponseEntity<List<User>> getUserListByRole(@PathVariable String role) {
         try {
-            List<User> users = userService.getUserByUserRole(role);
+            List<User> users = userService.getUserListByField(role, "roleID", "user");
             if (users != null && !users.isEmpty()) {
                 return ResponseEntity.ok(users);
             } else {
@@ -307,9 +287,9 @@ public class UserController {
     }
 
     @GetMapping("/account/getUser")
-    public ResponseEntity<User> getUserByUserID(@RequestParam String id) {
+    public ResponseEntity<User> getUserByUserID(@RequestParam int id) {
         try {
-            User user = userService.getUserByUserID(Integer.parseInt(id));
+            User user = userService.getUserByField(id, "id", "user");
             if (user != null) {
                 return ResponseEntity.ok(user);
             } else {
@@ -328,7 +308,7 @@ public class UserController {
             @RequestParam String input,
             @RequestParam String filter) {
         try {
-            List<User> users = userService.getUserByUserRole(role);
+            List<User> users = userService.getUserListByField(role, "roleID", "user");
             List<User> searchedUserList = userService.searchUser(input, filter, users);
             if (users != null && !users.isEmpty()) {
                 return ResponseEntity.ok(searchedUserList);

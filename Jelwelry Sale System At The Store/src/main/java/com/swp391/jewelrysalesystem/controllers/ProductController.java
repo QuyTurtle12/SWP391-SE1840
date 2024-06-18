@@ -37,13 +37,13 @@ public class ProductController {
             @RequestParam double laborCost,
             @RequestParam double stoneCost,
             @RequestParam int stock,
-            @RequestParam String category,
+            @RequestParam int categoryID,
             @RequestParam String img,
             @RequestParam int promotionID) {
 
         try {
             Product newProduct = new Product(ID, img, name, price, refundPrice, description, goldWeight, laborCost,
-                    stoneCost, stock, promotionID, category, true);
+                    stoneCost, stock, promotionID, categoryID, true);
             if (productService.saveProduct(newProduct)) {
                 return ResponseEntity.status(HttpStatus.CREATED).build();
             } else {
@@ -66,7 +66,7 @@ public class ProductController {
             @RequestParam double laborCost,
             @RequestParam double stoneCost,
             @RequestParam int stock,
-            @RequestParam String category,
+            @RequestParam int categoryID,
             @RequestParam String img,
             @RequestParam int promotionID) {
 
@@ -75,7 +75,7 @@ public class ProductController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Name cannot not be empty");
             }
 
-            if (category.isBlank() || category.equals(null)) {
+            if (categoryID <= 0) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("category cannot not be empty");
             }
 
@@ -108,53 +108,9 @@ public class ProductController {
             }
 
             Product newProduct = new Product(ID, img, name, price, refundPrice, description, goldWeight, laborCost,
-                    stoneCost, stock, promotionID, category, true);
+                    stoneCost, stock, promotionID, categoryID, true);
             if (productService.saveProduct(newProduct)) {
                 return ResponseEntity.status(HttpStatus.CREATED).build();
-            } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-            }
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    @PutMapping("/product/{ID}/update-info")
-    public ResponseEntity<Product> updateProductInfo(
-            @PathVariable int ID,
-            @RequestParam String name,
-            @RequestParam double price,
-            @RequestParam double refundPrice,
-            @RequestParam String description,
-            @RequestParam double goldWeight,
-            @RequestParam double laborCost,
-            @RequestParam double stoneCost,
-            @RequestParam int stock,
-            @RequestParam String category,
-            @RequestParam String img,
-            @RequestParam int promotionID) {
-
-        try {
-            Product existingProduct = productService.getProductByID(ID);
-            if (existingProduct == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
-
-            existingProduct.setName(name);
-            existingProduct.setImg(img);
-            existingProduct.setPrice(price);
-            existingProduct.setRefundPrice(refundPrice);
-            existingProduct.setDescription(description);
-            existingProduct.setGoldWeight(goldWeight);
-            existingProduct.setLaborCost(laborCost);
-            existingProduct.setStoneCost(stoneCost);
-            existingProduct.setStock(stock);
-            existingProduct.setCategory(category);
-            existingProduct.setPromotionID(promotionID);
-
-            if (productService.saveProduct(existingProduct)) {
-                return ResponseEntity.ok(existingProduct);
             } else {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
@@ -175,7 +131,7 @@ public class ProductController {
             @RequestParam double laborCost,
             @RequestParam double stoneCost,
             @RequestParam int stock,
-            @RequestParam String category,
+            @RequestParam int categoryID,
             @RequestParam String img,
             @RequestParam int promotionID) {
 
@@ -184,7 +140,7 @@ public class ProductController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Name cannot not be empty");
             }
 
-            if (category.isBlank() || category.equals(null)) {
+            if (categoryID <= 0) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("category cannot not be empty");
             }
             
@@ -231,7 +187,7 @@ public class ProductController {
             existingProduct.setLaborCost(laborCost);
             existingProduct.setStoneCost(stoneCost);
             existingProduct.setStock(stock);
-            existingProduct.setCategory(category);
+            existingProduct.setCategoryID(categoryID);
             existingProduct.setPromotionID(promotionID);
 
             if (productService.saveProduct(existingProduct)) {
@@ -256,19 +212,6 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failing to delete product ID: " + ID);
     }
 
-    @GetMapping("/product/list")
-    public ResponseEntity<List<Product>> getProductList() {
-        try {
-            List<Product> productList = productService.getProductList();
-            if (productList.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
-            return ResponseEntity.ok(productList);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
     @GetMapping("/v2/products")
     public ResponseEntity<List<Product>> getProductListV2() {
         try {
@@ -277,19 +220,6 @@ public class ProductController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
             return ResponseEntity.ok(productList);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    @GetMapping("/product/{ID}/info")
-    public ResponseEntity<Product> getProduct(@PathVariable int ID) {
-        try {
-            Product product = productService.getProductByID(ID);
-            if (product == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
-            return ResponseEntity.ok(product);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -307,6 +237,82 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    //Old endpoint version below here.
+
+    @PutMapping("/product/{ID}/update-info")
+    public ResponseEntity<Product> updateProductInfo(
+            @PathVariable int ID,
+            @RequestParam String name,
+            @RequestParam double price,
+            @RequestParam double refundPrice,
+            @RequestParam String description,
+            @RequestParam double goldWeight,
+            @RequestParam double laborCost,
+            @RequestParam double stoneCost,
+            @RequestParam int stock,
+            @RequestParam int categoryID,
+            @RequestParam String img,
+            @RequestParam int promotionID) {
+
+        try {
+            Product existingProduct = productService.getProductByID(ID);
+            if (existingProduct == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+
+            existingProduct.setName(name);
+            existingProduct.setImg(img);
+            existingProduct.setPrice(price);
+            existingProduct.setRefundPrice(refundPrice);
+            existingProduct.setDescription(description);
+            existingProduct.setGoldWeight(goldWeight);
+            existingProduct.setLaborCost(laborCost);
+            existingProduct.setStoneCost(stoneCost);
+            existingProduct.setStock(stock);
+            existingProduct.setCategoryID(categoryID);
+            existingProduct.setPromotionID(promotionID);
+
+            if (productService.saveProduct(existingProduct)) {
+                return ResponseEntity.ok(existingProduct);
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/product/list")
+    public ResponseEntity<List<Product>> getProductList() {
+        try {
+            List<Product> productList = productService.getProductList();
+            if (productList.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+            return ResponseEntity.ok(productList);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+
+
+    @GetMapping("/product/{ID}/info")
+    public ResponseEntity<Product> getProduct(@PathVariable int ID) {
+        try {
+            Product product = productService.getProductByID(ID);
+            if (product == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+            return ResponseEntity.ok(product);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+
 
     @PutMapping("/product/{ID}/change-status")
     public ResponseEntity<Product> changeProductStatus(@PathVariable int ID) {
