@@ -8,7 +8,6 @@ import ViewDashboard from "./components/Features/Admin/ViewDashboard";
 import ViewManagerList from "./components/Features/Admin/ViewManagerList";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Profile from "./components/Profile/Profile";
-import ListProducts from "./components/Products/ListProducts";
 import EditManager from "./components/Features/Admin/EditManager";
 import Register from "./components/Register/Register";
 import Admin from "./components/Features/Admin/Admin";
@@ -18,6 +17,7 @@ import ProductList from "./components/Features/Staff/ProductList";
 import HomePage from "./components/Homepage/HomePage";
 import ViewCart from "./components/Features/Staff/ViewCart";
 import AddManager from "./components/Features/Admin/AddManager";
+import ProductDetailStaff from "./components/Features/Staff/ProductDetailStaff";
 function App() {
   return (
     <div className="overflow-hidden">
@@ -25,9 +25,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/homepage" element={<HomePage />} />
-        <Route path="/product" element={<ListProducts />} />
         <Route path="/customer-list" element={<CustomerList />} />
-        <Route path="/productlist" element={<ProductList />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} />
@@ -39,6 +37,8 @@ function App() {
         <Route path="/products/:id" element={<ProductDetail />} />
         <Route path="/edit-manager/:id" element={<EditManager />} />
         <Route path="/viewcart" element={<ViewCart />} />
+        <Route path="/productlist" element={<ProductList />} />
+        <Route path="/productdetail/:id" element={<ProductDetailStaff />} />
       </Routes>
       <Routes></Routes>
       <Footer />

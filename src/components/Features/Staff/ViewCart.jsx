@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { aupdate } from "../../../net/Axios";
 
 function ViewCart() {
   const [cart, setCart] = useState([]);
@@ -47,7 +48,8 @@ function ViewCart() {
 
   const handleCreateOrder = () => {
     axios
-      .post(`http://localhost:8080/api/v2/orders?totalPrice=${subtotal}&orderID=${orderID}&staffID=${staffID}&counterID=${counterID}&customerID=${customerID}&discountApplied=${discountApplied}`,
+      .post(
+        `http://localhost:8080/api/v2/orders?totalPrice=${subtotal}&orderID=${orderID}&staffID=${staffID}&counterID=${counterID}&customerID=${customerID}&discountApplied=${discountApplied}`,
         cart
       )
       .then((response) => {
@@ -58,8 +60,7 @@ function ViewCart() {
       .catch((error) => {
         console.error("Error creating order", error);
       });
-};
-
+  };
 
   const handleClearCart = () => {
     axios
@@ -84,17 +85,20 @@ function ViewCart() {
     setCart(updatedCart); // Update the cart state with the updated quantity
     calculateSubtotal(updatedCart); // Recalculate subtotal based on updated quantities
   };
-  const handleUpdateQuantity = (cart, newQuantity) => {
+
+  const handleUpdateQuantity = (productID, newQuantity) => {
     axios
-      .put(`http://localhost:8080/cart?quantity=${newQuantity}`, { cart })
+      .put(`http://localhost:8080/cart?productID=${productID}&quantity=${newQuantity}`, {})
       .then((response) => {
-        console.log("Quantity updated successfully"+ newQuantity);
+        console.log(response);
+        console.log("Quantity updated successfully" + newQuantity);
         fetchCartData(); // Fetch updated cart data after update
       })
       .catch((error) => {
         console.error("Error updating quantity", error);
       });
   };
+
   const handleRemoveItem = (productID) => {
     axios
       .delete(`http://localhost:8080/cart?productID=${productID}`)
@@ -106,10 +110,9 @@ function ViewCart() {
         console.error("Error removing product", error);
       });
   };
-  
 
   return (
-    <div className="bg-tiffany h-screen py-8">
+    <div className="bg-white h-screen py-8">
       <div className="container mx-auto px-4">
         <h1 className="text-2xl font-semibold mb-4">Shopping Cart</h1>
         {cart.length === 0 ? (
@@ -118,17 +121,20 @@ function ViewCart() {
               cart is empty
             </div>
             <a href="/productlist">
-              <button className="bg-blue-500 text-white py-1 px-3 font-bold rounded">Continue shopping </button>
+              <button className="bg-blue-500 text-white py-1 px-3 font-bold rounded">
+                Continue shopping{" "}
+              </button>
             </a>
           </>
         ) : (
           <div className="flex flex-col md:flex-row gap-4">
             <div className="md:w-3/4">
-            <a href="/productlist">
-              <button className="bg-tiffany text-red-400 py-1 px-3 font-bold border-2 mb-4 border-black rounded">Continue shopping </button>
-            </a>
+              <a href="/productlist">
+                <button className="bg-tiffany text-red-400 py-1 px-3 font-bold border-2 mb-4 border-black rounded">
+                  Continue shopping{" "}
+                </button>
+              </a>
               <div className="bg-white rounded-lg shadow-md p-6 mb-4">
-               
                 <table className="w-full">
                   <thead>
                     <tr>
@@ -165,8 +171,8 @@ function ViewCart() {
                             className="w-16 border rounded px-2"
                             onChange={(e) =>
                               handleChangeQuantity(
-                                item.product.id,
-                                parseInt(e.target.value, 10) // Ensure to parse the value correctly
+                                parseInt(item.product.id),
+                                parseInt(e.target.value) // Ensure to parse the value correctly
                               )
                             }
                           />
@@ -183,12 +189,14 @@ function ViewCart() {
                           </button>{" "}
                           <button
                             className="bg-blue-500 text-white py-1 px-3 rounded"
-                            onClick={() =>
+                            onClick={() => {
+                              console.log(item.product.id);
+                              console.log(item.quantity);
                               handleUpdateQuantity(
                                 item.product.id,
                                 item.quantity // Use newQuantity here
-                              )
-                            }
+                              );
+                            }}
                           >
                             Update
                           </button>
@@ -224,9 +232,7 @@ function ViewCart() {
                   Clear Cart
                 </button>
               </div>
-              
             </div>
-            
           </div>
         )}
       </div>
