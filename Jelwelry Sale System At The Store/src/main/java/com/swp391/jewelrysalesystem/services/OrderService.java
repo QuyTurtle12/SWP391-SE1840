@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
-import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
@@ -17,10 +17,23 @@ import com.google.cloud.firestore.WriteResult;
 import com.google.firebase.cloud.FirestoreClient;
 import com.swp391.jewelrysalesystem.models.Order;
 import com.swp391.jewelrysalesystem.models.OrderDTO;
-import com.swp391.jewelrysalesystem.models.RefundDTO;
 
 @Service
 public class OrderService implements IOrderService{
+
+    private IGenericService<Order> genericService;
+    private ICustomerService customerService;
+    private IUserService userService;
+    private ICounterService counterService;
+
+    @Autowired
+    public OrderService(IGenericService<Order> genericService, ICustomerService customerService, IUserService userService, ICounterService counterService){
+        this.genericService = genericService;
+        this.customerService = customerService;
+        this.userService = userService;
+        this.counterService = counterService;
+    }
+
 
     @Override
     public List<Order> getOrderList() {
@@ -45,30 +58,17 @@ public class OrderService implements IOrderService{
 
     @Override
     public Order getOrder(int ID) {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
-        DocumentReference orderRef = dbFirestore.collection("order").document(String.valueOf(ID));
-
         try {
-            ApiFuture<DocumentSnapshot> future = orderRef.get();
-            DocumentSnapshot document = future.get();
-
-            if (document.exists()) {
-                Order order = document.toObject(Order.class);
-                return order;
-            } else {
-                System.out.println("User document with orderID" + ID + "does not exist");
-                return null;
-            }
+            return genericService.getByField(ID, "id", "order", Order.class);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     @Override
     public List<Order> searchOrderList(String input, String filter, List<Order> orderList) {
         List<Order> searchedOrderList = new ArrayList<>();
-        ICustomerService customerService = new CustomerService();
         switch (filter) {
             case "ByID":
                 for (Order order : orderList) {
@@ -135,19 +135,16 @@ public class OrderService implements IOrderService{
 
     @Override
     public boolean isNotNullStaff(int ID) {
-        UserService userService = new UserService();
         return userService.isNotNullUser(ID);
     }
 
     @Override
     public boolean isNotNullCounter(int ID) {
-        CounterService counterService = new CounterService();
         return counterService.isNotNullCounter(ID);
     }
 
     @Override
     public boolean isNotNullCustomer(int ID) {
-        CustomerService customerService = new CustomerService();
         try {
             return customerService.isNotNullCustomer(ID) ? true : false;
         } catch (InterruptedException | ExecutionException e) {

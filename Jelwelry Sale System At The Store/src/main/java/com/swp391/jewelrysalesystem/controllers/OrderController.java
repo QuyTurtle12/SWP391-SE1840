@@ -1,7 +1,9 @@
 package com.swp391.jewelrysalesystem.controllers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.cloud.Timestamp;
 import com.swp391.jewelrysalesystem.models.CartItem;
+import com.swp391.jewelrysalesystem.models.Customer;
 import com.swp391.jewelrysalesystem.models.Order;
 import com.swp391.jewelrysalesystem.models.OrderDTO;
 import com.swp391.jewelrysalesystem.models.Product;
+import com.swp391.jewelrysalesystem.services.GenericService;
 import com.swp391.jewelrysalesystem.services.IOrderService;
+import com.swp391.jewelrysalesystem.services.IProductService;
 import com.swp391.jewelrysalesystem.services.ProductService;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,10 +33,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequestMapping("/api")
 public class OrderController {
     private IOrderService orderService;
+    private IProductService productService;
 
     @Autowired
-    public OrderController(IOrderService orderService){
+    public OrderController(IOrderService orderService, IProductService productService){
         this.orderService = orderService;
+        this.productService = productService;
     }
     @PostMapping("/v2/orders")
     public ResponseEntity<String> createOrderV2(@RequestBody List<CartItem> cart,
@@ -79,7 +86,7 @@ public class OrderController {
                 orderService.saveOrderDTO(orderDTO);
             }
             for (OrderDTO orderDTO : orderDTOs) {
-                Product product = new ProductService().getProductByID(orderDTO.getProductID());
+                Product product = productService.getProductByID(orderDTO.getProductID());
                 product.setStock(product.getStock() - orderDTO.getAmount());
                 new ProductService().saveProduct(product);
             }
@@ -91,26 +98,43 @@ public class OrderController {
     }
 
     @GetMapping("/v2/orders")
-    public ResponseEntity<List<Order>> getOrderListV2() {
+    public ResponseEntity<List<Map<String, Object>>> getOrderListV2() {
         try {
             List<Order> orderList = orderService.getOrderList();
 
-            if (orderList == null && orderList.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null); 
+            if (orderList == null || orderList.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
             }
 
-            return ResponseEntity.ok(orderList);
+            List<Map<String, Object>> responseList = new ArrayList<>();
+            for (Order order : orderList) {
+                Map<String, Object> orderMap = new HashMap<>();
+                orderMap.put("id", order.getID());
+                orderMap.put("date", order.getDate());
+                orderMap.put("staffID", order.getStaffID());
+                orderMap.put("counterID", order.getCounterID());
+                orderMap.put("totalPrice", order.getTotalPrice());
+                orderMap.put("discountApplied", order.getDiscountApplied());
+
+                String customerName = new GenericService<Customer>().getByField(order.getCustomerID(), "id", "customer", Customer.class).getName();
+                orderMap.put("customerName", customerName);
+
+                responseList.add(orderMap);
+            }
+
+            return ResponseEntity.ok(responseList);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
     
     @GetMapping("/v2/orders/order")
     public ResponseEntity<Order> getOrderV2(@RequestParam int id) {
         try {
             Order order = orderService.getOrder(id);
-
+            
             if (order == null) {
                 return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
             }
@@ -123,15 +147,25 @@ public class OrderController {
     }
 
     @GetMapping("/v2/orders/order/products")
-    public ResponseEntity<List<OrderDTO>> getOrderDetailV2(@RequestParam int id) {
+    public ResponseEntity<List<Map<String, Object>>> getOrderDetailV2(@RequestParam int id) {
         try {
-            List<OrderDTO> order = orderService.getOrderDetailList(id);
+            List<OrderDTO> orders = orderService.getOrderDetailList(id);
 
-            if (order == null) {
+            if (orders == null) {
                 return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
+            }            
+
+            List<Map<String, Object>> responseList = new ArrayList<>();
+            for (OrderDTO orderDetail : orders) {
+                String productName = productService.getProductByID(orderDetail.getProductID()).getName();
+                Map<String, Object> orderDetailMap = new HashMap<>();
+                orderDetailMap.put("productName", productName);
+                orderDetailMap.put("amount", orderDetail.getAmount());
+
+                responseList.add(orderDetailMap);
             }
 
-            return ResponseEntity.ok(order);
+            return ResponseEntity.ok(responseList);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);

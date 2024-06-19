@@ -11,11 +11,11 @@ public interface ICustomerService {
 
     List<Customer> getCustomerList();
 
+    Customer getCustomer(int ID);
+
     List<Customer> searchCustomerList(String input, String filter, List<Customer> customerList);
 
     boolean isNotNullCustomer(int ID) throws InterruptedException, ExecutionException;
 
-    Customer getCustomerByField(String value, String field, String collection) throws InterruptedException, ExecutionException;
-
-    Customer getCustomerByField(int value, String field, String collection) throws InterruptedException, ExecutionException;
+    boolean isNotExistedPhoneNum(String contactInfo);
 }

@@ -8,7 +8,10 @@ import org.springframework.stereotype.Service;
 
 import com.swp391.jewelrysalesystem.models.Category;
 
+import lombok.NoArgsConstructor;
+
 @Service
+@NoArgsConstructor
 public class CategoryService implements ICategory{
 
     private IGenericService<Category> genericService;

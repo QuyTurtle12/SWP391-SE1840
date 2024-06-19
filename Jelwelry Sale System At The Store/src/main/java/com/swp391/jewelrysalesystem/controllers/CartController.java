@@ -15,19 +15,19 @@ import org.springframework.web.bind.annotation.RestController;
 import com.swp391.jewelrysalesystem.models.CartItem;
 import com.swp391.jewelrysalesystem.models.Product;
 import com.swp391.jewelrysalesystem.services.ICartService;
-import com.swp391.jewelrysalesystem.services.ProductService;
-
-import org.springframework.web.bind.annotation.PathVariable;
+import com.swp391.jewelrysalesystem.services.IProductService;
 
 
 @RestController
 @RequestMapping("/cart")
 public class CartController {
     private ICartService cartService;
+    private IProductService productService;
 
     @Autowired
-    public CartController(ICartService cartService) {
+    public CartController(ICartService cartService, IProductService productService) {
         this.cartService = cartService;
+        this.productService = productService;
     }
 
     @PostMapping("")
@@ -58,7 +58,7 @@ public class CartController {
 
         Product product = null;
         try {
-            product = new ProductService().getProductByID(productID);
+            product = productService.getProductByID(productID);
         } catch (Exception e) {
             e.printStackTrace();
         }

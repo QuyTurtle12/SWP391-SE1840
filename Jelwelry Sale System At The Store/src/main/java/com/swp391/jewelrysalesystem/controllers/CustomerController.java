@@ -29,7 +29,7 @@ public class CustomerController {
         try {
             List<Customer> CustomerList = customerService.getCustomerList();
 
-            if (CustomerList == null && CustomerList.isEmpty()) {
+            if (CustomerList == null || CustomerList.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
             }
 
@@ -43,7 +43,7 @@ public class CustomerController {
     @GetMapping("/v2/customers/customer")
     public ResponseEntity<Customer> getCustomerV2(@RequestParam int id) {
         try {
-            Customer Customer = customerService.getCustomerByField(id, "id", "customer");
+            Customer Customer = customerService.getCustomer(id);
 
             if (Customer == null) {
                 return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
@@ -96,7 +96,7 @@ public class CustomerController {
     @GetMapping("/customer/get")
     public ResponseEntity<Customer> getCustomer(@RequestParam int id) {
         try {
-            Customer Customer = customerService.getCustomerByField(id, "id", "customer");
+            Customer Customer = customerService.getCustomer(id);
 
             if (Customer != null) {
                 return ResponseEntity.ok(Customer);

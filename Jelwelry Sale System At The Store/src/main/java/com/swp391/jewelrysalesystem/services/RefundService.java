@@ -24,10 +24,12 @@ import com.swp391.jewelrysalesystem.models.RefundDTO;
 public class RefundService implements IRefundService {
 
     private IGenericService<Refund> genericService;
+    private ICustomerService customerService;
 
     @Autowired
-    public RefundService(IGenericService<Refund> genericService){
+    public RefundService(IGenericService<Refund> genericService, ICustomerService customerService){
         this.genericService = genericService;
+        this.customerService = customerService;
     }
 
     @Override
@@ -128,9 +130,8 @@ public class RefundService implements IRefundService {
     @Override
     public boolean isNotNullCustomer(int ID) {
         try {
-            return new CustomerService().isNotNullCustomer(ID) ? true : false;
+            return customerService.isNotNullCustomer(ID) ? true : false;
         } catch (InterruptedException | ExecutionException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             return false;
         }

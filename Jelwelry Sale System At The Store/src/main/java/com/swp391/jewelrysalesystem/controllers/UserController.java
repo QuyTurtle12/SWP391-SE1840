@@ -11,6 +11,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.List;
 import com.swp391.jewelrysalesystem.models.User;
+import com.swp391.jewelrysalesystem.services.ICustomerService;
 import com.swp391.jewelrysalesystem.services.IUserService;
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,10 +26,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class UserController {
 
     private IUserService userService;
+    private ICustomerService customerService;
 
     @Autowired
-    public UserController(IUserService userService) {
+    public UserController(IUserService userService, ICustomerService customerService) {
         this.userService = userService;
+        this.customerService = customerService;
     }
 
     @PostMapping("v2/accounts/{role}")
@@ -42,7 +45,7 @@ public class UserController {
             @RequestParam String contactInfo,
             @RequestParam int counterID) {
         
-        if (userService.isNotNullUser(ID) || !userService.isNotExistedPhoneNum(contactInfo) || !userService.isNotExistedEmail(email)) {
+        if (userService.isNotNullUser(ID) || !userService.isNotExistedPhoneNum(contactInfo) || !customerService.isNotExistedPhoneNum(contactInfo) || !userService.isNotExistedEmail(email)) {
             return ResponseEntity.status(HttpStatus.SC_CONFLICT)
                     .body("This user has been existed! Please, check ID or contact info or email");
         }
@@ -101,7 +104,7 @@ public class UserController {
                     .body("This user is not existing");
         }
 
-        if (!userService.isNotExistedPhoneNum(contactInfo) && !userService.isMyPhoneNum(ID, contactInfo)) {
+        if ((!customerService.isNotExistedPhoneNum(contactInfo) || !userService.isNotExistedPhoneNum(contactInfo)) && !userService.isMyPhoneNum(ID, contactInfo)) {
             return ResponseEntity.status(HttpStatus.SC_CONFLICT)
                     .body("This phone number has been registered");
         }

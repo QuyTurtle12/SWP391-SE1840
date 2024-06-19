@@ -3,16 +3,9 @@ package com.swp391.jewelrysalesystem.services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
-
-import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.cloud.FirestoreClient;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.CollectionReference;
@@ -20,12 +13,8 @@ import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.Query;
-import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
-
-import com.swp391.jewelrysalesystem.models.User;
-
-import lombok.val;;
+import com.swp391.jewelrysalesystem.models.User;;
 
 @Service
 public class UserService implements IUserService {
@@ -33,7 +22,14 @@ public class UserService implements IUserService {
     @Autowired
     private PasswordService passwordService;
 
+    private IGenericService<User> genericService;
+    private ICounterService counterService;
 
+    @Autowired
+    public UserService(IGenericService<User> genericService, ICounterService counterService){
+        this.genericService = genericService;
+        this.counterService = counterService;
+    }
 
     public User getUserByEmailAndPassword(String email, String rawPassword)
             throws InterruptedException, ExecutionException {
@@ -263,56 +259,13 @@ public class UserService implements IUserService {
     @Override
     public User getUserByField(String value, String field, String collection)
             throws InterruptedException, ExecutionException {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
-        CollectionReference users = dbFirestore.collection(collection);
-
-        Query query = users.whereEqualTo(field, value);
-
-        ApiFuture<QuerySnapshot> querySnapshot = query.get();
-
-        try {
-            List<User> userList = querySnapshot.get().toObjects(User.class);
-            if (!userList.isEmpty()) {
-                return userList.get(0);
-            } else {
-                return null;
-            }
-        } catch (InterruptedException | ExecutionException e) {
-            System.err.println("Error retrieving users by " + field + ": " + e.getMessage());
-            throw e;
-        } catch (Exception e) {
-            System.err.println("Unexpected error: " + e.getMessage());
-            e.printStackTrace();
-            throw new RuntimeException("Unexpected error occurred while retrieving users", e);
-        }
+        return genericService.getByField(value, field, collection, User.class);
     }
 
     @Override
     public User getUserByField(int value, String field, String collection)
             throws InterruptedException, ExecutionException {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
-        CollectionReference users = dbFirestore.collection(collection);
-
-        Query query = users.whereEqualTo(field, value);
-        
-        // Retrieve query results
-        ApiFuture<QuerySnapshot> querySnapshot = query.get();
-
-        try {
-            List<User> userList = querySnapshot.get().toObjects(User.class);
-            if (!userList.isEmpty()) {
-                return userList.get(0);
-            } else {
-                return null;
-            }
-        } catch (InterruptedException | ExecutionException e) {
-            System.err.println("Error retrieving users by " + field + ": " + e.getMessage());
-            throw e;
-        } catch (Exception e) {
-            System.err.println("Unexpected error: " + e.getMessage());
-            e.printStackTrace();
-            throw new RuntimeException("Unexpected error occurred while retrieving users", e);
-        }
+        return genericService.getByField(value, field, collection, User.class);
     }
 
     @Override
@@ -360,25 +313,7 @@ public class UserService implements IUserService {
     @Override
     public List<User> getUserListByField(int value, String field, String collection)
             throws InterruptedException, ExecutionException {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
-        CollectionReference users = dbFirestore.collection(collection);
-
-
-        Query query = users.whereEqualTo(field, value);
-
-        // Retrieve query results
-        ApiFuture<QuerySnapshot> querySnapshot = query.get();
-
-        try {
-            return querySnapshot.get().toObjects(User.class);
-        } catch (InterruptedException | ExecutionException e) {
-            System.err.println("Error retrieving users " + field + ": " + e.getMessage());
-            throw e;
-        } catch (Exception e) {
-            System.err.println("Unexpected error: " + e.getMessage());
-            e.printStackTrace();
-            throw new RuntimeException("Unexpected error occurred while retrieving users", e);
-        }
+        return genericService.getListByField(value, field, collection, User.class);
     }
 
     @Override
@@ -400,7 +335,7 @@ public class UserService implements IUserService {
             return "Phone Number must be in range 10 - 11";
         }
 
-        if (!new CounterService().isNotNullCounter(counterID)) {
+        if (!counterService.isNotNullCounter(counterID)) {
             return "Invalid counter ID";
         }
         return null;

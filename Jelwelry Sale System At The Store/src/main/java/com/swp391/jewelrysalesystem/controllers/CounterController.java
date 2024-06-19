@@ -3,7 +3,6 @@ package com.swp391.jewelrysalesystem.controllers;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.swp391.jewelrysalesystem.models.Counter;
-import com.swp391.jewelrysalesystem.models.Promotion;
 import com.swp391.jewelrysalesystem.services.ICounterService;
 
 import java.util.List;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
 
 
