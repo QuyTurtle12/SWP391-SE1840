@@ -14,7 +14,10 @@ import com.google.cloud.Timestamp;
 import com.swp391.jewelrysalesystem.models.CartItem;
 import com.swp391.jewelrysalesystem.models.Order;
 import com.swp391.jewelrysalesystem.models.OrderDTO;
+import com.swp391.jewelrysalesystem.models.Product;
 import com.swp391.jewelrysalesystem.services.IOrderService;
+import com.swp391.jewelrysalesystem.services.ProductService;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -75,6 +78,11 @@ public class OrderController {
                 orderDTOs.add(orderDTO);
                 orderService.saveOrderDTO(orderDTO);
             }
+            for (OrderDTO orderDTO : orderDTOs) {
+                Product product = new ProductService().getProductByID(orderDTO.getProductID());
+                product.setStock(product.getStock() - orderDTO.getAmount());
+                new ProductService().saveProduct(product);
+            }
             return ResponseEntity.ok().body("Create order Successfully");
         } catch (Exception e) {
             e.printStackTrace();
@@ -114,6 +122,22 @@ public class OrderController {
         }
     }
 
+    @GetMapping("/v2/orders/order/products")
+    public ResponseEntity<List<OrderDTO>> getOrderDetailV2(@RequestParam int id) {
+        try {
+            List<OrderDTO> order = orderService.getOrderDetailList(id);
+
+            if (order == null) {
+                return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
+            }
+
+            return ResponseEntity.ok(order);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
     @GetMapping("/v2/orders/search")
     public ResponseEntity<List<Order>> searchOrderListV2(
         @RequestParam String input,
@@ -133,7 +157,7 @@ public class OrderController {
         }
     }
 
-
+    
     //Old endpoints version are below here
     @PostMapping("/order/createOrder")
     public String createOrder(@RequestBody List<CartItem> cart,

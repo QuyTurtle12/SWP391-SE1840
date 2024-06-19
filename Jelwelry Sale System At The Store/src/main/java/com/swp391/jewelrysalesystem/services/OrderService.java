@@ -17,6 +17,7 @@ import com.google.cloud.firestore.WriteResult;
 import com.google.firebase.cloud.FirestoreClient;
 import com.swp391.jewelrysalesystem.models.Order;
 import com.swp391.jewelrysalesystem.models.OrderDTO;
+import com.swp391.jewelrysalesystem.models.RefundDTO;
 
 @Service
 public class OrderService implements IOrderService{
@@ -152,6 +153,22 @@ public class OrderService implements IOrderService{
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    @Override
+    public List<OrderDTO> getOrderDetailList(int orderID) {
+        Firestore dbFirestore =FirestoreClient.getFirestore();
+        CollectionReference collectionReference = dbFirestore.collection("order").document(String.valueOf(orderID)).collection("orderDTO");
+
+        try {
+            ApiFuture<QuerySnapshot> future = collectionReference.get();
+            QuerySnapshot querySnapshot = future.get();
+            return querySnapshot.toObjects(OrderDTO.class);
+        } catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+            return null;
         }
     }
     

@@ -12,6 +12,8 @@ public interface IOrderService {
 
     List<Order> searchOrderList(String input, String filter, List<Order> orderList);
 
+    List<OrderDTO> getOrderDetailList(int orderID);
+
     Order saveOrder(Order order);
 
     OrderDTO saveOrderDTO(OrderDTO orderDTO);
