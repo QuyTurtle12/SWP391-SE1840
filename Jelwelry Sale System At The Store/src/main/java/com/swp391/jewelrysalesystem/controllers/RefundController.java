@@ -7,9 +7,8 @@ import com.swp391.jewelrysalesystem.models.CartItem;
 import com.swp391.jewelrysalesystem.models.ProductPurity;
 import com.swp391.jewelrysalesystem.models.Refund;
 import com.swp391.jewelrysalesystem.models.RefundDTO;
+import com.swp391.jewelrysalesystem.services.IProductService;
 import com.swp391.jewelrysalesystem.services.IRefundService;
-import com.swp391.jewelrysalesystem.services.ProductService;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -30,10 +29,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 @RequestMapping("/api")
 public class RefundController {
     private IRefundService refundService;
-
+    private IProductService productService;
     @Autowired
-    public RefundController(IRefundService refundService){
+    public RefundController(IRefundService refundService, IProductService productService){
         this.refundService = refundService;
+        this.productService = productService;
     }
 
     @PostMapping("/refunds")
@@ -64,7 +64,7 @@ public class RefundController {
                 RefundDTO product = new RefundDTO();
                 product.setRefundID(ID);
                 product.setProductID(cartItem.getProduct().getID());
-                product.setProductName(new ProductService().getProductByID(product.getProductID()).getName());
+                product.setProductName(productService.getProductByID(product.getProductID()).getName());
                 product.setAmount(cartItem.getQuantity());
                 refundedProducts.add(product);
                 refundService.saveProduct(product);

@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 
 @Service
 @NoArgsConstructor
-public class CategoryService implements ICategory{
+public class CategoryService implements ICategoryService{
 
     private IGenericService<Category> genericService;
 

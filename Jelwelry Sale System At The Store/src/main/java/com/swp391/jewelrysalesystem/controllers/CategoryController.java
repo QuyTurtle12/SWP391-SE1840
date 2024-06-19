@@ -5,8 +5,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.swp391.jewelrysalesystem.models.Category;
-import com.swp391.jewelrysalesystem.services.ICategory;
-
+import com.swp391.jewelrysalesystem.services.ICategoryService;
 import java.util.List;
 
 import org.apache.http.HttpStatus;
@@ -24,10 +23,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 @RequestMapping("/api")
 public class CategoryController {
 
-    private final ICategory categoryService;
+    private final ICategoryService categoryService;
 
     @Autowired
-    public CategoryController(ICategory categoryService){
+    public CategoryController(ICategoryService categoryService){
         this.categoryService = categoryService;
     }
 

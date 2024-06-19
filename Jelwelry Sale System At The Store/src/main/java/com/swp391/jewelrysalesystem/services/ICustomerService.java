@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import com.swp391.jewelrysalesystem.models.Customer;
-import com.swp391.jewelrysalesystem.models.User;
 
 public interface ICustomerService {
     String getPhoneNumber(int ID);

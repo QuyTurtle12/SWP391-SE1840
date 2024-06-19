@@ -11,7 +11,6 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteResult;
 import com.google.firebase.cloud.FirestoreClient;
@@ -37,23 +36,12 @@ public class OrderService implements IOrderService{
 
     @Override
     public List<Order> getOrderList() {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
-        CollectionReference orderRef = dbFirestore.collection("order");
-
         try {
-            ApiFuture<QuerySnapshot> future = orderRef.get();
-            QuerySnapshot querySnapshot = future.get();
-
-            List<Order> orderList = new ArrayList<>();
-            for (QueryDocumentSnapshot document : querySnapshot) {
-                orderList.add(document.toObject(Order.class));
-            }
-            return orderList;
-        } catch (Exception e) {
+            return genericService.getList("order", Order.class);
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
+            return null;
         }
-
-        return null;
     }
 
     @Override
@@ -92,24 +80,12 @@ public class OrderService implements IOrderService{
     }
 
     @Override
-    public Order saveOrder(Order order) {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
-        DocumentReference documentReference = dbFirestore.collection("order")
-                .document(String.valueOf(order.getID()));
-
-        try {
-            ApiFuture<WriteResult> future = documentReference.set(order);
-            future.get();
-            return order;
-        } catch (InterruptedException | ExecutionException e) {
-            System.err.println("Error saving order document: " + e.getMessage());
-            e.printStackTrace();
-            return null;
-        }
+    public boolean saveOrder(Order order) {
+        return genericService.saveObject(order, "order", order.getID());
     }
 
     @Override
-    public OrderDTO saveOrderDTO(OrderDTO orderDTO) {
+    public boolean saveOrderDTO(OrderDTO orderDTO) {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         DocumentReference orderRef = dbFirestore.collection("order").document(String.valueOf(orderDTO.getOrderID()))
         .collection("orderDTO").document(String.valueOf(orderDTO.getProductID()));
@@ -117,11 +93,11 @@ public class OrderService implements IOrderService{
         try {
             ApiFuture<WriteResult> future = orderRef.set(orderDTO);
             future.get();
-            return orderDTO;
+            return true;
         } catch (InterruptedException | ExecutionException e) {
             System.err.println("Error saving orderDTO document: " + e.getMessage());
             e.printStackTrace();
-            return null;
+            return false;
         }
     }
 
@@ -156,7 +132,8 @@ public class OrderService implements IOrderService{
     @Override
     public List<OrderDTO> getOrderDetailList(int orderID) {
         Firestore dbFirestore =FirestoreClient.getFirestore();
-        CollectionReference collectionReference = dbFirestore.collection("order").document(String.valueOf(orderID)).collection("orderDTO");
+        CollectionReference collectionReference = dbFirestore.collection("order").document(String.valueOf(orderID))
+        .collection("orderDTO");
 
         try {
             ApiFuture<QuerySnapshot> future = collectionReference.get();

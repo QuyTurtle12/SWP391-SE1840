@@ -4,55 +4,32 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.CollectionReference;
-import com.google.cloud.firestore.DocumentReference;
-import com.google.cloud.firestore.DocumentSnapshot;
-import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.QueryDocumentSnapshot;
-import com.google.cloud.firestore.QuerySnapshot;
-import com.google.cloud.firestore.WriteResult;
-import com.google.firebase.cloud.FirestoreClient;
 import com.swp391.jewelrysalesystem.models.Promotion;
 
 @Service
 public class PromotionService implements IPromotionService {
+    private final int NO_PROMOTION = 0;
+
+    private IGenericService<Promotion> genericService;
+
+    @Autowired
+    public PromotionService(IGenericService<Promotion> genericService){
+        this.genericService = genericService;
+    }
 
     @Override
     public boolean savePromotion(Promotion promotion) {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
-        DocumentReference documentReference = dbFirestore.collection("promotion")
-                .document(String.valueOf(promotion.getID()));
-
-        ApiFuture<WriteResult> future = documentReference.set(promotion);
-        try {
-            future.get();
-            return true;
-        } catch (InterruptedException | ExecutionException e) {
-            System.err.println("Error saving promotion document: " + e.getMessage());
-            e.printStackTrace();
-            return false;
-        }
+        return genericService.saveObject(promotion, "promotion", promotion.getID());
     }
 
     @Override
     public List<Promotion> getPromotionList() {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
-        CollectionReference promotionCollection = dbFirestore.collection("promotion");
-
         try {
-            ApiFuture<QuerySnapshot> future = promotionCollection.get();
-            QuerySnapshot promotions = future.get();
-
-            List<Promotion> promotionList = new ArrayList<>();
-            for (QueryDocumentSnapshot document : promotions) {
-                promotionList.add(document.toObject(Promotion.class));
-            }
-            return promotionList;
+            return genericService.getList("promotion", Promotion.class);
         } catch (InterruptedException | ExecutionException e) {
-            System.err.println("Error retrieving promotion list: " + e.getMessage());
             e.printStackTrace();
             return null;
         }
@@ -60,25 +37,7 @@ public class PromotionService implements IPromotionService {
 
     @Override
     public boolean changePromotionStatus(int ID) {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
-        DocumentReference promotionRef = dbFirestore.collection("promotion").document(String.valueOf(ID));
-
-        try {
-            ApiFuture<DocumentSnapshot> future = promotionRef.get();
-            DocumentSnapshot documentSnapshot = future.get();
-
-            Promotion promotion = documentSnapshot.toObject(Promotion.class);
-            if (promotion != null) {
-                promotion.setStatus(!promotion.getStatus());
-                promotionRef.set(promotion);
-                return true;
-            }
-            return false;
-        } catch (InterruptedException | ExecutionException e) {
-            System.err.println("Error changing promotion status: " + e.getMessage());
-            e.printStackTrace();
-            return false;
-        }
+        return genericService.changeStatus(ID, "promotion", Promotion.class);
     }
 
     @Override
@@ -108,26 +67,21 @@ public class PromotionService implements IPromotionService {
 
     @Override
     public Promotion getPromotion(int ID) {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
-        DocumentReference promotionRef = dbFirestore.collection("promotion").document(String.valueOf(ID));
-
         try {
-            ApiFuture<DocumentSnapshot> future = promotionRef.get();
-            DocumentSnapshot document = future.get();
-
-            if (document.exists()) {
-                Promotion promotion = document.toObject(Promotion.class);
-                return promotion;
-            }
+            return genericService.getByField(ID, "id", "null", Promotion.class);
         } catch (InterruptedException | ExecutionException e) {
-            System.err.println("Error retrieving promotion:" + ID);
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     @Override
     public boolean isNotNullPromotion(int ID) {
+        
+        if (ID == NO_PROMOTION) {
+            return true;
+        }
+
         if (getPromotion(ID) == null) {
             return false;
         }

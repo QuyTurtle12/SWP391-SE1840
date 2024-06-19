@@ -14,9 +14,9 @@ public interface IOrderService {
 
     List<OrderDTO> getOrderDetailList(int orderID);
 
-    Order saveOrder(Order order);
+    boolean saveOrder(Order order);
 
-    OrderDTO saveOrderDTO(OrderDTO orderDTO);
+    boolean saveOrderDTO(OrderDTO orderDTO);
 
     boolean isNotNullOrder(int ID);
 

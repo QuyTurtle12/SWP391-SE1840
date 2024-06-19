@@ -11,7 +11,7 @@ import lombok.Setter;
 public class Counter implements StatusUpdatable{
     private int ID;
     private int sale;
-    private boolean status;
+    private Boolean status;
 
     @Override
     public void setStatus(boolean status) {
@@ -19,7 +19,7 @@ public class Counter implements StatusUpdatable{
     }
 
     @Override
-    public boolean getStatus() {
+    public Boolean getStatus() {
         return status;
     }
 }

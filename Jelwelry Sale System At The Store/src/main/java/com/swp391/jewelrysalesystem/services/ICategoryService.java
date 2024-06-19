@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.swp391.jewelrysalesystem.models.Category;
 
-public interface ICategory {
+public interface ICategoryService {
     boolean saveCatogory(Category category);
 
     List<Category> getCategoryList();

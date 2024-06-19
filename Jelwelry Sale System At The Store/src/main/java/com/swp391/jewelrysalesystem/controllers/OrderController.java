@@ -21,8 +21,6 @@ import com.swp391.jewelrysalesystem.models.Product;
 import com.swp391.jewelrysalesystem.services.GenericService;
 import com.swp391.jewelrysalesystem.services.IOrderService;
 import com.swp391.jewelrysalesystem.services.IProductService;
-import com.swp391.jewelrysalesystem.services.ProductService;
-
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -88,7 +86,7 @@ public class OrderController {
             for (OrderDTO orderDTO : orderDTOs) {
                 Product product = productService.getProductByID(orderDTO.getProductID());
                 product.setStock(product.getStock() - orderDTO.getAmount());
-                new ProductService().saveProduct(product);
+                productService.saveProduct(product);
             }
             return ResponseEntity.ok().body("Create order Successfully");
         } catch (Exception e) {

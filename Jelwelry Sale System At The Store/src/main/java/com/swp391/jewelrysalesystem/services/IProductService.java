@@ -12,7 +12,7 @@ public interface IProductService {
 
     List<Product> getProductList() throws InterruptedException, ExecutionException;
 
-    Product changeProductStatus(int ID) throws InterruptedException, ExecutionException;
+    boolean changeProductStatus(int ID) throws InterruptedException, ExecutionException;
 
     List<Product> searchProduct(String input, String filter, List<Product> productList);
 
@@ -21,4 +21,7 @@ public interface IProductService {
     boolean deleteProduct(int ID);
 
     boolean isNotNullProduct(int ID);
+
+    String isGeneralValidated(String name, int categoryID, double price, double refundPrice, 
+    double goldWeight, double laborCost, double stoneCost, int stock, String img, int promotionID);
 }

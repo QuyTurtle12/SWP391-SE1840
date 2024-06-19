@@ -1,14 +1,8 @@
 package com.swp391.jewelrysalesystem.controllers;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.regex.Pattern;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -71,40 +65,14 @@ public class ProductController {
             @RequestParam int promotionID) {
 
         try {
-            if (name.isBlank() || name.equals(null)) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Name cannot not be empty");
-            }
-
-            if (categoryID <= 0) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("category cannot not be empty");
-            }
 
             if (productService.isNotNullProduct(ID)) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("Duplicate ID");
             }
 
-            if (price < 0) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Price cannot be negative");
-            }
-
-            if (refundPrice < 0) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Refund price cannot be negative");
-            }
-
-            if (goldWeight < 0) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Gold weight cannot be negative");
-            }
-
-            if (laborCost < 0) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Labor cost cannot be negative");
-            }
-
-            if (stoneCost < 0) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Stone cost cannot be negative");
-            }
-
-            if (stock < 0) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Stock cannot be negative");
+            String error = productService.isGeneralValidated(name, categoryID, price, refundPrice, goldWeight, laborCost, stoneCost, stock, img, promotionID);
+            if (error != null) {
+                return ResponseEntity.badRequest().body(error);
             }
 
             Product newProduct = new Product(ID, img, name, price, refundPrice, description, goldWeight, laborCost,
@@ -136,44 +104,14 @@ public class ProductController {
             @RequestParam int promotionID) {
 
         try {
-            if (name.isBlank() || name.equals(null)) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Name cannot not be empty");
-            }
 
-            if (categoryID <= 0) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("category cannot not be empty");
-            }
-            
             if (!productService.isNotNullProduct(ID)) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product ID " + ID + " is not existed!");
             }
 
-            if (price < 0) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Price cannot be negative");
-            }
-
-            if (refundPrice < 0) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Refund price cannot be negative");
-            }
-
-            if (goldWeight < 0) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Gold weight cannot be negative");
-            }
-
-            if (laborCost < 0) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Labor cost cannot be negative");
-            }
-
-            if (stoneCost < 0) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Stone cost cannot be negative");
-            }
-
-            if (stock < 0) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Stock cannot be negative");
-            }
-
-            if (!isValidImageUrl(img)) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid image URL");
+            String error = productService.isGeneralValidated(name, categoryID, price, refundPrice, goldWeight, laborCost, stoneCost, stock, img, promotionID);
+            if (error != null) {
+                return ResponseEntity.badRequest().body(error);
             }
 
             Product existingProduct = productService.getProductByID(ID);
@@ -312,29 +250,27 @@ public class ProductController {
         }
     }
 
-
-
     @PutMapping("/product/{ID}/change-status")
     public ResponseEntity<Product> changeProductStatus(@PathVariable int ID) {
         try {
-            Product product = productService.changeProductStatus(ID);
-            if (product == null) {
+            boolean product = productService.changeProductStatus(ID);
+            if (product == false) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
-            return ResponseEntity.ok(product);
+            return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     @PutMapping("/v2/products/{ID}/status")
-    public ResponseEntity<Product> changeProductStatusV2(@PathVariable int ID) {
+    public ResponseEntity<String> changeProductStatusV2(@PathVariable int ID) {
         try {
-            Product product = productService.changeProductStatus(ID);
-            if (product == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            boolean product = productService.changeProductStatus(ID);
+            if (product == false) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product with ID " + ID + " is not existing");
             }
-            return ResponseEntity.ok(product);
+            return ResponseEntity.ok().body("Change status Successfully");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -442,22 +378,4 @@ public class ProductController {
         }
     }
 
-    private boolean isValidImageUrl(String url) {
-        // Regular expression to check URL format
-        String urlPattern = "^(https?|ftp)://[^\\s/$.?#].[^\\s]*$";
-        if (!Pattern.compile(urlPattern).matcher(url).matches()) {
-            return false;
-        }
-
-        try {
-            URL imageUrl = new URL(url);
-            HttpURLConnection connection = (HttpURLConnection) imageUrl.openConnection();
-            connection.setRequestMethod("HEAD");
-            connection.connect();
-            String contentType = connection.getContentType();
-            return contentType.startsWith("image/");
-        } catch (Exception e) {
-            return false;
-        }
-    }
 }
