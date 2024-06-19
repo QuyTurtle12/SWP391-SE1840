@@ -1,11 +1,10 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import StaffMenu from "./StaffMenu";
-import { useNavigate } from "react-router-dom";
 
 function CustomerList() {
   const [customers, setCustomers] = useState([]);
-  const navigate = useNavigate();
+
   useEffect(() => {
     axios
       .get("http://localhost:8080/api/customer/list")
@@ -19,9 +18,12 @@ function CustomerList() {
   return (
     <>
       <StaffMenu />
-      <div className="bg-tiffany py-36 view-manager-list flex justify-center h-screen ">
+      <div className="text-3xl justify-between text-center font-bold pt-10 text-black mb-8">
+        <h1>Customer List</h1>
+      </div>
+      <div className="bg-white py-16 view-manager-list flex justify-center h-screen ">
         <div className="justify-between items-center px-10">
-          <table className="min-w-full divide-y divide-gray-200 ">
+          <table className="border border-black min-w-full divide-y divide-gray-500 ">
             <thead>
               <tr>
               <th className="px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
@@ -41,7 +43,7 @@ function CustomerList() {
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-gray-500">
               {customers.map((customer) => (
                 <tr key={customer.id}>
                    <td className="px-6 py-4 whitespace-nowrap">

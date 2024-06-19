@@ -67,7 +67,7 @@ function ViewManagerList() {
   return (
     <>
       <AdminMenu />
-      <div className="bg-tiffany view-manager-list flex justify-center h-screen ">
+      <div className="bg-white view-manager-list flex justify-center h-auto ">
         <div className="justify-between items-center px-10">
           <table className="min-w-full divide-y divide-gray-200 ">
             <thead>
@@ -137,13 +137,13 @@ function ViewManagerList() {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <button
                       onClick={() => handleEditClick(manager.id)}
-                      className=" px-4 py-2 font-medium text-white bg-blue-600 rounded-md hover:bg-blue-500 focus:outline-none focus:shadow-outline-blue active:bg-blue-600 transition duration-150 ease-in-out"
+                      className=" px-4 py-2 font-medium text-white bg-black rounded-md hover:bg-blue-500 focus:outline-none focus:shadow-outline-blue active:bg-blue-600 transition duration-150 ease-in-out"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => handleDelete(manager.id)}
-                      className="ml-2 px-4 py-2 font-medium text-white bg-red-600 rounded-md hover:bg-red-500 focus:outline-none focus:shadow-outline-blue active:bg-red-600 transition duration-150 ease-in-out"
+                      className="ml-2 px-4 py-2 font-medium text-white bg-gray-400 rounded-md hover:bg-red-500 focus:outline-none focus:shadow-outline-blue active:bg-red-600 transition duration-150 ease-in-out"
                     >
                       Change Status
                     </button>

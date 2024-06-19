@@ -54,7 +54,7 @@ const AddManager = () => {
     return (
         <div>
             <AdminMenu />
-            <div className="min-h-screen bg-tiffany flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+            <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
                 <div className="sm:mx-auto sm:w-full sm:max-w-md">
                     <img
                         className="mx-auto h-10 w-auto"
@@ -191,7 +191,7 @@ const AddManager = () => {
                             <div className="mt-6">
                                 <button
                                     type="submit"
-                                    className="block w-full py-2 text-center text-white bg-teal-500 border border-teal-500 rounded hover:bg-transparent hover:text-teal-500 transition uppercase font-roboto font-medium"
+                                    className="block w-full py-2 text-center text-white bg-black border rounded hover:bg-transparent transition uppercase font-roboto font-medium"
                                 >
                                     Create Manager
                                 </button>

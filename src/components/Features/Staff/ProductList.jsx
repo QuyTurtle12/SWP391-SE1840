@@ -8,7 +8,8 @@ import { Link, useNavigate } from "react-router-dom";
 function ProductList() {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
-const navigate = useNavigate([]);
+  const navigate = useNavigate();
+
   useEffect(() => {
     axios
       .get("http://localhost:8080/api/product/list")
@@ -18,16 +19,26 @@ const navigate = useNavigate([]);
       })
       .catch((error) => console.error("error at fetching data", error));
   }, []);
+
   const handleProductClick = (id) => {
     navigate(`/productdetail/${id}`);
   };
+
   const addToCart = (product) => {
-    // Gửi yêu cầu POST đến backend để thêm sản phẩm vào giỏ hàng
+    if (product.stock <= 0) {
+      alert("Product is out of stock.");
+      return;
+    }
+    const isAlreadyInCart = cart.some((item) => item.id === product.id);
+    if (isAlreadyInCart) {
+      alert("Product is already in the cart.");
+      return;
+    }
+
     axios
       .post("http://localhost:8080/cart", product)
       .then((response) => {
         console.log("Item added to cart:", response.data);
-        // Cập nhật giỏ hàng sau khi thêm sản phẩm
         setCart([...cart, product]);
       })
       .catch((error) => {
@@ -37,10 +48,9 @@ const navigate = useNavigate([]);
 
   return (
     <div className=" ">
-      <div className="border-b-4">
-      <StaffMenu/>
-      </div>
      
+        <StaffMenu />
+
 
       <div className="bg-white py-36">
         <div className="container mx-auto px-4">
@@ -49,10 +59,7 @@ const navigate = useNavigate([]);
             <div className="justify-end flex pr-8">
               <div className="relative">
                 <Button component={Link} to="/viewcart">
-                  <ShoppingCartIcon
-                    className="text-black"
-                    sx={{ fontSize: 40 }}
-                  />
+                  <ShoppingCartIcon className="text-black" sx={{ fontSize: 40 }} />
                 </Button>
                 {cart.length > 0 && (
                   <div className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center">
@@ -64,42 +71,37 @@ const navigate = useNavigate([]);
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {products.map((product) => (
-              <div
-                key={product.id}
-                className="bg-white rounded-lg shadow-lg p-8"
-              >
+              <div key={product.id} className="bg-white rounded-lg shadow-lg p-8">
                 <div className="relative overflow-hidden">
-                  <img
-                    className="object-fit w-full h-96"
-                    src={product.img}
-                    alt={product.name}
-                  />
+                  <img className="object-fit w-full h-96" src={product.img} alt={product.name} />
                   <div className="absolute inset-0 bg-black opacity-40"></div>
                   <div className="absolute inset-0 flex items-center justify-center">
                     <button
-                    onClick={() => handleProductClick(product.id)}
-                    className="bg-white text-gray-900 py-2 px-6 rounded-full font-bold hover:bg-gray-300">
+                      onClick={() => handleProductClick(product.id)}
+                      className="bg-white text-gray-900 py-2 px-6 rounded-full font-bold hover:bg-gray-300"
+                    >
                       View Product
                     </button>
                   </div>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mt-4">
-                  {product.name}
-                </h3>
-                <p className="text-gray-500 text-sm mt-2">
-                  {product.description}
-                </p>
+                <h3 className="text-xl font-bold text-gray-900 mt-4">{product.name}</h3>
+                <p className="text-gray-500 text-sm mt-2">{product.description}</p>
                 <div className="flex items-center justify-between mt-4">
-                  <span className="text-gray-900 font-bold text-lg">
-                    {product.price} $
-                  </span>
+                  <span className="text-gray-900 font-bold text-lg">{product.price} $</span>
                   <button
                     onClick={() => addToCart(product)}
                     className="bg-gray-900 text-white py-2 px-4 rounded-full font-bold hover:bg-gray-800"
                   >
                     Add to Cart
                   </button>
+
                 </div>
+                 {/* Display stock status */}
+                 {product.stock <= 0 ? (
+                  <span className="text-gray-400 font-bold mt-2">Out of Stock</span>
+                ) : (
+                  <span className="text-black font-bold mt-2">In Stock: {product.stock}</span>
+                )}
               </div>
             ))}
           </div>

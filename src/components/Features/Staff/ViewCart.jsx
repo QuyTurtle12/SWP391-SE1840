@@ -2,8 +2,6 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { aupdate } from "../../../net/Axios";
-
 function ViewCart() {
   const [cart, setCart] = useState([]);
   const [subtotal, setSubtotal] = useState(0);
@@ -13,11 +11,11 @@ function ViewCart() {
   const [counterID, setCounterID] = useState(""); // Example counter ID, should be fetched dynamically
   const [customerID, setCustomerID] = useState(""); // Example customer ID, should be fetched dynamically
   const [discountApplied, setDiscountApplied] = useState(0); // Example discount
+  const [notification, setNotification] = useState("");
 
   useEffect(() => {
     fetchCartData();
   }, []);
-
   const fetchCartData = () => {
     axios
       .get("http://localhost:8080/cart")
@@ -54,11 +52,16 @@ function ViewCart() {
       )
       .then((response) => {
         console.log(response.data);
+        setNotification("Create order successfully!");
+
         // Handle successful order creation
+        handleClearCart(); // clear cart after success checkout
         setShowModal(false);
       })
       .catch((error) => {
         console.error("Error creating order", error);
+        setNotification("Create order failed!")
+
       });
   };
 
@@ -88,7 +91,10 @@ function ViewCart() {
 
   const handleUpdateQuantity = (productID, newQuantity) => {
     axios
-      .put(`http://localhost:8080/cart?productID=${productID}&quantity=${newQuantity}`, {})
+      .put(
+        `http://localhost:8080/cart?productID=${productID}&quantity=${newQuantity}`,
+        {}
+      )
       .then((response) => {
         console.log(response);
         console.log("Quantity updated successfully" + newQuantity);
@@ -117,11 +123,16 @@ function ViewCart() {
         <h1 className="text-2xl font-semibold mb-4">Shopping Cart</h1>
         {cart.length === 0 ? (
           <>
-            <div className="bg-white rounded-lg font-bold shadow-md p-6 mb-4">
+            <div className="bg-white text-red-900 rounded-lg font-bold shadow-md p-6 mb-4">
               cart is empty
             </div>
+            {notification && (
+                <div className="mt-4 text-center text-green-500 font-bold">
+                  {notification}
+                </div>
+              )}
             <a href="/productlist">
-              <button className="bg-blue-500 text-white py-1 px-3 font-bold rounded">
+              <button className="bg-white text-black py-1 px-3 font-bold border-2 mb-4 border-black rounded">
                 Continue shopping{" "}
               </button>
             </a>
@@ -130,7 +141,7 @@ function ViewCart() {
           <div className="flex flex-col md:flex-row gap-4">
             <div className="md:w-3/4">
               <a href="/productlist">
-                <button className="bg-tiffany text-red-400 py-1 px-3 font-bold border-2 mb-4 border-black rounded">
+                <button className="bg-white text-black py-1 px-3 font-bold border-2 mb-4 border-black rounded">
                   Continue shopping{" "}
                 </button>
               </a>
@@ -153,7 +164,7 @@ function ViewCart() {
                             <img
                               className="h-16 w-16 mr-4"
                               src={item.product.img}
-                              alt="Product image"
+                              alt={item.product.name}
                             />
                             <span className="font-semibold">
                               {item.product.name}
@@ -182,13 +193,13 @@ function ViewCart() {
                         </td>
                         <td className="py-4">
                           <button
-                            className="bg-red-500 text-white py-1 px-3 rounded"
+                            className="bg-gray-400 text-white py-1 px-3 rounded"
                             onClick={() => handleRemoveItem(item.product.id)}
                           >
                             Remove
                           </button>{" "}
                           <button
-                            className="bg-blue-500 text-white py-1 px-3 rounded"
+                            className="bg-black text-white py-1 px-3 rounded"
                             onClick={() => {
                               console.log(item.product.id);
                               console.log(item.quantity);
@@ -220,13 +231,13 @@ function ViewCart() {
                   <span className="font-semibold">${subtotal.toFixed(2)}</span>
                 </div>
                 <button
-                  className="bg-green-500 text-white py-2 px-4 rounded-lg mt-4 w-full"
+                  className="bg-black text-white py-2 px-4 rounded-lg mt-4 w-full"
                   onClick={handleCheckout}
                 >
                   Checkout
                 </button>
                 <button
-                  className="bg-red-500 text-white py-2 px-4 rounded-lg mt-4 w-full"
+                  className="bg-gray-400 text-white py-2 px-4 rounded-lg mt-4 w-full"
                   onClick={handleClearCart}
                 >
                   Clear Cart

@@ -4,7 +4,7 @@ import Button from "@mui/material/Button";
 function AdminMenu() {
   return (
     <>
-      <div className="flex py-6 rounded-lg bg-white justify-between h-24 w-full ">
+      <div className="flex border-b-2 py-6 rounded-lg bg-white justify-between h-24 w-full ">
         <Button title="back to admin menu" component={Link} to="/admin">
           <h1 className="w-full px-6 text-black text-3xl font-bold"> ADMIN </h1>
         </Button>

@@ -64,7 +64,7 @@ function EditManager() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-tiffany">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white rounded-lg shadow relative w-full max-w-2xl p-10">
         <div className="flex items-start justify-between p-5 border-b rounded-t">
           <h3 className="text-xl font-semibold">Edit Manager</h3>

@@ -18,6 +18,8 @@ import HomePage from "./components/Homepage/HomePage";
 import ViewCart from "./components/Features/Staff/ViewCart";
 import AddManager from "./components/Features/Admin/AddManager";
 import ProductDetailStaff from "./components/Features/Staff/ProductDetailStaff";
+import ViewOrderList from "./components/Features/Staff/ViewOrderList";
+import OrderDetail from "./components/Features/Staff/OrderDetail";
 function App() {
   return (
     <div className="overflow-hidden">
@@ -38,7 +40,9 @@ function App() {
         <Route path="/edit-manager/:id" element={<EditManager />} />
         <Route path="/viewcart" element={<ViewCart />} />
         <Route path="/productlist" element={<ProductList />} />
+        <Route path="/order-list" element={<ViewOrderList />} />
         <Route path="/productdetail/:id" element={<ProductDetailStaff />} />
+        <Route path="/orderdetail/:id" element={<OrderDetail />} />
       </Routes>
       <Routes></Routes>
       <Footer />
