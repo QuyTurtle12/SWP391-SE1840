@@ -278,12 +278,12 @@ public class UserService implements IUserService {
                 return null;
             }
         } catch (InterruptedException | ExecutionException e) {
-            System.err.println("Error retrieving users by : " + field + " " + e.getMessage());
+            System.err.println("Error retrieving users by " + field + ": " + e.getMessage());
             throw e;
         } catch (Exception e) {
             System.err.println("Unexpected error: " + e.getMessage());
             e.printStackTrace();
-            throw new RuntimeException("Unexpected error occurred while retrieving users by contactInfo", e);
+            throw new RuntimeException("Unexpected error occurred while retrieving users", e);
         }
     }
 
@@ -306,12 +306,12 @@ public class UserService implements IUserService {
                 return null;
             }
         } catch (InterruptedException | ExecutionException e) {
-            System.err.println("Error retrieving users by : " + field + " " + e.getMessage());
+            System.err.println("Error retrieving users by " + field + ": " + e.getMessage());
             throw e;
         } catch (Exception e) {
             System.err.println("Unexpected error: " + e.getMessage());
             e.printStackTrace();
-            throw new RuntimeException("Unexpected error occurred while retrieving users by contactInfo", e);
+            throw new RuntimeException("Unexpected error occurred while retrieving users", e);
         }
     }
 
@@ -335,12 +335,12 @@ public class UserService implements IUserService {
         try {
             return querySnapshot.get().toObjects(User.class);
         } catch (InterruptedException | ExecutionException e) {
-            System.err.println("Error retrieving users by role: " + e.getMessage());
+            System.err.println("Error retrieving users by: "+ field + ": " + e.getMessage());
             throw e;
         } catch (Exception e) {
             System.err.println("Unexpected error: " + e.getMessage());
             e.printStackTrace();
-            throw new RuntimeException("Unexpected error occurred while retrieving users by role", e);
+            throw new RuntimeException("Unexpected error occurred while retrieving users", e);
         }
     }
 
@@ -372,12 +372,12 @@ public class UserService implements IUserService {
         try {
             return querySnapshot.get().toObjects(User.class);
         } catch (InterruptedException | ExecutionException e) {
-            System.err.println("Error retrieving users by role: " + e.getMessage());
+            System.err.println("Error retrieving users " + field + ": " + e.getMessage());
             throw e;
         } catch (Exception e) {
             System.err.println("Unexpected error: " + e.getMessage());
             e.printStackTrace();
-            throw new RuntimeException("Unexpected error occurred while retrieving users by role", e);
+            throw new RuntimeException("Unexpected error occurred while retrieving users", e);
         }
     }
 

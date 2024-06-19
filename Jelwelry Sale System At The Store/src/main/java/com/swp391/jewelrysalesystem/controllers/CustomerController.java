@@ -43,7 +43,7 @@ public class CustomerController {
     @GetMapping("/v2/customers/customer")
     public ResponseEntity<Customer> getCustomerV2(@RequestParam int id) {
         try {
-            Customer Customer = customerService.getCustomer(id);
+            Customer Customer = customerService.getCustomerByField(id, "id", "customer");
 
             if (Customer == null) {
                 return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
@@ -96,7 +96,7 @@ public class CustomerController {
     @GetMapping("/customer/get")
     public ResponseEntity<Customer> getCustomer(@RequestParam int id) {
         try {
-            Customer Customer = customerService.getCustomer(id);
+            Customer Customer = customerService.getCustomerByField(id, "id", "customer");
 
             if (Customer != null) {
                 return ResponseEntity.ok(Customer);

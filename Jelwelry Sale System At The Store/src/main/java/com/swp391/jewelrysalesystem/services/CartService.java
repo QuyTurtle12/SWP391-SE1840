@@ -41,6 +41,7 @@ public class CartService implements ICartService {
             CartItem cartItem = iterator.next();
             if (cartItem.getProduct().getID() == productID) {
                 iterator.remove(); // Xóa cartItem khỏi danh sách cartItems
+                break;
             }
         }
     }
@@ -80,6 +81,19 @@ public class CartService implements ICartService {
     public boolean clearCart() {
         cartItems.clear();;
         return true;
+    }
+
+    @Override
+    public void updateRefundPriceOfEachProduct() {
+        for (CartItem cartItem : cartItems) {
+            cartItem.setPrice(cartItem.getQuantity() * cartItem.getProduct().getRefundPrice());
+        }
+    }
+
+    @Override
+    public List<CartItem> viewRefundedCart() {
+        updateRefundPriceOfEachProduct();
+        return cartItems;
     }
 
 }

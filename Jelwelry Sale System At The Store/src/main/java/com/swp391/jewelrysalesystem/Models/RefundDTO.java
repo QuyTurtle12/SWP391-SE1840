@@ -14,6 +14,7 @@ import lombok.Setter;
 
 public class RefundDTO {
     private int refundID; //Link from Refund table
-    private int productID; //Link from Product table
+    private int productID;
+    private String productName;
     private int amount; //Quantity of the product in the order
 }

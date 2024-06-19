@@ -1,13 +1,25 @@
 package com.swp391.jewelrysalesystem.models;
 
+import com.swp391.jewelrysalesystem.services.StatusUpdatable;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
-public class Counter {
+public class Counter implements StatusUpdatable{
     private int ID;
     private int sale;
-    private Boolean status;
+    private boolean status;
+
+    @Override
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+
+    @Override
+    public boolean getStatus() {
+        return status;
+    }
 }

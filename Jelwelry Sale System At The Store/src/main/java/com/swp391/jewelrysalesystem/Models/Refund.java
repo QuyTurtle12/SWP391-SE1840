@@ -1,6 +1,6 @@
 package com.swp391.jewelrysalesystem.models;
 
-import java.time.LocalDateTime;
+import com.google.cloud.Timestamp;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class Refund {
     private int ID;
-    private LocalDateTime date;
-    private double totalAmount;
+    private Timestamp date;
+    private double totalPrice;
     private int customerID;
 }

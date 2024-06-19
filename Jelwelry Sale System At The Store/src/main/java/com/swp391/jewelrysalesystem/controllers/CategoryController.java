@@ -10,6 +10,7 @@ import com.swp391.jewelrysalesystem.services.ICategory;
 import java.util.List;
 
 import org.apache.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,6 +28,7 @@ public class CategoryController {
 
     private final ICategory categoryService;
 
+    @Autowired
     public CategoryController(ICategory categoryService){
         this.categoryService = categoryService;
     }
@@ -42,6 +44,19 @@ public class CategoryController {
         return categoryService.saveCatogory(category) 
         ? ResponseEntity.status(HttpStatus.SC_CREATED).body("Create Successfully")
         : ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body("Error creating category");
+    }
+
+    @PutMapping("/categories")
+    public ResponseEntity<String> updateCategory(@RequestParam int ID, @RequestParam String categoryName) {
+        if (!categoryService.isNotNullCategory(ID)) {
+            return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body("This ID " + ID + " is not existing");
+        }
+
+        Category category = new Category(ID, categoryName);
+
+        return categoryService.saveCatogory(category) 
+        ? ResponseEntity.status(HttpStatus.SC_CREATED).body("Updating Successfully")
+        : ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body("Error updating category");
     }
     
     @DeleteMapping("/categories")

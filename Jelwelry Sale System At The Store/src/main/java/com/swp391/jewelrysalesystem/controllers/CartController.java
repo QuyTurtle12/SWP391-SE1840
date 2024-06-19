@@ -84,7 +84,29 @@ public class CartController {
         return cartService.clearCart() ? "Clear Cart Successfully" : "Error clearing cart";
     }
 
-    
+    //Refund Cart
+    @PostMapping("/refundItem")
+    public String addRefundedItem(@RequestBody Product product) {
+        int quantity = 1;
+        double price = product.getRefundPrice();
+        if (product.getStock() > 0) {
+            if (quantity <= product.getStock()) {
+                
+                cartService.addItem(product, quantity, price);
+                return "Item added to cart";
+            } else {
+                return "Not enough quantity in stock";
+            }
+        } else {
+            return "This item is out of stock";
+        }
+    }
+
+    @GetMapping("/refundItem")
+    public List<CartItem> viewRefundedCartV2() {
+        return cartService.viewRefundedCart();
+    }
+
     // Old endpoints version below here
     @PostMapping("/add")
     public String addItem(@RequestBody Product product, @RequestParam int quantity, @RequestParam double price) {

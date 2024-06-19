@@ -147,7 +147,12 @@ public class OrderService implements IOrderService{
     @Override
     public boolean isNotNullCustomer(int ID) {
         CustomerService customerService = new CustomerService();
-        return customerService.isNotNullCustomer(ID);
+        try {
+            return customerService.isNotNullCustomer(ID) ? true : false;
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
     
 }
