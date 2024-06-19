@@ -32,15 +32,15 @@ public class RefundService implements IRefundService {
 
     @Override
     public boolean saveRefundedOrder(Refund order) {
-        return genericService.saveObject(order, "Refund", order.getID());
+        return genericService.saveObject(order, "refund", order.getID());
     }
 
     @Override
     public boolean saveProduct(RefundDTO product) {
         try {
             Firestore dbFirestore = FirestoreClient.getFirestore();
-            DocumentReference documentReference = dbFirestore.collection("Refund").document(String.valueOf(product.getRefundID()))
-            .collection("RefundedProduct").document(String.valueOf(product.getProductID()));
+            DocumentReference documentReference = dbFirestore.collection("refund").document(String.valueOf(product.getRefundID()))
+            .collection("refundedProduct").document(String.valueOf(product.getProductID()));
 
             ApiFuture<WriteResult> future = documentReference.set(product);
             future.get();
@@ -55,9 +55,9 @@ public class RefundService implements IRefundService {
     public boolean saveProductPurity(ProductPurity product, int refundID) {
         try {
             Firestore dbFirestore = FirestoreClient.getFirestore();
-            DocumentReference documentReference = dbFirestore.collection("Refund").document(String.valueOf(refundID))
-            .collection("RefundedProduct").document(String.valueOf(product.getProductID()))
-            .collection("ProductPurity").document(String.valueOf(product.getPurity()));
+            DocumentReference documentReference = dbFirestore.collection("refund").document(String.valueOf(refundID))
+            .collection("refundedProduct").document(String.valueOf(product.getProductID()))
+            .collection("productPurity").document(String.valueOf(product.getPurity()));
 
             ApiFuture<WriteResult> future = documentReference.set(product);
             future.get();
@@ -79,15 +79,36 @@ public class RefundService implements IRefundService {
     }
 
     @Override
-    public List<RefundDTO> getRefundedProductList(int ID) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getRefundedProductList'");
+    public List<RefundDTO> getRefundedProductList(int refundID) {
+        Firestore dbFirestore =FirestoreClient.getFirestore();
+        CollectionReference collectionReference = dbFirestore.collection("refund").document(String.valueOf(refundID)).collection("refundedProduct");
+
+        try {
+            ApiFuture<QuerySnapshot> future = collectionReference.get();
+            QuerySnapshot querySnapshot = future.get();
+            return querySnapshot.toObjects(RefundDTO.class);
+        } catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
-    public List<ProductPurity> getProductPurityList(int ID) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getProductPurityList'");
+    public List<ProductPurity> getProductPurityList(int refundID, int productID) {
+        Firestore dbFirestore =FirestoreClient.getFirestore();
+        CollectionReference collectionReference = dbFirestore.collection("refund").document(String.valueOf(refundID))
+        .collection("refundedProduct").document(String.valueOf(productID)).collection("productPurity");
+
+        try {
+            ApiFuture<QuerySnapshot> future = collectionReference.get();
+            QuerySnapshot querySnapshot = future.get();
+            return querySnapshot.toObjects(ProductPurity.class);
+        } catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
@@ -123,10 +144,20 @@ public class RefundService implements IRefundService {
             return "Incorrect total price!";
         }
 
-        if (isNotNullCustomer(customerID)) {
+        if (!isNotNullCustomer(customerID)) {
             return "The customer ID " + customerID + " is not existing";
         }
 
         return null;
+    }
+
+    @Override
+    public Refund getRefundedOrder(int ID) {
+        try {
+            return genericService.getByField(ID, "id", "refund", Refund.class);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

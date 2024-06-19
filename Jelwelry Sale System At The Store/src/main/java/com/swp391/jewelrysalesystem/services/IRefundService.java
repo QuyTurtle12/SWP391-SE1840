@@ -15,9 +15,11 @@ public interface IRefundService {
 
     List<Refund> getRefundedOrderList();
 
-    List<RefundDTO> getRefundedProductList(int ID);
+    List<RefundDTO> getRefundedProductList(int refundID);
 
-    List<ProductPurity> getProductPurityList(int ID);
+    List<ProductPurity> getProductPurityList(int refundID, int productID);
+
+    Refund getRefundedOrder(int ID);
 
     boolean isNotNullRefundedOrder(int ID);
 
