@@ -1,30 +1,32 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import AdminMenu from "./AdminMenu";
+
 import { useNavigate } from "react-router-dom";
+import ManagerMenu from "./ManagerMenu";
 
 function ViewManagerList() {
-  const [managers, setManagers] = useState([]);
+  const [staffs, setStaffs] = useState([]);
   const navigate = useNavigate();
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false); // State để điều khiển hiển thị popup xác nhận
-  const [managerToDelete, setManagerToDelete] = useState(null); // State để lưu thông tin của manager đang được chọn để xóa
+  const [staffToDelete, setStaffToDelete] = useState(null); // State để lưu thông tin của manager đang được chọn để xóa
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/account/MANAGER/list")
+      .get("http://localhost:8080/api/account/STAFF/list")
       .then((response) => {
         console.log(response.data);
-        setManagers(response.data);
+        setStaffs(response.data);
       })
       .catch((error) => console.error("Error at fetching data", error));
   }, []);
+
   const handleEditClick = (id) => {
-    navigate(`/edit-manager/${id}`);
+    navigate(`/edit-staff/${id}`);
   };
 
  const handleDelete = async (id) => {
     try {
       setShowDeleteConfirmation(true); // Hiển thị popup xác nhận
-      setManagerToDelete(id); // Lưu thông tin của manager đang được chọn để xóa
+      setStaffToDelete(id); // Lưu thông tin của manager đang được chọn để xóa
     } catch (error) {
       console.error(
         "Error updating status",
@@ -32,25 +34,26 @@ function ViewManagerList() {
       );
     }
   };
+
   const confirmDelete = async () => {
     try {
       // Thực hiện xóa
       await axios.put(
-        `http://localhost:8080/api/account/MANAGER/change-status?ID=${managerToDelete}`
+        `http://localhost:8080/api/account/STAFF/change-status?ID=${staffToDelete}`
       );
-      // Cập nhật trạng thái của manager trong mảng managers
-      const updatedManagers = managers.map(manager => {
-        if (manager.id === managerToDelete) {
+      // Cập nhật trạng thái của staff trong mảng staff
+      const updatedStaffs = staffs.map(staff => {
+        if (staff.id === staffToDelete) {
           // Đảo ngược trạng thái của manager
-          return { ...manager, status: !manager.status };
+          return { ...staff, status: !staff.status };
         }
-        return manager;
+        return staff;
       });
       // Cập nhật mảng managers với trạng thái mới
-      setManagers(updatedManagers);
+      setStaffs(updatedStaffs);
       // Đặt lại state và thông tin của manager để xóa
       setShowDeleteConfirmation(false);
-      setManagerToDelete(null);
+      setStaffToDelete(null);
     } catch (error) {
       console.error(
         "Error updating status",
@@ -58,18 +61,19 @@ function ViewManagerList() {
       );
     }
   };
+
   const cancelDelete = () => {
     // Đặt lại state và thông tin của manager để xóa
     setShowDeleteConfirmation(false);
-    setManagerToDelete(null);
+    setStaffToDelete(null);
   };
   
   return (
     <>
-      <AdminMenu />
+      <ManagerMenu/>
       <div className="bg-tiffany view-manager-list flex justify-center min-h-screen ">
         <div className="justify-between items-center px-10">
-          <table className="min-w-full min-h-full divide-y divide-gray-200 ">
+          <table className="min-w-full divide-y divide-gray-200 ">
             <thead>
               <tr>
                 <th className="px-6 py-3 font-bold text-left text-xs  text-black uppercase tracking-wider">
@@ -102,29 +106,29 @@ function ViewManagerList() {
               </tr>
             </thead>
             <tbody className=" bg-white divide-y divide-black">
-              {managers.map((manager) => (
-                <tr key={manager.id}>
-                  <td className="px-6 py-4 whitespace-nowrap">{manager.id}</td>
+              {staffs.map((staff) => (
+                <tr key={staff.id}>
+                  <td className="px-6 py-4 whitespace-nowrap">{staff.id}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {manager.fullName}
+                    {staff.fullName}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {manager.roleID}
+                    {staff.roleID}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {manager.email}
+                    {staff.email}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {manager.gender}
+                    {staff.gender}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {manager.contactInfo}
+                    {staff.contactInfo}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {manager.counterID}
+                    {staff.counterID}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {manager.status === true ? (
+                    {staff.status === true ? (
                       <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                         Active
                       </span>
@@ -136,13 +140,13 @@ function ViewManagerList() {
                   </td>{" "}
                   <td className="px-6 py-4 whitespace-nowrap">
                     <button
-                      onClick={() => handleEditClick(manager.id)}
+                      onClick={() => handleEditClick(staff.id)}
                       className=" px-4 py-2 font-medium text-white bg-blue-600 rounded-md hover:bg-blue-500 focus:outline-none focus:shadow-outline-blue active:bg-blue-600 transition duration-150 ease-in-out"
                     >
                       Edit
                     </button>
                     <button
-                      onClick={() => handleDelete(manager.id)}
+                      onClick={() => handleDelete(staff.id)}
                       className="ml-2 px-4 py-2 font-medium text-white bg-red-600 rounded-md hover:bg-red-500 focus:outline-none focus:shadow-outline-blue active:bg-red-600 transition duration-150 ease-in-out"
                     >
                       Change Status

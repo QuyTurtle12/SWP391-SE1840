@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import AdminMenu from './AdminMenu';
+import ManagerMenu from './ManagerMenu';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-const AddManager = () => {
+
+const AddStaff = () => {
 	const [ID, setID] = useState('');
 	const [fullName, setFullName] = useState('');
 	const [gender, setGender] = useState('');
@@ -13,6 +16,7 @@ const AddManager = () => {
 	const [counterID, setCounterID] = useState('');
 
 	const navigate = useNavigate(); // Initialize useNavigate hook
+	const notify = () => toast("Wow so easy!");
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -29,10 +33,13 @@ const AddManager = () => {
 
 		try {
 			console.log('Submitting data:', data);
-			const response = await axios.post('http://localhost:8080/api/account/MANAGER/register', null, {
+			const response = await axios.post('http://localhost:8080/api/account/STAFF/register', null, {
 				params: data
 			});
-			alert('Manager added successfully!');
+
+			toast("Staff added successfully!")
+
+
 			// Optionally reset form fields
 			setID('');
 			setFullName('');
@@ -44,7 +51,7 @@ const AddManager = () => {
 			console.log("Add response", response);
 
 			// Navigate to view-manager-list after successful submission
-			navigate('/view-manager-list');
+			navigate('/view-staff-list');
 		} catch (error) {
 			console.error('Error adding manager:', error.response ? error.response.data : error.message);
 			alert(`Failed to add manager. Error: ${error.response ? error.response.data.error : error.message}`);
@@ -53,7 +60,7 @@ const AddManager = () => {
 
 	return (
 		<div>
-			<AdminMenu />
+			<ManagerMenu />
 			<div className="min-h-screen bg-tiffany flex flex-col justify-center py-12 sm:px-6 lg:px-8">
 				<div className="sm:mx-auto sm:w-full sm:max-w-md">
 					<img
@@ -62,7 +69,7 @@ const AddManager = () => {
 						alt="Workflow"
 					/>
 					<h2 className="mt-6 text-center text-3xl leading-9 font-extrabold text-gray-900">
-						Create new manager
+						Create new staff
 					</h2>
 				</div>
 
@@ -190,12 +197,13 @@ const AddManager = () => {
 								</div>
 							</div>
 							<div className="mt-6">
-								<button
+								<button onClick={notify}
 									type="submit"
-									className="block w-full py-2 text-center text-white bg-teal-500 border border-teal-500 rounded hover:text-teal-500 transition uppercase font-roboto font-medium"
+									className="block w-full py-2 text-center text-white bg-teal-500 border border-teal-500 rounded  hover:text-teal-500 transition uppercase font-roboto font-medium"
 								>
-									Create Manager
-								</button>
+									Create Staff
+									<ToastContainer />
+								</button >
 							</div>
 						</form>
 					</div>
@@ -205,4 +213,4 @@ const AddManager = () => {
 	);
 }
 
-export default AddManager;
+export default AddStaff;

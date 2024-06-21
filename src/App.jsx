@@ -18,9 +18,18 @@ import ProductList from "./components/Features/Staff/ProductList";
 import HomePage from "./components/Homepage/HomePage";
 import ViewCart from "./components/Features/Staff/ViewCart";
 import AddManager from "./components/Features/Admin/AddManager";
+import Manager from "./components/Features/Manager/Manager";
+import AddStaff from "./components/Features/Manager/AddStaff";
+import ViewStaffList from "./components/Features/Manager/ViewStaffList";
+import EditStaff from "./components/Features/Manager/EditStaff";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
 function App() {
   return (
     <div className="overflow-hidden">
+      <ToastContainer />
       <Navbar />
       <Routes>
         <Route path="/" element={<HomePage />} />
@@ -33,10 +42,16 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/view-dashboard" element={<ViewDashboard />} />
         <Route path="/view-manager-list" element={<ViewManagerList />} />
+        <Route path="/view-staff-list" element={<ViewStaffList />} />
         <Route path="/add-manager" element={<AddManager />} />
+        <Route path="/add-staff" element={<AddStaff />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/staff" element={<Staff />} />
+        <Route path="/manager" element={<Manager />} />
         <Route path="/products/:id" element={<ProductDetail />} />
+
+        <Route path="/edit-staff/:id" element={<EditStaff />} />
+
         <Route path="/edit-manager/:id" element={<EditManager />} />
         <Route path="/viewcart" element={<ViewCart />} />
       </Routes>
