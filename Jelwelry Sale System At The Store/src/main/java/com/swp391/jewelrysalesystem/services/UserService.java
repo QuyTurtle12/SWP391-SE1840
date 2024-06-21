@@ -331,6 +331,10 @@ public class UserService implements IUserService {
             return "Contact Info cannot be empty!";
         }
 
+        if (!contactInfo.matches("0\\d+")) {
+            return "Contact Info must contain only numeric characters and start with zero!";
+        }
+        
         if (contactInfo.length() < 10 || contactInfo.length() > 11) {
             return "Phone Number must be in range 10 - 11";
         }

@@ -16,6 +16,7 @@ import com.google.cloud.firestore.WriteResult;
 import com.google.firebase.cloud.FirestoreClient;
 import com.swp391.jewelrysalesystem.models.Order;
 import com.swp391.jewelrysalesystem.models.OrderDTO;
+import com.swp391.jewelrysalesystem.models.User;
 
 @Service
 public class OrderService implements IOrderService{
@@ -111,7 +112,17 @@ public class OrderService implements IOrderService{
 
     @Override
     public boolean isNotNullStaff(int ID) {
-        return userService.isNotNullUser(ID);
+        try {
+            User user = userService.getUserByField(ID, "id", "user");
+            if (user != null && user.getRoleID() == 1) {
+                return true;
+            }
+
+            return false;
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
