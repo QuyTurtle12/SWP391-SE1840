@@ -12,6 +12,8 @@ public interface ICustomerService {
 
     Customer getCustomer(int ID);
 
+    Customer getCustomerByPhone(String contactInfo);
+
     List<Customer> searchCustomerList(String input, String filter, List<Customer> customerList);
 
     boolean isNotNullCustomer(int ID) throws InterruptedException, ExecutionException;

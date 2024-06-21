@@ -13,6 +13,7 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteResult;
 import com.google.firebase.cloud.FirestoreClient;
+import com.swp391.jewelrysalesystem.models.Customer;
 import com.swp391.jewelrysalesystem.models.ProductPurity;
 import com.swp391.jewelrysalesystem.models.Refund;
 import com.swp391.jewelrysalesystem.models.RefundDTO;
@@ -136,14 +137,14 @@ public class RefundService implements IRefundService {
     }
 
     @Override
-    public String isGeneralValidated(double totalPrice, int customerID) {
+    public String isGeneralValidated(double totalPrice, Customer customer) {
 
         if (totalPrice < 0) {
             return "Incorrect total price!";
         }
 
-        if (!isNotNullCustomer(customerID)) {
-            return "The customer ID " + customerID + " is not existing";
+        if (customer == null) {
+            return "This customer phone is not existing";
         }
 
         return null;

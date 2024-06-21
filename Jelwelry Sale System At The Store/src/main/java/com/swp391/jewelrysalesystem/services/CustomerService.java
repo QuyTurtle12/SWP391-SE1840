@@ -92,4 +92,15 @@ public class CustomerService implements ICustomerService {
             return false;
         }
     }
+
+
+    @Override
+    public Customer getCustomerByPhone(String contactInfo) {
+        try {
+            return genericService.getByField(contactInfo, "contactInfo", "customer", Customer.class);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

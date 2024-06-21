@@ -4,9 +4,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.cloud.Timestamp;
 import com.swp391.jewelrysalesystem.models.CartItem;
+import com.swp391.jewelrysalesystem.models.Customer;
 import com.swp391.jewelrysalesystem.models.ProductPurity;
 import com.swp391.jewelrysalesystem.models.Refund;
 import com.swp391.jewelrysalesystem.models.RefundDTO;
+import com.swp391.jewelrysalesystem.services.ICustomerService;
 import com.swp391.jewelrysalesystem.services.IProductService;
 import com.swp391.jewelrysalesystem.services.IRefundService;
 import java.util.ArrayList;
@@ -30,30 +32,36 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class RefundController {
     private IRefundService refundService;
     private IProductService productService;
+    private ICustomerService customerService;
     @Autowired
-    public RefundController(IRefundService refundService, IProductService productService){
+    public RefundController(IRefundService refundService, IProductService productService, ICustomerService customerService){
         this.refundService = refundService;
         this.productService = productService;
+        this.customerService = customerService;
     }
 
     @PostMapping("/refunds")
     public ResponseEntity<String> addRefundedOrder(
         @RequestParam int ID,
         @RequestParam double totalPrice,
-        @RequestParam int customerID,
+        @RequestParam String customerPhone,
         @RequestBody List<CartItem> cart) throws InterruptedException, ExecutionException {
             
             if (refundService.isNotNullRefundedOrder(ID)) {
                 return ResponseEntity.status(HttpStatus.SC_CONFLICT).body("The refund ID " + ID + " has been existed.");
             }
 
-            String error = refundService.isGeneralValidated(totalPrice, customerID);
+            Customer customer = customerService.getCustomerByPhone(customerPhone);
+
+            String error = refundService.isGeneralValidated(totalPrice, customer);
             if (error != null) {
                 return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body(error);
             }
 
+            int customerID = customer.getID();
+
             Refund refund = new Refund();
-            refund.setID(customerID);
+            refund.setID(ID);
             refund.setTotalPrice(totalPrice);
             refund.setCustomerID(customerID);
             refund.setDate(Timestamp.now());
