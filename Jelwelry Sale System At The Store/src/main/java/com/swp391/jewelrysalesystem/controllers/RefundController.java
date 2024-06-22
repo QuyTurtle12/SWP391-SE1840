@@ -44,6 +44,7 @@ public class RefundController {
             @RequestParam int ID,
             @RequestParam double totalPrice,
             @RequestParam String customerPhone,
+            @RequestParam int staffID,
             @RequestBody List<CartItem> cart) throws InterruptedException, ExecutionException {
 
         if (refundService.isNotNullRefundedOrder(ID)) {
@@ -52,7 +53,7 @@ public class RefundController {
 
         Customer customer = customerService.getCustomerByPhone(customerPhone);
 
-        String error = refundService.isGeneralValidated(totalPrice, customer);
+        String error = refundService.isGeneralValidated(totalPrice, customer, staffID);
         if (error != null) {
             return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body(error);
         }
@@ -64,6 +65,7 @@ public class RefundController {
         refund.setTotalPrice(totalPrice);
         refund.setCustomerID(customerID);
         refund.setDate(Timestamp.now());
+        refund.setStaffID(staffID);
 
         refundService.saveRefundedOrder(refund);
         List<RefundDTO> refundedProducts = new ArrayList<>();
