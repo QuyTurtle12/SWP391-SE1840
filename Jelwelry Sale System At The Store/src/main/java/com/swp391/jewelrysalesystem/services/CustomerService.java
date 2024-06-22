@@ -15,14 +15,15 @@ public class CustomerService implements ICustomerService {
     private IGenericService<Customer> genericService;
 
     @Autowired
-    public CustomerService(IGenericService<Customer> genericService) {
+    public CustomerService(IGenericService<Customer> genericService){
         this.genericService = genericService;
     }
+
 
     @Override
     public String getPhoneNumber(int ID) {
         try {
-            Customer customer = genericService.getByField(ID, "id", "customer", Customer.class);
+            Customer customer =  genericService.getByField(ID, "id", "customer", Customer.class);
             return customer.getContactInfo();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
@@ -52,9 +53,9 @@ public class CustomerService implements ICustomerService {
                     }
                 }
                 break;
-
+        
             default:
-                throw new IllegalArgumentException("Invalid filter: " + filter);
+                throw new IllegalArgumentException("Invalid filter: " + filter); 
         }
         return searchedCustomerList;
     }
@@ -63,6 +64,7 @@ public class CustomerService implements ICustomerService {
     public boolean isNotNullCustomer(int ID) throws InterruptedException, ExecutionException {
         return genericService.getByField(ID, "id", "customer", Customer.class) != null ? true : false;
     }
+
 
     @Override
     public Customer getCustomer(int ID) {
@@ -74,22 +76,23 @@ public class CustomerService implements ICustomerService {
         }
     }
 
+
     @Override
     public boolean isNotExistedPhoneNum(String contactInfo) {
         try {
-            Customer existedPhoneNum = genericService.getByField(contactInfo, "contactInfo", "customer",
-                    Customer.class);
+            Customer existedPhoneNum = genericService.getByField(contactInfo, "contactInfo", "customer", Customer.class);
 
             if (existedPhoneNum == null) {
                 return true;
             }
-
+            
             return false;
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             return false;
         }
     }
+
 
     @Override
     public Customer getCustomerByPhone(String contactInfo) {

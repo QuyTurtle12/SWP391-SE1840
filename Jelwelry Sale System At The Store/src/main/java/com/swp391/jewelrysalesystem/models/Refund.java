@@ -13,5 +13,4 @@ public class Refund {
     private Timestamp date;
     private double totalPrice;
     private int customerID;
-    private int staffID;
 }

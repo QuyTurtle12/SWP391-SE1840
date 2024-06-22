@@ -26,5 +26,5 @@ public interface IRefundService {
 
     boolean isNotNullCustomer(int ID);
 
-    String isGeneralValidated(double totalPrice, Customer customer, int staffID);
+    String isGeneralValidated(double totalPrice, Customer customer);
 }

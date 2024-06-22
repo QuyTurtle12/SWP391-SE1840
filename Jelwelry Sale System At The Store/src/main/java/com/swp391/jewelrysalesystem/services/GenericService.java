@@ -20,8 +20,7 @@ import com.google.firebase.cloud.FirestoreClient;
 public class GenericService<T> implements IGenericService<T> {
 
     @Override
-    public T getByField(String value, String field, String collection, Class<T> clazz)
-            throws InterruptedException, ExecutionException {
+    public T getByField(String value, String field, String collection, Class<T> clazz) throws InterruptedException, ExecutionException {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         CollectionReference collectionReference = dbFirestore.collection(collection);
 
@@ -36,8 +35,7 @@ public class GenericService<T> implements IGenericService<T> {
     }
 
     @Override
-    public T getByField(int value, String field, String collection, Class<T> clazz)
-            throws InterruptedException, ExecutionException {
+    public T getByField(int value, String field, String collection, Class<T> clazz) throws InterruptedException, ExecutionException {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         CollectionReference collectionReference = dbFirestore.collection(collection);
 
@@ -57,6 +55,7 @@ public class GenericService<T> implements IGenericService<T> {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         CollectionReference collectionReference = dbFirestore.collection(collection);
 
+
         Query query = collectionReference.whereEqualTo(field, value);
 
         // Retrieve query results
@@ -65,7 +64,7 @@ public class GenericService<T> implements IGenericService<T> {
         try {
             return querySnapshot.get().toObjects(clazz);
         } catch (InterruptedException | ExecutionException e) {
-            System.err.println("Error retrieving " + collection + " by " + field + ": " + e.getMessage());
+            System.err.println("Error retrieving "+ collection + " by " + field + ": " + e.getMessage());
             throw e;
         } catch (Exception e) {
             System.err.println("Unexpected error: " + e.getMessage());
@@ -77,8 +76,9 @@ public class GenericService<T> implements IGenericService<T> {
     @Override
     public List<T> getListByField(int value, String field, String collection, Class<T> clazz)
             throws InterruptedException, ExecutionException {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
+                Firestore dbFirestore = FirestoreClient.getFirestore();
         CollectionReference collectionReference = dbFirestore.collection(collection);
+
 
         Query query = collectionReference.whereEqualTo(field, value);
 
@@ -88,7 +88,7 @@ public class GenericService<T> implements IGenericService<T> {
         try {
             return querySnapshot.get().toObjects(clazz);
         } catch (InterruptedException | ExecutionException e) {
-            System.err.println("Error retrieving " + collection + " by " + field + ": " + e.getMessage());
+            System.err.println("Error retrieving "+ collection + " by " + field + ": " + e.getMessage());
             throw e;
         } catch (Exception e) {
             System.err.println("Unexpected error: " + e.getMessage());
@@ -97,6 +97,7 @@ public class GenericService<T> implements IGenericService<T> {
         }
     }
 
+    
     @Override
     public List<T> getList(String collection, Class<T> clazz) throws InterruptedException, ExecutionException {
         Firestore dbFirestore = FirestoreClient.getFirestore();
@@ -108,7 +109,7 @@ public class GenericService<T> implements IGenericService<T> {
         try {
             return querySnapshot.get().toObjects(clazz);
         } catch (InterruptedException | ExecutionException e) {
-            System.err.println("Error retrieving " + collection + " :" + e.getMessage());
+            System.err.println("Error retrieving "+ collection + " :" + e.getMessage());
             throw e;
         } catch (Exception e) {
             System.err.println("Unexpected error: " + e.getMessage());
@@ -121,8 +122,7 @@ public class GenericService<T> implements IGenericService<T> {
     public boolean saveObject(T object, String collection, int documentID) {
         try {
             Firestore dbFirestore = FirestoreClient.getFirestore();
-            DocumentReference documentReference = dbFirestore.collection(collection)
-                    .document(String.valueOf(documentID));
+            DocumentReference documentReference = dbFirestore.collection(collection).document(String.valueOf(documentID));
             ApiFuture<WriteResult> future = documentReference.set(object);
             future.get();
             return true;
@@ -136,8 +136,7 @@ public class GenericService<T> implements IGenericService<T> {
     public boolean deleteObject(int documentID, String collection) {
         try {
             Firestore dbFirestore = FirestoreClient.getFirestore();
-            DocumentReference documentReference = dbFirestore.collection(collection)
-                    .document(String.valueOf(documentID));
+            DocumentReference documentReference = dbFirestore.collection(collection).document(String.valueOf(documentID));
             ApiFuture<WriteResult> future = documentReference.delete();
             future.get();
             return true;
