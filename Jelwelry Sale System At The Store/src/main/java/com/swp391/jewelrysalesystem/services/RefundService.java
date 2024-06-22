@@ -17,17 +17,20 @@ import com.swp391.jewelrysalesystem.models.Customer;
 import com.swp391.jewelrysalesystem.models.ProductPurity;
 import com.swp391.jewelrysalesystem.models.Refund;
 import com.swp391.jewelrysalesystem.models.RefundDTO;
+import com.swp391.jewelrysalesystem.models.User;
 
 @Service
 public class RefundService implements IRefundService {
 
     private IGenericService<Refund> genericService;
     private ICustomerService customerService;
+    private IUserService userService;
 
     @Autowired
-    public RefundService(IGenericService<Refund> genericService, ICustomerService customerService){
+    public RefundService(IGenericService<Refund> genericService, ICustomerService customerService, IUserService userService){
         this.genericService = genericService;
         this.customerService = customerService;
+        this.userService = userService;
     }
 
     @Override
@@ -137,7 +140,7 @@ public class RefundService implements IRefundService {
     }
 
     @Override
-    public String isGeneralValidated(double totalPrice, Customer customer) {
+    public String isGeneralValidated(double totalPrice, Customer customer, int staffID) {
 
         if (totalPrice < 0) {
             return "Incorrect total price!";
@@ -147,6 +150,15 @@ public class RefundService implements IRefundService {
             return "This customer phone is not existing";
         }
 
+        try {
+            User staff = userService.getUserByField(staffID, "id", "user");
+            if ( staff == null || staff.getRoleID() != 1) {
+                return "This staff ID " + staffID + " is not existing";
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return "error while validating staff ID";
+        }
         return null;
     }
 

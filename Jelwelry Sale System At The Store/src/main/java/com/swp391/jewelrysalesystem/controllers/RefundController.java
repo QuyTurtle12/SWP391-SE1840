@@ -24,17 +24,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 
-
-
-
 @RestController
 @RequestMapping("/api")
 public class RefundController {
     private IRefundService refundService;
     private IProductService productService;
     private ICustomerService customerService;
+
     @Autowired
-    public RefundController(IRefundService refundService, IProductService productService, ICustomerService customerService){
+    public RefundController(IRefundService refundService, IProductService productService,
+            ICustomerService customerService) {
         this.refundService = refundService;
         this.productService = productService;
         this.customerService = customerService;
@@ -42,62 +41,65 @@ public class RefundController {
 
     @PostMapping("/refunds")
     public ResponseEntity<String> addRefundedOrder(
-        @RequestParam int ID,
-        @RequestParam double totalPrice,
-        @RequestParam String customerPhone,
-        @RequestBody List<CartItem> cart) throws InterruptedException, ExecutionException {
-            
-            if (refundService.isNotNullRefundedOrder(ID)) {
-                return ResponseEntity.status(HttpStatus.SC_CONFLICT).body("The refund ID " + ID + " has been existed.");
-            }
+            @RequestParam int ID,
+            @RequestParam double totalPrice,
+            @RequestParam String customerPhone,
+            @RequestParam int staffID,
+            @RequestBody List<CartItem> cart) throws InterruptedException, ExecutionException {
 
-            Customer customer = customerService.getCustomerByPhone(customerPhone);
+        if (refundService.isNotNullRefundedOrder(ID)) {
+            return ResponseEntity.status(HttpStatus.SC_CONFLICT).body("The refund ID " + ID + " has been existed.");
+        }
 
-            String error = refundService.isGeneralValidated(totalPrice, customer);
-            if (error != null) {
-                return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body(error);
-            }
+        Customer customer = customerService.getCustomerByPhone(customerPhone);
 
-            int customerID = customer.getID();
+        String error = refundService.isGeneralValidated(totalPrice, customer, staffID);
+        if (error != null) {
+            return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body(error);
+        }
 
-            Refund refund = new Refund();
-            refund.setID(ID);
-            refund.setTotalPrice(totalPrice);
-            refund.setCustomerID(customerID);
-            refund.setDate(Timestamp.now());
+        int customerID = customer.getID();
 
-            refundService.saveRefundedOrder(refund);
-            List<RefundDTO> refundedProducts = new ArrayList<>(); 
-            for (CartItem cartItem : cart) {
-                RefundDTO product = new RefundDTO();
-                product.setRefundID(ID);
-                product.setProductID(cartItem.getProduct().getID());
-                product.setProductName(productService.getProductByID(product.getProductID()).getName());
-                product.setAmount(cartItem.getQuantity());
-                refundedProducts.add(product);
-                refundService.saveProduct(product);
-            }
-            return null;
+        Refund refund = new Refund();
+        refund.setID(ID);
+        refund.setTotalPrice(totalPrice);
+        refund.setCustomerID(customerID);
+        refund.setDate(Timestamp.now());
+        refund.setStaffID(staffID);
+
+        refundService.saveRefundedOrder(refund);
+        List<RefundDTO> refundedProducts = new ArrayList<>();
+        for (CartItem cartItem : cart) {
+            RefundDTO product = new RefundDTO();
+            product.setRefundID(ID);
+            product.setProductID(cartItem.getProduct().getID());
+            product.setProductName(productService.getProductByID(product.getProductID()).getName());
+            product.setAmount(cartItem.getQuantity());
+            refundedProducts.add(product);
+            refundService.saveProduct(product);
+        }
+        return null;
     }
-    
+
     @PostMapping("/refunds/itemPurity")
     public ResponseEntity<String> addProductPurity(
-        @RequestParam int refundID,
-        @RequestBody List<ProductPurity> products) throws InterruptedException, ExecutionException {
+            @RequestParam int refundID,
+            @RequestBody List<ProductPurity> products) throws InterruptedException, ExecutionException {
 
-            if (!refundService.isNotNullRefundedOrder(refundID)) {
-                return ResponseEntity.status(HttpStatus.SC_CONFLICT).body("The refund ID " + refundID + " is not existing.");
-            }
-
-            for (ProductPurity product : products) {
-                refundService.saveProductPurity(product, refundID);
-            }
-            return null;
+        if (!refundService.isNotNullRefundedOrder(refundID)) {
+            return ResponseEntity.status(HttpStatus.SC_CONFLICT)
+                    .body("The refund ID " + refundID + " is not existing.");
         }
+
+        for (ProductPurity product : products) {
+            refundService.saveProductPurity(product, refundID);
+        }
+        return null;
+    }
 
     @GetMapping("/refunds")
     public ResponseEntity<List<Refund>> getRefundList() {
-        List<Refund> refunds =  refundService.getRefundedOrderList();
+        List<Refund> refunds = refundService.getRefundedOrderList();
 
         if (refunds.isEmpty() || refunds == null) {
             return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
@@ -105,10 +107,10 @@ public class RefundController {
 
         return ResponseEntity.ok(refunds);
     }
-    
+
     @GetMapping("/refunds/refund")
     public ResponseEntity<Refund> getRefund(@RequestParam int ID) {
-        Refund refunds =  refundService.getRefundedOrder(ID);
+        Refund refunds = refundService.getRefundedOrder(ID);
 
         if (refunds == null) {
             return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
@@ -119,7 +121,7 @@ public class RefundController {
 
     @GetMapping("/refunds/refund/products")
     public ResponseEntity<List<RefundDTO>> getRefundedProductList(@RequestParam int refundID) {
-        List<RefundDTO> refunds =  refundService.getRefundedProductList(refundID);
+        List<RefundDTO> refunds = refundService.getRefundedProductList(refundID);
 
         if (refunds.isEmpty() || refunds == null) {
             return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
@@ -130,10 +132,9 @@ public class RefundController {
 
     @GetMapping("/refunds/refund/products/product")
     public ResponseEntity<List<ProductPurity>> getRefundedProductPurityList(
-        @RequestParam int refundID,
-        @RequestParam int productID
-    ) {
-        List<ProductPurity> refunds =  refundService.getProductPurityList(refundID, productID);
+            @RequestParam int refundID,
+            @RequestParam int productID) {
+        List<ProductPurity> refunds = refundService.getProductPurityList(refundID, productID);
 
         if (refunds.isEmpty() || refunds == null) {
             return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
