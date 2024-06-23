@@ -4,6 +4,10 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 swp291-7bd29-firebase-adminsdk-f8mz9-e2c94c2a1f.json
+.dockerignore
+compose.yaml
+Dockerfile
+README.Docker.md
 
 ### STS ###
 .apt_generated

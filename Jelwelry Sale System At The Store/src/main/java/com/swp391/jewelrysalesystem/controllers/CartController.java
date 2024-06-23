@@ -89,17 +89,8 @@ public class CartController {
     public String addRefundedItem(@RequestBody Product product) {
         int quantity = 1;
         double price = product.getRefundPrice();
-        if (product.getStock() > 0) {
-            if (quantity <= product.getStock()) {
-                
-                cartService.addItem(product, quantity, price);
-                return "Item added to cart";
-            } else {
-                return "Not enough quantity in stock";
-            }
-        } else {
-            return "This item is out of stock";
-        }
+        cartService.addItem(product, quantity, price);
+        return "add cart successfully";
     }
 
     @GetMapping("/refundItem")
