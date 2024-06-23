@@ -35,6 +35,12 @@ export default function ManagerMenu() {
               <h2 className="font-bold">View Promotion</h2>{" "}
             </Button>
           </li>
+          <li><Button component={Link} to="/productlist">
+              <h3 className=" px-4 rounded-sm text-black font-bold">
+                View Product Lists
+              </h3>
+            </Button>
+            </li>
         </ul>
       </div>
     </>
