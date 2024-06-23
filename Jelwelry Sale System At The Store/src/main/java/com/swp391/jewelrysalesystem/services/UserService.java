@@ -59,19 +59,7 @@ public class UserService implements IUserService {
 
     @Override
     public boolean saveUser(User user) {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
-        user.setPassword(passwordService.hashPassword(user.getPassword()));
-        DocumentReference documentReference = dbFirestore.collection("user").document(String.valueOf(user.getID()));
-
-        ApiFuture<com.google.cloud.firestore.WriteResult> future = documentReference.set(user);
-        try {
-            future.get();
-            return true;
-        } catch (InterruptedException | ExecutionException e) {
-            System.err.println("Error saving user document: " + e.getMessage());
-            e.printStackTrace();
-            return false;
-        }
+        return genericService.saveObject(user, "user", user.getID());
     }
 
     @Override
