@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import AdminMenu from './AdminMenu';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from 'react-toastify';
 
 const AddManager = () => {
     const [ID, setID] = useState('');
@@ -11,11 +13,18 @@ const AddManager = () => {
     const [password, setPassword] = useState('');
     const [contactInfo, setContactInfo] = useState('');
     const [counterID, setCounterID] = useState('');
-
+    const notify = () => toast("wow so easy");
     const navigate = useNavigate(); // Initialize useNavigate hook
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // // Validate contactInfo (assuming it's a phone number)
+        // const phoneRegex = /^[0-9]{10}$/; // Adjust this regex according to your phone number format
+        // if (!phoneRegex.test(contactInfo)) {
+        //     alert('Invalid phone number format. Please enter a valid 10-digit phone number.');
+        //     return;
+        // }
 
         const data = {
             ID: parseInt(ID),
@@ -29,10 +38,9 @@ const AddManager = () => {
 
         try {
             console.log('Submitting data:', data);
-            const response = await axios.post('http://localhost:8080/api/account/MANAGER/register', null, {
+            const response = await axios.post('http://localhost:8080/api/v2/accounts/MANAGER', null, {
                 params: data
             });
-            alert('Manager added successfully!');
             // Optionally reset form fields
             setID('');
             setFullName('');
@@ -44,17 +52,21 @@ const AddManager = () => {
             console.log("Add response", response);
 
             // Navigate to view-manager-list after successful submission
-            navigate('/view-manager-list');
+            toast.success('Manager added successfully!');
+            setTimeout(() => navigate(`/view-manager-list`), 2000); // Navigate after 2 seconds
+
         } catch (error) {
             console.error('Error adding manager:', error.response ? error.response.data : error.message);
-            alert(`Failed to add manager. Error: ${error.response ? error.response.data.error : error.message}`);
+            const errorMessage = error.response ? error.response.data : error.message;
+            toast.error(`${errorMessage}`);
         }
     };
 
     return (
         <div>
-            <AdminMenu />
-            <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+            <AdminMenu/>
+            <ToastContainer/>
+            <div className="h-auto bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
                 <div className="sm:mx-auto sm:w-full sm:max-w-md">
                     <img
                         className="mx-auto h-10 w-auto"
@@ -116,7 +128,7 @@ const AddManager = () => {
                                     <option value="" disabled>Select Gender</option>
                                     <option value="Male">Male</option>
                                     <option value="Female">Female</option>
-                                    <option value="Third gender">Third gender</option>
+                                    <option value="Other">Other</option>
                                 </select>
                             </div>
                             <div className="mt-6">

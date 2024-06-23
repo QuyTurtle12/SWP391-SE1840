@@ -6,10 +6,9 @@ import { Button } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 
-function ProductList() {
+function RefundList() {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
-  const navigate = useNavigate();
 
   useEffect(() => {
     axios
@@ -21,15 +20,9 @@ function ProductList() {
       .catch((error) => console.error("error at fetching data", error));
   }, []);
 
-  const handleProductClick = (id) => {
-    navigate(`/productdetail/${id}`);
-  };
 
   const addToCart = (product) => {
-    if (product.stock <= 0) {
-      toast.error("Product is out of stock.");
-      return;
-    }
+  
     const isAlreadyInCart = cart.some((item) => item.id === product.id);
     if (isAlreadyInCart) {
       toast.error("Product is already in the cart.");
@@ -37,7 +30,7 @@ function ProductList() {
     }
 
     axios
-      .post("http://localhost:8080/cart", product)
+      .post("http://localhost:8080/cart/refundItem", product)
       .then((response) => {
         console.log("Item added to cart:", response.data);
         setCart([...cart, product]);
@@ -56,10 +49,10 @@ function ProductList() {
       <div className="bg-white py-36">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl justify-between text-center font-bold text-black mb-8">
-            Our Latest Products
+             List Refund Products
             <div className="justify-end flex pr-8">
               <div className="relative">
-                <Button component={Link} to="/viewcart">
+                <Button component={Link} to="/refund-viewcart">
                   <ShoppingCartIcon className="text-black" sx={{ fontSize: 40 }} />
                 </Button>
                 {cart.length > 0 && (
@@ -73,35 +66,33 @@ function ProductList() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {products.map((product) => (
               <div key={product.id} className="bg-white rounded-lg shadow-lg p-8">
-                <div className="relative overflow-hidden">
+                <div className="relative border-2 border-black  overflow-hidden">
                   <img className="object-fit w-full h-96" src={product.img} alt={product.name} />
-                  <div className="absolute inset-0 bg-black opacity-40"></div>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <button
-                      onClick={() => handleProductClick(product.id)}
-                      className="bg-white text-gray-900 py-2 px-6 rounded-full font-bold hover:bg-gray-300"
-                    >
-                      View Product
-                    </button>
-                  </div>
+                  
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mt-4">{product.name}</h3>
+
+                <div className="flex">
+                <h3 className="text-xl font-bold text-gray-900 mt-4">Price : </h3>
+                <h4 className="text-lg font-semibold text-gray-900 px-4 mt-4">${product.price}</h4>
+
+                </div>
+                <div className="flex">
+                <h3 className="text-xl font-bold text-gray-900 mt-4">Refund Price : </h3>
+                <h4 className="text-lg font-semibold text-gray-900 px-4 mt-4">${product.refundPrice}</h4>
+
+                </div>
+
                 <div className="flex items-center justify-between mt-4">
-                  <span className="text-gray-900 font-bold text-lg">{product.price.toLocaleString("en-US")} $</span>
                   <button
                     onClick={() => addToCart(product)}
                     className="bg-gray-900 text-white py-2 px-4 rounded-full font-bold hover:bg-gray-800"
                   >
-                    Add to Cart
+                    Add to Refund Cart
                   </button>
 
                 </div>
-                 {/* Display stock status */}
-                 {product.stock <= 0 ? (
-                  <span className="text-gray-400 font-bold mt-2">Out of Stock</span>
-                ) : (
-                  <span className="text-black font-bold mt-2">In Stock: {product.stock}</span>
-                )}
+                
               </div>
             ))}
           </div>
@@ -111,4 +102,4 @@ function ProductList() {
   );
 }
 
-export default ProductList;
+export default RefundList;

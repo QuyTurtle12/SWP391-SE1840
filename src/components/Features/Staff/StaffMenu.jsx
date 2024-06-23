@@ -10,7 +10,13 @@ function StaffMenu() {
           <h1 className="w-full  px-6 text-3xl text-black font-bold"> staff </h1>
         </Button>
         <ul className="flex my-auto">
-         
+        <li className=" px-8  text-nowrap ">
+            <Button component={Link} to="/customer-list">
+              <h3 className=" px-4 rounded-sm text-black font-bold">
+                Customer List
+              </h3>
+            </Button>
+          </li>
 
           <li className="font-bold px-8 text-nowrap ">
             <Button component={Link} to="/productlist">
@@ -19,17 +25,25 @@ function StaffMenu() {
               </h3>
             </Button>
           </li>
-          <li className=" px-8  text-nowrap ">
-            <Button component={Link} to="/customer-list">
-              <h3 className=" px-4 rounded-sm text-black font-bold">
-                Customer List
-              </h3>
-            </Button>
-          </li>
+          
           <li className=" px-8  text-nowrap ">
             <Button component={Link} to="/order-list">
               <h3 className=" px-4 rounded-sm text-black font-bold">
                 View Order List
+              </h3>
+            </Button>
+          </li>
+          <li className=" px-8  text-nowrap ">
+            <Button component={Link} to="/order-refund">
+              <h3 className=" px-4 rounded-sm text-black font-bold">
+                View Order Refund List
+              </h3>
+            </Button>
+          </li>
+          <li className=" px-8  text-nowrap ">
+            <Button component={Link} to="/refund-list">
+              <h3 className=" px-4 rounded-sm text-black font-bold">
+                Refund
               </h3>
             </Button>
           </li>

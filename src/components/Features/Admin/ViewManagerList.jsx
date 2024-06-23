@@ -9,8 +9,9 @@ function ViewManagerList() {
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false); // State để điều khiển hiển thị popup xác nhận
   const [managerToDelete, setManagerToDelete] = useState(null); // State để lưu thông tin của manager đang được chọn để xóa
   useEffect(() => {
+    
     axios
-      .get("http://localhost:8080/api/account/MANAGER/list")
+      .get("http://localhost:8080/api/v2/accounts/MANAGER")
       .then((response) => {
         console.log(response.data);
         setManagers(response.data);
@@ -36,7 +37,7 @@ function ViewManagerList() {
     try {
       // Thực hiện xóa
       await axios.put(
-        `http://localhost:8080/api/account/MANAGER/change-status?ID=${managerToDelete}`
+        `http://localhost:8080/api/v2/accounts/MANAGER/status?ID=${managerToDelete}`
       );
       // Cập nhật trạng thái của manager trong mảng managers
       const updatedManagers = managers.map(manager => {

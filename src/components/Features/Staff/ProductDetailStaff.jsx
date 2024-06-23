@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 
 function ProductDetailStaff() {
   const { id } = useParams();
@@ -49,7 +50,7 @@ function ProductDetailStaff() {
   const addToCart = (product) => {
     const isAlreadyInCart = cart.some((item) => item.id === product.id);
     if (isAlreadyInCart) {
-      alert("Product is already in the cart.");
+      toast.error("Product is already in the cart.");
       return;
     }
 
@@ -58,18 +59,17 @@ function ProductDetailStaff() {
       .then((response) => {
         console.log("Item added to cart:", response.data);
         setCart([...cart, product]);
-        setNotification("Item added to cart successfully!");
-        setTimeout(() => setNotification(""), 3000); // Hide notification after 3 seconds
+        toast.success("Item added to cart successfully!");
       })
       .catch((error) => {
         console.error("Error adding item to cart:", error);
-        setNotification("Error adding item to cart!");
-                setTimeout(() => setNotification(""), 3000);
+        toast.error("Error adding item to cart!");
       });
   };
   
   return (
     <div className="h-screen">
+      <ToastContainer/>
       <div className="bg-gray-100 py-8 h-full">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row -mx-4">
@@ -100,7 +100,7 @@ function ProductDetailStaff() {
                     Price:
                   </span>
                   <span className="text-gray-800 text-xl ml-6">
-                    {product.price}$
+                    {product.price.toLocaleString("en-US")}$
                   </span>
                 </div>
                 <div className="mr-4">
@@ -108,7 +108,7 @@ function ProductDetailStaff() {
                     Refund Price:
                   </span>
                   <span className="text-gray-800 text-xl ml-6">
-                    {product.refundPrice}$
+                    {product.refundPrice.toLocaleString("en-US")}$
                   </span>
                 </div>
                 <div className="mr-4">
@@ -124,7 +124,7 @@ function ProductDetailStaff() {
                     Labor Cost:
                   </span>
                   <span className="text-gray-800 text-xl ml-6">
-                    {product.laborCost}$
+                    {product.laborCost.toLocaleString("en-US")}$
                   </span>
                 </div>
                 <div className="mr-4">
@@ -132,7 +132,7 @@ function ProductDetailStaff() {
                     Stone Cost:
                   </span>
                   <span className="text-gray-800 text-xl ml-6">
-                    {product.stoneCost}$
+                    {product.stoneCost.toLocaleString("en-US")}$
                   </span>
                 </div>
                 <div className="mr-4">
@@ -168,11 +168,7 @@ function ProductDetailStaff() {
                   Add to Cart
                 </button>
               </div>
-              {notification && (
-                <div className="mt-4 text-center text-green-700 font-bold">
-                  {notification}
-                </div>
-              )}
+          
             </div>
           </div>
           <div className="mt-20">

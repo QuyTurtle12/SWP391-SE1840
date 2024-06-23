@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/quyturtle12.github.io/SWP391-SE1840/static/css/main.465c4f5e.css",
+    "main.js": "/quyturtle12.github.io/SWP391-SE1840/static/js/main.fe70f7a2.js",
+    "static/media/login1.png": "/quyturtle12.github.io/SWP391-SE1840/static/media/login1.b61abbc33bcd9cfc0c3c.png",
+    "static/media/banner1.png": "/quyturtle12.github.io/SWP391-SE1840/static/media/banner1.ef1c973a7f5f3c49a02e.png",
+    "index.html": "/quyturtle12.github.io/SWP391-SE1840/index.html",
+    "main.465c4f5e.css.map": "/quyturtle12.github.io/SWP391-SE1840/static/css/main.465c4f5e.css.map",
+    "main.fe70f7a2.js.map": "/quyturtle12.github.io/SWP391-SE1840/static/js/main.fe70f7a2.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.465c4f5e.css",
+    "static/js/main.fe70f7a2.js"
+  ]
+}

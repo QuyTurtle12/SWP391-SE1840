@@ -57,8 +57,8 @@ function ViewOrderList() {
             </thead>
             <tbody className="bg-white divide-y divide-gray-500">
               {orders.map((order) => (
-                <tr key={order.ID}>
-                  <td className="px-4 py-4 whitespace-nowrap">{order.ID} </td>
+                <tr key={order.id}>
+                  <td className="px-4 py-4 whitespace-nowrap">{order.id} </td>
                   <td className="px-4 py-4 whitespace-nowrap">
                     {order.customerName}
                   </td>
@@ -79,7 +79,7 @@ function ViewOrderList() {
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap">
                   <button
-                      onClick={() => handleOrder(order.ID)}
+                      onClick={() => handleOrder(order.id)}
                       className="bg-white text-gray-900 py-2 px-6 rounded-full font-bold hover:bg-gray-300"
                     >
                       View 

@@ -2,20 +2,22 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { toast } from "react-toastify";
-function ViewCart() {
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from "react-router-dom";
+
+function RefundViewCart() {
   const [cart, setCart] = useState([]);
   const [subtotal, setSubtotal] = useState(0);
   const [showModal, setShowModal] = useState(false);
-  const [orderID, setOrderID] = useState(1); // Example order ID, should be generated uniquely
-  const [staffID, setStaffID] = useState(""); // Example staff ID, should be fetched dynamically
-  const [counterID, setCounterID] = useState(""); // Example counter ID, should be fetched dynamically
-  const [customerID, setCustomerID] = useState(""); // Example customer ID, should be fetched dynamically
-  const [discountApplied, setDiscountApplied] = useState(0); // Example discount
-
+  const [orderID, setOrderID] = useState(1);
+  const [staffID, setStaffID] = useState(""); 
+  const [customerPhone, setCustomerPhone] = useState(""); 
+  const navigate = useNavigate();
   useEffect(() => {
     fetchCartData();
   }, []);
+
   const fetchCartData = () => {
     axios
       .get("http://localhost:8080/cart")
@@ -31,7 +33,9 @@ function ViewCart() {
   const calculateSubtotal = (cartItems) => {
     let total = 0;
     cartItems.forEach((item) => {
-      total += item.product.price * item.quantity;
+      if (item.product.refundPrice && item.quantity) {
+        total += item.product.refundPrice * item.quantity;
+      }
     });
     setSubtotal(total);
   };
@@ -47,7 +51,7 @@ function ViewCart() {
   const handleCreateOrder = () => {
     axios
       .post(
-        `http://localhost:8080/api/v2/orders?totalPrice=${subtotal}&orderID=${orderID}&staffID=${staffID}&counterID=${counterID}&customerID=${customerID}&discountApplied=${discountApplied}`,
+        `http://localhost:8080/api/refunds?ID=${orderID}&totalPrice=${subtotal}&customerPhone=${customerPhone}&staffID=${staffID}`,
         cart
       )
       .then((response) => {
@@ -57,11 +61,14 @@ function ViewCart() {
         // Handle successful order creation
         handleClearCart(); // clear cart after success checkout
         setShowModal(false);
+        navigate(`/refund-form/${orderID}`);
+       
+      
       })
       .catch((error) => {
         console.error("Error creating order", error);
-        toast.error("Create order failed!")
-
+        const errorMessage = error.response ? error.response.data : error.message;
+        toast.error(`${errorMessage}`);
       });
   };
 
@@ -119,37 +126,37 @@ function ViewCart() {
 
   return (
     <div className="bg-white h-screen py-8">
+      <ToastContainer/>
       <div className="container mx-auto px-4">
-        <h1 className="text-2xl font-semibold mb-4">Shopping Cart</h1>
+        <h1 className="text-2xl font-bold mb-4">Refund Cart</h1>
         {cart.length === 0 ? (
           <>
             <div className="bg-white text-red-900 rounded-lg font-bold shadow-md p-6 mb-4">
-              cart is empty
+              cart refund is empty
             </div>
-           
-            <a href="/productlist">
+            <a href="/refund-list">
               <button className="bg-white text-black py-1 px-3 font-bold border-2 mb-4 border-black rounded">
-                Continue shopping{" "}
+                Continue adding refund product{" "}
               </button>
             </a>
           </>
         ) : (
           <div className="flex flex-col md:flex-row gap-4">
             <div className="md:w-3/4">
-              <a href="/productlist">
+              <a href="/refund-list">
                 <button className="bg-white text-black py-1 px-3 font-bold border-2 mb-4 border-black rounded">
-                  Continue shopping{" "}
+                  Continue adding refund product{" "}
                 </button>
               </a>
               <div className="bg-white rounded-lg shadow-md p-6 mb-4">
                 <table className="w-full">
                   <thead>
                     <tr>
-                      <th className="text-left font-semibold">Product</th>
-                      <th className="text-left font-semibold">Price</th>
-                      <th className="text-left font-semibold">Quantity</th>
-                      <th className="text-left font-semibold">Total</th>
-                      <th className="text-left font-semibold">Actions</th>
+                      <th className="text-left font-bold">Product</th>
+                      <th className="text-left font-bold">Refund Price</th>
+                      <th className="text-left font-bold">Quantity</th>
+                      <th className="text-left font-bold">Total</th>
+                      <th className="text-left font-bold">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -168,7 +175,7 @@ function ViewCart() {
                           </div>
                         </td>
                         <td className="py-4">
-                          ${item.product.price.toLocaleString("en-US")}
+                          ${item.product.refundPrice.toLocaleString("en-US")}
                         </td>
                         <td className="py-4">
                           <input
@@ -185,7 +192,7 @@ function ViewCart() {
                           />
                         </td>
                         <td className="py-4">
-                          ${(item.product.price * item.quantity).toLocaleString("en-US")}
+                          ${(item.product.refundPrice * item.quantity).toLocaleString("en-US")}
                         </td>
                         <td className="py-4">
                           <button
@@ -218,12 +225,12 @@ function ViewCart() {
               <div className="bg-white rounded-lg shadow-md p-6">
                 <h2 className="text-lg font-semibold mb-4">Summary</h2>
                 <div className="flex justify-between mb-2">
-                  <span>Subtotal</span>
+                  <span>Total Refund Price</span>
                   <span>${subtotal.toLocaleString("en-US")}</span>
                 </div>
                 <hr className="my-2" />
                 <div className="flex justify-between mb-2">
-                  <span className="font-semibold">Total</span>
+                  <span className="font-semibold">Total Refund Price</span>
                   <span className="font-semibold">${subtotal.toLocaleString("en-US")}</span>
                 </div>
                 <button
@@ -251,7 +258,7 @@ function ViewCart() {
         <Modal.Body>
           <Form>
             <Form.Group controlId="formOrderID">
-              <Form.Label>Order ID</Form.Label>
+              <Form.Label>Order Refund ID</Form.Label>
               <Form.Control
                 type="number"
                 placeholder="Enter order ID"
@@ -270,33 +277,16 @@ function ViewCart() {
             </Form.Group>
 
             <Form.Group controlId="formCounterID">
-              <Form.Label>Counter ID</Form.Label>
+              <Form.Label>Customer Phone</Form.Label>
               <Form.Control
                 type="number"
                 placeholder="Enter counter ID"
-                value={counterID}
-                onChange={(e) => setCounterID(e.target.value)}
+                value={customerPhone}
+                onChange={(e) => setCustomerPhone(e.target.value)}
               />
             </Form.Group>
 
-            <Form.Group controlId="formCustomerID">
-              <Form.Label>Customer ID</Form.Label>
-              <Form.Control
-                type="number"
-                placeholder="Enter customer ID"
-                value={customerID}
-                onChange={(e) => setCustomerID(e.target.value)}
-              />
-            </Form.Group>
-            <Form.Group controlId="formDiscountApplied">
-              <Form.Label>Discount Applied</Form.Label>
-              <Form.Control
-                type="number"
-                placeholder="Enter discount"
-                value={discountApplied}
-                onChange={(e) => setDiscountApplied(e.target.value)}
-              />
-            </Form.Group>
+           
           </Form>
         </Modal.Body>
         <Modal.Footer>
@@ -312,4 +302,4 @@ function ViewCart() {
   );
 }
 
-export default ViewCart;
+export default RefundViewCart;
