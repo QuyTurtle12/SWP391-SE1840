@@ -1,5 +1,6 @@
 package com.swp391.jewelrysalesystem.controllers;
 
+//
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,8 +48,8 @@ public class CustomerController {
 
             if (Customer == null) {
                 return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
-            } 
-            
+            }
+
             return ResponseEntity.ok(Customer);
         } catch (Exception e) {
             e.printStackTrace();
