@@ -22,7 +22,7 @@ function RefundPurity() {
   return (
     <>
   <div className="text-3xl justify-between text-center font-bold pt-10 text-black mb-8">
-        <h1>Order Detail</h1>
+        <h1>Product Purity Detail</h1>
       
       </div>
       <Link

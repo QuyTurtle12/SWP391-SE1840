@@ -39,7 +39,7 @@ function ProductList() {
     axios
       .post("http://localhost:8080/cart", product)
       .then((response) => {
-        console.log("Item added to cart:", response.data);
+        toast.success("Item added to cart:", response.data);
         setCart([...cart, product]);
       })
       .catch((error) => {
@@ -90,7 +90,7 @@ function ProductList() {
                   <span className="text-gray-900 font-bold text-lg">{product.price.toLocaleString("en-US")} $</span>
                   <button
                     onClick={() => addToCart(product)}
-                    className="bg-gray-900 text-white py-2 px-4 rounded-full font-bold hover:bg-gray-800"
+                    className="bg-gray-900 text-white py-2 px-4 rounded-full font-bold hover:bg-gray-500"
                   >
                     Add to Cart
                   </button>

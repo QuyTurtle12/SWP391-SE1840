@@ -20,7 +20,6 @@ function ProductDetailStaff() {
     status: "",
   });
   const [cart, setCart] = useState([]);
-  const [notification, setNotification] = useState("");
 
   useEffect(() => {
     const fetchProduct = async () => {

@@ -23,7 +23,7 @@ function ViewOrderList() {
     < >
       {" "}
       <StaffMenu />
-      <div className="container h-screen">
+      <div className="container h-full">
       <div className=" bg-white view-manager-list  justify-center h-auto ">
         <div className="text-3xl justify-between text-center font-bold pt-10 text-black mb-8">
           <h1>Order List</h1>

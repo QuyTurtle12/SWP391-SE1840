@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 function ViewCart() {
   const [cart, setCart] = useState([]);
   const [subtotal, setSubtotal] = useState(0);
@@ -60,7 +60,8 @@ function ViewCart() {
       })
       .catch((error) => {
         console.error("Error creating order", error);
-        toast.error("Create order failed!")
+        const errorMessage = error.response ? error.response.data : error.message;
+        toast.error(`${errorMessage}`);
 
       });
   };
@@ -97,7 +98,7 @@ function ViewCart() {
       )
       .then((response) => {
         console.log(response);
-        console.log("Quantity updated successfully" + newQuantity);
+        toast.success("Quantity updated successfully with quantity: " + newQuantity);
         fetchCartData(); // Fetch updated cart data after update
       })
       .catch((error) => {
@@ -109,15 +110,17 @@ function ViewCart() {
     axios
       .delete(`http://localhost:8080/cart?productID=${productID}`)
       .then((response) => {
-        console.log("Product removed successfully");
+        toast.success("Product removed successfully");
         fetchCartData(); // Fetch updated cart data after removal
       })
       .catch((error) => {
-        console.error("Error removing product", error);
+        toast.error("Error removing product", error);
       });
   };
 
   return (
+    <>
+    <ToastContainer/>
     <div className="bg-white h-screen py-8">
       <div className="container mx-auto px-4">
         <h1 className="text-2xl font-semibold mb-4">Shopping Cart</h1>
@@ -309,6 +312,8 @@ function ViewCart() {
         </Modal.Footer>
       </Modal>
     </div>
+    </>
+    
   );
 }
 
