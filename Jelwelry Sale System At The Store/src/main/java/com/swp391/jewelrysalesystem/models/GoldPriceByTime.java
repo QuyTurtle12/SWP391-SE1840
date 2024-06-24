@@ -7,8 +7,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
-public class GoldPriceByRatio {
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class GoldPriceByTime {
     private LocalDateTime date;
     private double goldPrice;
 }

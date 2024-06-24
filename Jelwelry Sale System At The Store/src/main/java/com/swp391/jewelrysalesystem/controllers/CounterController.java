@@ -20,52 +20,51 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
 
-
-
 @RestController
 @RequestMapping("/api")
 public class CounterController {
     private ICounterService counterService;
 
     @Autowired
-    public CounterController(ICounterService counterService){
+    public CounterController(ICounterService counterService) {
         this.counterService = counterService;
     }
 
     @PostMapping("/v2/counters")
     public ResponseEntity<String> addCounterV2(@RequestParam int id) {
         if (counterService.isNotNullCounter(id)) {
-            return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body("Counter ID " + id +" is existing");
+            return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body("Counter ID " + id + " is existing");
         }
-        
+
         Counter newCounter = new Counter();
         newCounter.setID(id);
-        newCounter.setSale(0); //VND
+        newCounter.setSale(0); // VND
         newCounter.setStatus(true);
 
-        return counterService.saveCounter(newCounter) ? ResponseEntity.status(HttpStatus.SC_CREATED).body("Create Successfully") 
-        : ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body("Error creating counter");
+        return counterService.saveCounter(newCounter)
+                ? ResponseEntity.status(HttpStatus.SC_CREATED).body("Create Successfully")
+                : ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body("Error creating counter");
     }
 
     @DeleteMapping("/v2/counters")
     public ResponseEntity<String> deleteCounterV2(@RequestParam int id) {
         if (!counterService.isNotNullCounter(id)) {
-            return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body("Counter ID " + id +" is not existing");
+            return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body("Counter ID " + id + " is not existing");
         }
 
-        return counterService.removeCounter(id) ? ResponseEntity.ok().body("Deleting Successfully") 
-        : ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body("Error deleting counter");
-        
+        return counterService.removeCounter(id) ? ResponseEntity.ok().body("Deleting Successfully")
+                : ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body("Error deleting counter");
+
     }
 
     @PutMapping("/v2/counters/{id}/status")
     public ResponseEntity<String> changeCounterStatusV2(@PathVariable int id) {
         if (!counterService.isNotNullCounter(id)) {
-            return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body("Counter ID " + id +" is not existing");
+            return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body("Counter ID " + id + " is not existing");
         }
 
-        return counterService.changeStatus(id) ? ResponseEntity.ok().body("Changing status Successfully") 
-        : ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body("Error chaging status");
+        return counterService.changeStatus(id) ? ResponseEntity.ok().body("Changing status Successfully")
+                : ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body("Error chaging status");
     }
 
     @GetMapping("/v2/counters")
@@ -74,7 +73,7 @@ public class CounterController {
             List<Counter> counterList = counterService.getCountersList();
             if (counterList == null && counterList.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
-                
+
             }
 
             return ResponseEntity.ok(counterList);
@@ -99,12 +98,12 @@ public class CounterController {
         }
     }
 
-    //Old endpoints version below here
+    // Old endpoints version below here
     @PostMapping("/counter/add")
     public Counter addCounter(@RequestParam int id) {
         Counter newCounter = new Counter();
         newCounter.setID(id);
-        newCounter.setSale(0); //VND
+        newCounter.setSale(0); // VND
         newCounter.setStatus(true);
 
         counterService.saveCounter(newCounter);
@@ -151,4 +150,20 @@ public class CounterController {
             return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
+    @GetMapping("/v2/counters/{id}/calculate-sale")
+    public ResponseEntity<Double> calculateCounterSaleV2(@PathVariable int id) {
+        if (!counterService.isNotNullCounter(id)) {
+            return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
+        }
+
+        try {
+            double totalSale = counterService.calculateCounterSale(id);
+            return ResponseEntity.ok(totalSale);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
 }

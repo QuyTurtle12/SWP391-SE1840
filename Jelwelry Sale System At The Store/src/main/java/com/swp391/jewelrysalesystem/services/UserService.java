@@ -7,10 +7,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.cloud.FirestoreClient;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.CollectionReference;
@@ -21,7 +17,7 @@ import com.google.cloud.firestore.Query;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 
-import com.swp391.jewelrysalesystem.models.User;;
+import com.swp391.jewelrysalesystem.models.User;
 
 @Service
 public class UserService implements IUserService {
@@ -29,16 +25,17 @@ public class UserService implements IUserService {
     @Autowired
     private PasswordService passwordService;
 
+    // @Autowired
+    // public FirebaseService firebaseService;
+
     // Method to get a user by email
     public User getUserByEmail(String email) throws InterruptedException, ExecutionException {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         CollectionReference users = dbFirestore.collection("user");
 
         // Create a query to get the user with the specified email
-        Query query = users.whereEqualTo("email", email);
+        ApiFuture<QuerySnapshot> querySnapshot = users.whereEqualTo("email", email).get();
 
-        // Retrieve query results
-        ApiFuture<QuerySnapshot> querySnapshot = query.get();
         List<User> userList = querySnapshot.get().toObjects(User.class);
 
         if (userList.isEmpty()) {
@@ -136,14 +133,14 @@ public class UserService implements IUserService {
     @Override
     public boolean saveUser(User user) {
         Firestore dbFirestore = FirestoreClient.getFirestore();
-        user.setPassword(passwordService.hashPassword(user.getPassword()));
+        // user.setPassword(passwordService.hashPassword(user.getPassword()));
         DocumentReference documentReference = dbFirestore.collection("user").document(String.valueOf(user.getID()));
 
         ApiFuture<com.google.cloud.firestore.WriteResult> future = documentReference.set(user);
         try {
             future.get();
             return true;
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (Exception e) {
             System.err.println("Error saving user document: " + e.getMessage());
             e.printStackTrace();
             return false;
@@ -329,5 +326,32 @@ public class UserService implements IUserService {
             return false;
         }
     }
+
+    // Function to register a new user with hashed password
+    /*
+     * public boolean registerUser(User user) {
+     * Firestore dbFirestore = FirestoreClient.getFirestore();
+     * user.setPassword(passwordService.hashPassword(user.getPassword()));
+     * DocumentReference documentReference =
+     * dbFirestore.collection("user").document(String.valueOf(user.getID()));
+     * 
+     * try {
+     * // First, set the user document
+     * ApiFuture<com.google.cloud.firestore.WriteResult> future =
+     * documentReference.set(user);
+     * future.get(); // Wait for the write operation to complete
+     * 
+     * // Then, add the new entry with auto-increment ID
+     * String collectionName = "user";
+     * firebaseService.addNewEntry(collectionName, user.toMap());
+     * 
+     * return true;
+     * } catch (Exception e) {
+     * System.err.println("Error saving user document: " + e.getMessage());
+     * e.printStackTrace();
+     * return false;
+     * }
+     * }
+     */
 
 }

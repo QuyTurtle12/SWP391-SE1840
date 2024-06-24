@@ -16,6 +16,7 @@ import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteResult;
 import com.google.firebase.cloud.FirestoreClient;
 import com.swp391.jewelrysalesystem.models.Counter;
+import com.swp391.jewelrysalesystem.models.Order;
 import com.swp391.jewelrysalesystem.models.Promotion;
 
 @Service
@@ -125,5 +126,27 @@ public class CounterService implements ICounterService {
     public boolean isNotNullCounter(int ID) {
         return getCounter(ID) != null ? true : false;
     }
-    
+
+    @Override
+    public double calculateCounterSale(int counterID) {
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        CollectionReference ordersCollection = dbFirestore.collection("order");
+
+        try {
+            ApiFuture<QuerySnapshot> future = ordersCollection.whereEqualTo("counterID", counterID).get();
+            QuerySnapshot orders = future.get();
+
+            double totalSale = 0.0;
+            for (QueryDocumentSnapshot document : orders) {
+                Order order = document.toObject(Order.class);
+                totalSale += order.getTotalPrice();
+            }
+            return totalSale;
+        } catch (InterruptedException | ExecutionException e) {
+            System.err.println("Error calculating counter sale: " + e.getMessage());
+            e.printStackTrace();
+            return 0.0;
+        }
+    }
+
 }
