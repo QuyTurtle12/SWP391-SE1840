@@ -2,17 +2,18 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import AdminMenu from './AdminMenu';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from 'react-toastify';
 
 const AddManager = () => {
-	const [ID, setID] = useState('');
-	const [fullName, setFullName] = useState('');
-	const [gender, setGender] = useState('');
-	const [email, setEmail] = useState('');
-	const [password, setPassword] = useState('');
-	const [contactInfo, setContactInfo] = useState('');
-	const [counterID, setCounterID] = useState('');
-
-	const navigate = useNavigate(); // Initialize useNavigate hook
+    const [ID, setID] = useState('');
+    const [fullName, setFullName] = useState('');
+    const [gender, setGender] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [contactInfo, setContactInfo] = useState('');
+    const [counterID, setCounterID] = useState('');
+    const navigate = useNavigate();
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();

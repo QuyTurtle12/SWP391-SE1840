@@ -5,7 +5,7 @@ function Admin() {
   return (
     <>
       <AdminMenu></AdminMenu>
-      <div className="bg-tiffany w-full h-screen">
+      <div className="bg-white w-full h-screen">
       </div>
     </>
   );

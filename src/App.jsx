@@ -8,7 +8,6 @@ import ViewDashboard from "./components/Features/Admin/ViewDashboard";
 import ViewManagerList from "./components/Features/Admin/ViewManagerList";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Profile from "./components/Profile/Profile";
-import ListProducts from "./components/Products/ListProducts";
 import EditManager from "./components/Features/Admin/EditManager";
 import Register from "./components/Register/Register";
 import Admin from "./components/Features/Admin/Admin";
@@ -26,6 +25,15 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 
+import ProductDetailStaff from "./components/Features/Staff/ProductDetailStaff";
+import ViewOrderList from "./components/Features/Staff/ViewOrderList";
+import OrderDetail from "./components/Features/Staff/OrderDetail";
+import RefundList from "./components/Features/Staff/RefundList";
+import RefundViewCart from "./components/Features/Staff/RefundViewCart";
+import RefundForm from "./components/Features/Staff/RefundForm";
+import ViewOrderRefund from "./components/Features/Staff/ViewOrderRefund";
+import RefundDetail from "./components/Features/Staff/RefundDetail";
+import RefundPurity from "./components/Features/Staff/RefundPurity";
 function App() {
   return (
     <div className="overflow-hidden">
@@ -34,9 +42,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/homepage" element={<HomePage />} />
-        <Route path="/product" element={<ListProducts />} />
         <Route path="/customer-list" element={<CustomerList />} />
-        <Route path="/productlist" element={<ProductList />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} />
@@ -54,6 +60,16 @@ function App() {
 
         <Route path="/edit-manager/:id" element={<EditManager />} />
         <Route path="/viewcart" element={<ViewCart />} />
+        <Route path="/productlist" element={<ProductList />} />
+        <Route path="/order-list" element={<ViewOrderList />} />
+        <Route path="/productdetail/:id" element={<ProductDetailStaff />} />
+        <Route path="/orderdetail/:id" element={<OrderDetail />} />
+        <Route path="/refund-detail/:id" element={<RefundDetail />} />
+        <Route path="/refund-form/:id" element={<RefundForm />} />
+        <Route path="/refund-list" element={<RefundList />} />
+        <Route path="/refund-viewcart" element={<RefundViewCart />} />
+        <Route path="/refund-purity/:id/:productID" element={<RefundPurity />} />
+        <Route path="/order-refund" element={<ViewOrderRefund />} />
       </Routes>
       <Routes></Routes>
       <Footer />

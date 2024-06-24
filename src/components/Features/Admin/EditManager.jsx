@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+
 function EditManager() {
   const { id } = useParams(); // Lấy id từ URL
   const navigate = useNavigate(); // Để điều hướng sau khi cập nhật thành công
   const handleButtonX = () => {
     navigate("/view-manager-list");
   };
+
   const [manager, setManager] = useState({
     fullName: "",
     gender: "",
@@ -18,7 +20,7 @@ function EditManager() {
     const fetchManager = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/api/account/getUser?id=${id}`
+          `http://localhost:8080/api/v2/accounts/user?id=${id}`
         );
         console.log("Fetched manager data:", response.data);
         setManager(response.data);
@@ -37,11 +39,19 @@ function EditManager() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // // Validate contactInfo (assuming it's a phone number)
+    // const phoneRegex = /^[0-9]{10}$/; // Adjust this regex according to your phone number format
+    // if (!phoneRegex.test(manager.contactInfo)) {
+    //   alert("Invalid phone number format. Please enter a valid 10-digit phone number.");
+    //   return;
+    // }
+
     console.log("Submitting form with data:", manager);
     try {
       const { fullName, gender, contactInfo, counterID } = manager; // Lấy các giá trị từ object manager
       const response = await axios.put(
-        `http://localhost:8080/api/account/MANAGER/update-info?ID=${parseInt(
+        `http://localhost:8080/api/v2/accounts/MANAGER?ID=${parseInt(
           id
         )}&fullName=${fullName}&gender=${gender}&contactInfo=${contactInfo}&counterID=${counterID}`
       );
@@ -52,6 +62,7 @@ function EditManager() {
         "Error updating manager",
         error.response ? error.response.data : error.message
       );
+      alert("Error updating manager. Please try again.");
     }
   };
 
@@ -64,7 +75,7 @@ function EditManager() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-tiffany">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white rounded-lg shadow relative w-full max-w-2xl p-10">
         <div className="flex items-start justify-between p-5 border-b rounded-t">
           <h3 className="text-xl font-semibold">Edit Manager</h3>
@@ -82,7 +93,7 @@ function EditManager() {
             >
               <path
                 fillRule="evenodd"
-                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 111.414 1.414L11.414 10l4.293 4.293a1 1 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 01-1.414-1.414L8.586 10 4.293 5.707a1 1 010-1.414z"
                 clipRule="evenodd"
               ></path>
             </svg>
@@ -171,7 +182,7 @@ function EditManager() {
             </div>
             <div className="p-6 border-t border-gray-200 rounded-b">
               <button
-                className="text-white bg-cyan-600 hover:bg-cyan-700 focus:ring-4 focus:ring-cyan-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                className="text-white bg-black focus:ring-4 focus:ring-cyan-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 type="submit"
               >
                 Save all

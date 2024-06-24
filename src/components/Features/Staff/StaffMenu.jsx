@@ -5,12 +5,18 @@ import Button from "@mui/material/Button";
 function StaffMenu() {
   return (
     <>
-      <div className="flex py-6 rounded-lg bg-white justify-between h-24 w-full ">
+      <div className="flex border-b-4  py-6 rounded-lg bg-white justify-between h-24 w-full ">
         <Button title="back to admin menu" component={Link} to="/staff">
-          <h1 className="w-full px-6 text-3xl text-black font-bold"> staff </h1>
+          <h1 className="w-full  px-6 text-3xl text-black font-bold"> staff </h1>
         </Button>
         <ul className="flex my-auto">
-         
+        <li className=" px-8  text-nowrap ">
+            <Button component={Link} to="/customer-list">
+              <h3 className=" px-4 rounded-sm text-black font-bold">
+                Customer List
+              </h3>
+            </Button>
+          </li>
 
           <li className="font-bold px-8 text-nowrap ">
             <Button component={Link} to="/productlist">
@@ -19,10 +25,25 @@ function StaffMenu() {
               </h3>
             </Button>
           </li>
+          
           <li className=" px-8  text-nowrap ">
-            <Button component={Link} to="/customer-list">
+            <Button component={Link} to="/order-list">
               <h3 className=" px-4 rounded-sm text-black font-bold">
-                Customer List
+                View Order List
+              </h3>
+            </Button>
+          </li>
+          <li className=" px-8  text-nowrap ">
+            <Button component={Link} to="/order-refund">
+              <h3 className=" px-4 rounded-sm text-black font-bold">
+                View Order Refund List
+              </h3>
+            </Button>
+          </li>
+          <li className=" px-8  text-nowrap ">
+            <Button component={Link} to="/refund-list">
+              <h3 className=" px-4 rounded-sm text-black font-bold">
+                Refund
               </h3>
             </Button>
           </li>
