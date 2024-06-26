@@ -71,7 +71,7 @@ function ViewManagerList() {
   return (
     <>
       <ManagerMenu/>
-      <div className="bg-tiffany view-manager-list flex justify-center min-h-screen ">
+      <div className="bg-tiffany view-manager-list flex justify-center h-full ">
         <div className="justify-between items-center px-10">
           <table className="min-w-full divide-y divide-gray-200 ">
             <thead>

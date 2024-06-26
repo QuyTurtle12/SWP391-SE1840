@@ -22,7 +22,7 @@ function RefundPurity() {
   return (
     <>
   <div className="text-3xl justify-between text-center font-bold pt-10 text-black mb-8">
-        <h1>Product Purity Detail</h1>
+        <h1>Product Purity Detail Of Product ID : {productID}</h1>
       
       </div>
       <Link
@@ -39,16 +39,14 @@ function RefundPurity() {
     
  
     <div className="container h-screen">
-    <table className="border border-black min-w-full divide-y divide-gray-500 ">
+    <table className="border text-center border-black min-w-full divide-y divide-gray-500 ">
             <thead>
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
-                  Product ID
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
+             
+                <th className="px-4 py-3  text-xs font-bold text-black uppercase tracking-wider">
                     Purity
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
+                <th className="px-4 py-3  text-xs font-bold text-black uppercase tracking-wider">
                   Amount
                 </th>
                 
@@ -59,9 +57,7 @@ function RefundPurity() {
               {orders.map((order) => (
                 <tr key={order.productID}>
               
-                  <td className="px-4 py-4 whitespace-nowrap">
-                    {order.productID}
-                  </td>
+                
                   <td className="px-4 py-4 whitespace-nowrap">
                     {order.purity}
                   </td>

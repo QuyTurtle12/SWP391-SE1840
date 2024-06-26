@@ -18,8 +18,21 @@ function ProductList() {
         console.log(response.data);
         setProducts(response.data);
       })
-      .catch((error) => console.error("error at fetching data", error));
+      .catch((error) => console.error("Error fetching products:", error));
+    
+    fetchCartData();
   }, []);
+
+  const fetchCartData = () => {
+    axios
+      .get("http://localhost:8080/cart")
+      .then((response) => {
+        setCart(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching cart data:", error);
+      });
+  };
 
   const handleProductClick = (id) => {
     navigate(`/productdetail/${id}`);
@@ -30,7 +43,8 @@ function ProductList() {
       toast.error("Product is out of stock.");
       return;
     }
-    const isAlreadyInCart = cart.some((item) => item.id === product.id);
+
+    const isAlreadyInCart = cart.some((item) => item.product.id === product.id);
     if (isAlreadyInCart) {
       toast.error("Product is already in the cart.");
       return;
@@ -40,7 +54,7 @@ function ProductList() {
       .post("http://localhost:8080/cart", product)
       .then((response) => {
         toast.success("Item added to cart:", response.data);
-        setCart([...cart, product]);
+        setCart([...cart, { product, quantity: 1, price: product.price }]);
       })
       .catch((error) => {
         console.error("Error adding item to cart:", error);
@@ -48,11 +62,9 @@ function ProductList() {
   };
 
   return (
-    <div className=" ">
-     
-        <StaffMenu />
-    <ToastContainer/>
-
+    <div>
+      <StaffMenu />
+      <ToastContainer />
       <div className="bg-white py-36">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl justify-between text-center font-bold text-black mb-8">
@@ -94,10 +106,8 @@ function ProductList() {
                   >
                     Add to Cart
                   </button>
-
                 </div>
-                 {/* Display stock status */}
-                 {product.stock <= 0 ? (
+                {product.stock <= 0 ? (
                   <span className="text-gray-400 font-bold mt-2">Out of Stock</span>
                 ) : (
                   <span className="text-black font-bold mt-2">In Stock: {product.stock}</span>

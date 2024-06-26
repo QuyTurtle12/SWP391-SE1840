@@ -125,7 +125,7 @@ function EditStaff() {
                 >
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
-                  <option value="Third gender">Third gender</option>
+                  <option value="Other">Other</option>
                 </select>
               </div>
               <div className="col-span-6 sm:col-span-3">

@@ -75,7 +75,7 @@ function ViewOrderList() {
                     {order.counterID}
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap">
-                    {order.totalPrice}
+                    ${order.totalPrice.toLocaleString("en-US")}
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap">
                   <button
