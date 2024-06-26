@@ -3,6 +3,7 @@ package com.swp391.jewelrysalesystem.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +18,6 @@ import com.swp391.jewelrysalesystem.models.Product;
 import com.swp391.jewelrysalesystem.services.ICartService;
 import com.swp391.jewelrysalesystem.services.IProductService;
 
-
 @RestController
 @RequestMapping("/cart")
 public class CartController {
@@ -31,20 +31,19 @@ public class CartController {
     }
 
     @PostMapping("")
-    public String addItemV2(@RequestBody Product product) {
+    public ResponseEntity<String> addItemV2(@RequestBody Product product) {
         int quantity = 1;
         double price = product.getPrice();
-        if (product.getStock() > 0) {
-            if (quantity <= product.getStock()) {
-                
-                cartService.addItem(product, quantity, price);
-                return "Item added to cart";
-            } else {
-                return "Not enough quantity in stock";
-            }
-        } else {
-            return "This item is out of stock";
+        if (product.getStock() <= 0) {
+            return ResponseEntity.badRequest().body("This item is out of stock");
         }
+
+        if (quantity > product.getStock()) {
+            return ResponseEntity.badRequest().body("Not enough quantity in stock");
+        }
+
+        cartService.addItem(product, quantity, price);
+        return ResponseEntity.ok().body("Item added to cart");
     }
 
     @DeleteMapping("")
@@ -54,7 +53,7 @@ public class CartController {
     }
 
     @PutMapping("")
-    public String updateCartV2(@RequestParam int productID, @RequestParam int quantity) {
+    public ResponseEntity<String> updateCartV2(@RequestParam int productID, @RequestParam int quantity) {
 
         Product product = null;
         try {
@@ -64,14 +63,14 @@ public class CartController {
         }
 
         if (quantity > product.getStock()) {
-            return "Not enough quantity in stock";
+            return ResponseEntity.badRequest().body("Not enough quantity in stock");
         }
 
         if (cartService.updateCart(product, quantity)) {
-            return "Cart updated";
+            return ResponseEntity.ok().body("Cart updated");
         }
 
-        return "Error updating cart";
+        return ResponseEntity.badRequest().body("Error updating cart");
     }
 
     @GetMapping("")
@@ -80,11 +79,12 @@ public class CartController {
     }
 
     @PutMapping("/clear")
-    public String clearCart() {
-        return cartService.clearCart() ? "Clear Cart Successfully" : "Error clearing cart";
+    public ResponseEntity<String> clearCart() {
+        return cartService.clearCart() ? ResponseEntity.ok().body("Clear Cart Successfully")
+                : ResponseEntity.internalServerError().body("Error clearing cart");
     }
 
-    //Refund Cart
+    // Refund Cart
     @PostMapping("/refundItem")
     public String addRefundedItem(@RequestBody Product product) {
         int quantity = 1;
@@ -99,6 +99,7 @@ public class CartController {
     }
 
     // Old endpoints version below here
+
     @PostMapping("/add")
     public String addItem(@RequestBody Product product, @RequestParam int quantity, @RequestParam double price) {
         if (product.getStock() < 0) {
