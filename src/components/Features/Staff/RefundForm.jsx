@@ -45,15 +45,28 @@ function RefundForm() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const body = productPurities.map((purity) => ({
-      productID: purity.productID,
-      purity: parseInt(purity.purity),
-      amount: 1,
-    }));
+
+    const consolidatedPurities = productPurities.reduce((acc, current) => {
+      const foundIndex = acc.findIndex(
+        (item) =>
+          item.productID === current.productID && item.purity === parseInt(current.purity)
+      );
+      if (foundIndex >= 0) {
+        acc[foundIndex].amount += 1;
+      } else {
+        acc.push({
+          productID: current.productID,
+          purity: parseInt(current.purity),
+          amount: 1,
+        });
+      }
+      return acc;
+    }, []);
+
     try {
       const response = await axios.post(
         `http://localhost:8080/api/refunds/itemPurity?refundID=${id}`,
-        body
+        consolidatedPurities
       );
       console.log(response.data);
       toast.success("Created refund order successfully!!");

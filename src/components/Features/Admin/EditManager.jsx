@@ -40,12 +40,7 @@ function EditManager() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // // Validate contactInfo (assuming it's a phone number)
-    // const phoneRegex = /^[0-9]{10}$/; // Adjust this regex according to your phone number format
-    // if (!phoneRegex.test(manager.contactInfo)) {
-    //   alert("Invalid phone number format. Please enter a valid 10-digit phone number.");
-    //   return;
-    // }
+  
 
     console.log("Submitting form with data:", manager);
     try {
@@ -136,7 +131,7 @@ function EditManager() {
                 >
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
-                  <option value="Third gender">Third gender</option>
+                  <option value="Other">Other</option>
                 </select>
               </div>
               <div className="col-span-6 sm:col-span-3">
