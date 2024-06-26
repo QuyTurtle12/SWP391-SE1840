@@ -23,6 +23,4 @@ public interface IOrderService {
     boolean isNotNullStaff(int ID);
 
     boolean isNotNullCounter(int ID);
-    
-    boolean isNotNullCustomer(int ID);
 }

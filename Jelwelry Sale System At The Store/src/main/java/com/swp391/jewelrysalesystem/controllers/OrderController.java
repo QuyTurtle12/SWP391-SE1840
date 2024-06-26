@@ -19,6 +19,7 @@ import com.swp391.jewelrysalesystem.models.Order;
 import com.swp391.jewelrysalesystem.models.OrderDTO;
 import com.swp391.jewelrysalesystem.models.Product;
 import com.swp391.jewelrysalesystem.services.GenericService;
+import com.swp391.jewelrysalesystem.services.ICustomerService;
 import com.swp391.jewelrysalesystem.services.IOrderService;
 import com.swp391.jewelrysalesystem.services.IProductService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,19 +33,22 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class OrderController {
     private IOrderService orderService;
     private IProductService productService;
+    private ICustomerService customerService;
 
     @Autowired
-    public OrderController(IOrderService orderService, IProductService productService){
+    public OrderController(IOrderService orderService, IProductService productService, ICustomerService customerService){
         this.orderService = orderService;
         this.productService = productService;
+        this.customerService = customerService;
     }
+
     @PostMapping("/v2/orders")
     public ResponseEntity<String> createOrderV2(@RequestBody List<CartItem> cart,
                              @RequestParam double totalPrice,
                              @RequestParam int orderID,
                              @RequestParam int staffID,
                              @RequestParam int counterID,
-                             @RequestParam int customerID,
+                             @RequestParam String customerPhone,
                              @RequestParam double discountApplied) {
 
         if (orderService.isNotNullOrder(orderID)) {
@@ -55,10 +59,14 @@ public class OrderController {
             return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body("Staff ID " + staffID +" is not existing");
         }
 
-        if (!orderService.isNotNullCustomer(customerID)) {
-            return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body("Customer ID " + customerID +" is not existing");
+        Customer customer = customerService.getCustomerByPhone(customerPhone);
+
+        if (customer == null) {
+            return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body("Customer Phone " + customerPhone +" is not existing");
         }
 
+        int customerID = customer.getID();
+        
         if (!orderService.isNotNullCounter(counterID)) {
             return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body("Counter ID " + counterID +" is not existing");
         }

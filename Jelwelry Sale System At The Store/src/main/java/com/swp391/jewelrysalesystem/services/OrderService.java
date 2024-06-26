@@ -131,16 +131,6 @@ public class OrderService implements IOrderService{
     }
 
     @Override
-    public boolean isNotNullCustomer(int ID) {
-        try {
-            return customerService.isNotNullCustomer(ID) ? true : false;
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    @Override
     public List<OrderDTO> getOrderDetailList(int orderID) {
         Firestore dbFirestore =FirestoreClient.getFirestore();
         CollectionReference collectionReference = dbFirestore.collection("order").document(String.valueOf(orderID))
