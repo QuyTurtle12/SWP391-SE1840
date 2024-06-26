@@ -6,7 +6,7 @@ import { Button } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 
-function ProductList() {
+export default function ProductListManager() {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
   const navigate = useNavigate();
@@ -22,35 +22,14 @@ function ProductList() {
   }, []);
 
   const handleProductClick = (id) => {
-    navigate(`/productdetail/${id}`);
+    navigate(`/productdetail2/${id}`);
   };
 
-  const addToCart = (product) => {
-    if (product.stock <= 0) {
-      toast.error("Product is out of stock.");
-      return;
-    }
-    const isAlreadyInCart = cart.some((item) => item.id === product.id);
-    if (isAlreadyInCart) {
-      toast.error("Product is already in the cart.");
-      return;
-    }
-
-    axios
-      .post("http://localhost:8080/cart", product)
-      .then((response) => {
-        toast.success("Item added to cart:", response.data);
-        setCart([...cart, product]);
-      })
-      .catch((error) => {
-        console.error("Error adding item to cart:", error);
-      });
-  };
-
+ 
   return (
     <div className=" ">
      
-        <ManagerMenu />
+    <ManagerMenu/>
     <ToastContainer/>
 
       <div className="bg-white py-36">
@@ -86,16 +65,7 @@ function ProductList() {
                   </div>
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mt-4">{product.name}</h3>
-                <div className="flex items-center justify-between mt-4">
-                  <span className="text-gray-900 font-bold text-lg">{product.price.toLocaleString("en-US")} $</span>
-                  <button
-                    onClick={() => addToCart(product)}
-                    className="bg-gray-900 text-white py-2 px-4 rounded-full font-bold hover:bg-gray-500"
-                  >
-                    Add to Cart
-                  </button>
-
-                </div>
+                
                  {/* Display stock status */}
                  {product.stock <= 0 ? (
                   <span className="text-gray-400 font-bold mt-2">Out of Stock</span>
@@ -111,4 +81,4 @@ function ProductList() {
   );
 }
 
-export default ProductList;
+
