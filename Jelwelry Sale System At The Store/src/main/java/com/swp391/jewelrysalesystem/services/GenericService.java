@@ -103,7 +103,6 @@ public class GenericService<T> implements IGenericService<T> {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         CollectionReference collectionReference = dbFirestore.collection(collection);
 
-        // Retrieve query results
         ApiFuture<QuerySnapshot> querySnapshot = collectionReference.get();
 
         try {

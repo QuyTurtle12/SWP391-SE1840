@@ -20,4 +20,5 @@ public interface IGenericService<T> {
     boolean deleteObject(int documentID, String collection);
 
     boolean changeStatus(int ID, String collection, Class<T> clazz);
+
 }

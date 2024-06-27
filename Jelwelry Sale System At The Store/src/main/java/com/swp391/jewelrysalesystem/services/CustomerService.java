@@ -103,4 +103,11 @@ public class CustomerService implements ICustomerService {
             return null;
         }
     }
+
+
+    @Override
+    public boolean saveCustomer(Customer customer) {
+        return genericService.saveObject(customer, "customer", customer.getID());
+    }
+
 }

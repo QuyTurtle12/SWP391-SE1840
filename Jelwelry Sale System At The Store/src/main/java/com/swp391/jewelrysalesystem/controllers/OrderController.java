@@ -18,10 +18,13 @@ import com.swp391.jewelrysalesystem.models.Customer;
 import com.swp391.jewelrysalesystem.models.Order;
 import com.swp391.jewelrysalesystem.models.OrderDTO;
 import com.swp391.jewelrysalesystem.models.Product;
+import com.swp391.jewelrysalesystem.models.User;
 import com.swp391.jewelrysalesystem.services.GenericService;
 import com.swp391.jewelrysalesystem.services.ICustomerService;
 import com.swp391.jewelrysalesystem.services.IOrderService;
 import com.swp391.jewelrysalesystem.services.IProductService;
+import com.swp391.jewelrysalesystem.services.IUserService;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,12 +37,14 @@ public class OrderController {
     private IOrderService orderService;
     private IProductService productService;
     private ICustomerService customerService;
+    private IUserService userService;
 
     @Autowired
-    public OrderController(IOrderService orderService, IProductService productService, ICustomerService customerService){
+    public OrderController(IOrderService orderService, IProductService productService, ICustomerService customerService, IUserService userService){
         this.orderService = orderService;
         this.productService = productService;
         this.customerService = customerService;
+        this.userService = userService;
     }
 
     @PostMapping("/v2/orders")
@@ -60,7 +65,7 @@ public class OrderController {
         }
 
         Customer customer = customerService.getCustomerByPhone(customerPhone);
-
+        
         if (customer == null) {
             return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body("Customer Phone " + customerPhone +" is not existing");
         }
@@ -122,8 +127,18 @@ public class OrderController {
                 orderMap.put("totalPrice", order.getTotalPrice());
                 orderMap.put("discountApplied", order.getDiscountApplied());
 
-                String customerName = new GenericService<Customer>().getByField(order.getCustomerID(), "id", "customer", Customer.class).getName();
+                Customer customer = customerService.getCustomer(order.getCustomerID());
+                String customerName = customer.getName();
+                String customerPhone = customer.getContactInfo();
                 orderMap.put("customerName", customerName);
+                orderMap.put("customerPhone", customerPhone);
+
+                User staff = userService.getUserByField(order.getStaffID(), "id", "user");
+                String staffName = "N/A";
+                if (staff != null) {
+                    staffName = staff.getFullName();
+                }
+                orderMap.put("staffName", staffName);
 
                 responseList.add(orderMap);
             }

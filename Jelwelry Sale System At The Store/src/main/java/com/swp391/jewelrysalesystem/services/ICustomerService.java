@@ -6,6 +6,8 @@ import java.util.concurrent.ExecutionException;
 import com.swp391.jewelrysalesystem.models.Customer;
 
 public interface ICustomerService {
+    boolean saveCustomer(Customer customer);
+
     String getPhoneNumber(int ID);
 
     List<Customer> getCustomerList();
