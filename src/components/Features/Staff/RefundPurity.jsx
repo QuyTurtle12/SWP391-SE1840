@@ -38,7 +38,7 @@ function RefundPurity() {
      
     
  
-    <div className="container h-screen">
+    <div className="container h-full">
     <table className="border text-center border-black min-w-full divide-y divide-gray-500 ">
             <thead>
               <tr>

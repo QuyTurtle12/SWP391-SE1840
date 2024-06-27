@@ -33,7 +33,7 @@ function ViewOrderList() {
             <thead>
               <tr>
                 <th className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
-                  OrderID{" "}
+                  Order{" "}
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                   Customer Name
@@ -48,7 +48,7 @@ function ViewOrderList() {
                   StaffID{" "}
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
-                  CounterID
+                  Counter
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                   total Price{" "}

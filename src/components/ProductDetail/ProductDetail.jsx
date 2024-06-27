@@ -11,7 +11,7 @@ export default function ProductDetail() {
         aget(`/products/${id}`).then(res => {
             setData(res.data)
         })
-    }, [])
+    })
 
     return (
         <div className='product-detail'>

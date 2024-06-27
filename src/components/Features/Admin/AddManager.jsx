@@ -31,7 +31,7 @@ const AddManager = () => {
     try {
       console.log("Submitting data:", data);
       const response = await axios.post(
-        "http://localhost:8080/api/account/MANAGER/register",
+        "http://localhost:8080/api/v2/accounts/MANAGER",
         null,
         {
           params: data,
@@ -229,7 +229,7 @@ const AddManager = () => {
               <div className="mt-6">
                 <button
                   type="submit"
-                  className="  w-full py-2 font-medium text-white bg-green-500 rounded-md hover:bg-green-300 focus:outline-none focus:shadow-outline-blue active:bg-red-600 transition duration-150 ease-in-out"
+                  className="  w-full py-2 font-medium text-white bg-green-500 rounded-md hover:bg-green-400 focus:outline-none focus:shadow-outline-blue active:bg-red-600 transition duration-150 ease-in-out"
                 >
                   Create Manager
                 </button>
