@@ -2,9 +2,9 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import { Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Button, Form, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+
 export default function ProductDetailManager() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -22,17 +22,13 @@ export default function ProductDetailManager() {
     category: "",
     status: "",
   });
-  
-  const updateProductClick = (id) => {
-    navigate(`/update-product/:id`);
-  };
+
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         const response = await axios.get(
           `http://localhost:8080/api/v2/products/${id}`
         );
-        console.log("Fetched data success:", response.data);
         setProduct(response.data);
       } catch (error) {
         console.error("Error fetching product data", error);
@@ -40,10 +36,32 @@ export default function ProductDetailManager() {
     };
 
     fetchProduct();
-  }, []);
+  }, [id]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setProduct((prevProduct) => ({ ...prevProduct, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.put(`http://localhost:8080/api/v2/products/${id}?name=${product.name}&price=${product.price}
+      &refundPrice=${product.refundPrice}&description=${product.description}
+      &goldWeight=${product.goldWeight}&laborCost=${product.laborCost}
+      &stoneCost=${product.stoneCost}&stock=${product.stock}
+      &category=${product.category}&promotionID=${product.promotionID}&img=${product.img}`);
+      toast.success("Product updated successfully!");
+      navigate(`/productlist2`);
+    } catch (error) {
+      console.error("Error updating product", error);
+      toast.error("Failed to update product.");
+    }
+  };
+
   return (
-    <div className="h-screen">
-      <ToastContainer/>
+    <div className="h-full">
+      <ToastContainer />
       <div className="bg-gray-100 py-8 h-full">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row -mx-4">
@@ -60,98 +78,106 @@ export default function ProductDetailManager() {
               <h2 className="text-4xl font-bold text-gray-800 mb-2">
                 {product.name}
               </h2>
-              <div className="mt-20 mb-4">
-                <div className="mr-4">
-                  <span className="text-2xl font-bold text-gray-700">
-                    ID Product:
-                  </span>
-                  <span className="text-gray-800 text-xl ml-6">
-                    {product.id}
-                  </span>
-                </div>
-                <div className="mr-4">
-                  <span className="text-2xl font-bold text-gray-700">
-                    Price:
-                  </span>
-                  <span className="text-gray-800 text-xl ml-6">
-                    {product.price.toLocaleString("en-US")}$
-                  </span>
-                </div>
-                <div className="mr-4">
-                  <span className="text-2xl font-bold text-gray-700">
-                    Refund Price:
-                  </span>
-                  <span className="text-gray-800 text-xl ml-6">
-                    {product.refundPrice.toLocaleString("en-US")}$
-                  </span>
-                </div>
-                <div className="mr-4">
-                  <span className="text-2xl font-bold text-gray-700">
-                    Gold Weight:
-                  </span>
-                  <span className="text-gray-800 text-xl ml-6">
-                    {product.goldWeight}
-                  </span>
-                </div>
-                <div className="mr-4">
-                  <span className="text-2xl font-bold text-gray-700">
-                    Labor Cost:
-                  </span>
-                  <span className="text-gray-800 text-xl ml-6">
-                    {product.laborCost.toLocaleString("en-US")}$
-                  </span>
-                </div>
-                <div className="mr-4">
-                  <span className="text-2xl font-bold text-gray-700">
-                    Stone Cost:
-                  </span>
-                  <span className="text-gray-800 text-xl ml-6">
-                    {product.stoneCost.toLocaleString("en-US")}$
-                  </span>
-                </div>
-                <div className="mr-4">
-                  <span className="text-2xl font-bold text-gray-700">
-                    Promotion ID:
-                  </span>
-                  <span className="text-gray-800 text-xl ml-6">
-                    {product.promotionID}
-                  </span>
-                </div>
-                <div className="mr-4">
-                  <span className="text-2xl font-bold text-gray-700">
-                    Category:
-                  </span>
-                  <span className="text-gray-800 text-xl ml-6">
-                    {product.category}
-                  </span>
-                </div>
-                <div>
-                  <span className="font-bold text-2xl text-gray-700">
-                    Stock:
-                  </span>
-                  <span className="text-gray-800 text-xl ml-6">
-                    {product.stock} pcs
-                  </span>
-                </div>
-              </div>
-              <div className="w-1/2 px-2">
-             <Button onClick={() => updateProductClick(product.id)}>
-               Update
-             </Button>
-              </div>
-          
+              <Form onSubmit={handleSubmit}>
+                <Form.Group as={Col} controlId="formGridName">
+                  <Form.Label>Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="name"
+                    value={product.name}
+                    onChange={handleInputChange}
+                  />
+                </Form.Group>
+                <Form.Group as={Col} controlId="formGridPrice">
+                  <Form.Label>Price</Form.Label>
+                  <Form.Control
+                    type="number"
+                    name="price"
+                    value={product.price}
+                    onChange={handleInputChange}
+                  />
+                </Form.Group>
+                <Form.Group as={Col} controlId="formGridRefundPrice">
+                  <Form.Label>Refund Price</Form.Label>
+                  <Form.Control
+                    type="number"
+                    name="refundPrice"
+                    value={product.refundPrice}
+                    onChange={handleInputChange}
+                  />
+                </Form.Group>
+                <Form.Group as={Col} controlId="formGridGoldWeight">
+                  <Form.Label>Gold Weight</Form.Label>
+                  <Form.Control
+                    type="number"
+                    name="goldWeight"
+                    value={product.goldWeight}
+                    onChange={handleInputChange}
+                  />
+                </Form.Group>
+                <Form.Group as={Col} controlId="formGridLaborCost">
+                  <Form.Label>Labor Cost</Form.Label>
+                  <Form.Control
+                    type="number"
+                    name="laborCost"
+                    value={product.laborCost}
+                    onChange={handleInputChange}
+                  />
+                </Form.Group>
+                <Form.Group as={Col} controlId="formGridStoneCost">
+                  <Form.Label>Stone Cost</Form.Label>
+                  <Form.Control
+                    type="number"
+                    name="stoneCost"
+                    value={product.stoneCost}
+                    onChange={handleInputChange}
+                  />
+                </Form.Group>
+                <Form.Group as={Col} controlId="formGridStock">
+                  <Form.Label>Stock</Form.Label>
+                  <Form.Control
+                    type="number"
+                    name="stock"
+                    value={product.stock}
+                    onChange={handleInputChange}
+                  />
+                </Form.Group>
+                <Form.Group as={Col} controlId="formGridPromotionID">
+                  <Form.Label>Promotion ID</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="promotionID"
+                    value={product.promotionID}
+                    onChange={handleInputChange}
+                  />
+                </Form.Group>
+                <Form.Group as={Col} controlId="formGridCategory">
+                  <Form.Label>Category</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="category"
+                    value={product.category}
+                    onChange={handleInputChange}
+                  />
+                </Form.Group>
+                <Form.Group as={Col} controlId="formGridDescription">
+                  <Form.Label>Description</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={3}
+                    name="description"
+                    value={product.description}
+                    onChange={handleInputChange}
+                  />
+                </Form.Group>
+                <Button variant="primary" type="submit" className="mt-4">
+                  Update Product
+                </Button>
+              </Form>
             </div>
-          </div>
-          <div className="mt-20">
-            <span className="font-bold text-2xl text-gray-700">
-              Product Description:
-            </span>
-            <p className="text-gray-800 text-xl ml-6">{product.description}</p>
           </div>
         </div>
       </div>
     </div>
   );
 }
-
-

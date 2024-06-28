@@ -1,5 +1,5 @@
 import "./App.scss";
-import UpdateProduct from "./components/Features/Manager/UpdateProduct";
+
 import Login from "./components/Login/Login";
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
@@ -57,7 +57,7 @@ function App() {
         <Route path="/staff" element={<Staff />} />
         <Route path="/manager" element={<Manager />} />
         <Route path="/products/:id" element={<ProductDetail />} />
-        <Route path="/update-product/:id" element={<UpdateProduct />} />
+       
         <Route path="/edit-staff/:id" element={<EditStaff />} />
 
         <Route path="/edit-manager/:id" element={<EditManager />} />
