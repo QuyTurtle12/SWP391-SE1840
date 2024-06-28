@@ -5,6 +5,7 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { Button } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function ProductListManager() {
   const [products, setProducts] = useState([]);
@@ -22,15 +23,27 @@ export default function ProductListManager() {
   }, []);
 
   const handleProductClick = (id) => {
-    navigate(`/productdetail2/${id}`);
+    navigate(`/productlist2/${id}`);
   };
 
- 
+  const handleDeleteProduct = async (id) => {
+    try {
+      const response = await axios.delete(`http://localhost:8080/api/v2/products/${id}`);
+      if (response.status === 200) {
+        toast.success("Product deleted successfully!");
+        setProducts(products.filter((product) => product.id !== id));
+      } else {
+        toast.error(`Failed to delete product. Error: ${response.data}`);
+      }
+    } catch (error) {
+      toast.error(`Failed to delete product. Error: ${error.response ? error.response.data : error.message}`);
+    }
+  };
+
   return (
     <div className=" ">
-     
-    <ManagerMenu/>
-    <ToastContainer/>
+      <ManagerMenu />
+      <ToastContainer />
 
       <div className="bg-white py-36">
         <div className="container mx-auto px-4">
@@ -66,12 +79,20 @@ export default function ProductListManager() {
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mt-4">{product.name}</h3>
                 
-                 {/* Display stock status */}
-                 {product.stock <= 0 ? (
+                {/* Display stock status */}
+                {product.stock <= 0 ? (
                   <span className="text-gray-400 font-bold mt-2">Out of Stock</span>
                 ) : (
                   <span className="text-black font-bold mt-2">In Stock: {product.stock}</span>
                 )}
+
+                {/* Delete button */}
+                <button
+                  onClick={() => handleDeleteProduct(product.id)}
+                  className="mt-4 bg-red-500 text-white py-2 px-4 rounded-full font-bold hover:bg-red-700"
+                >
+                  Delete Product
+                </button>
               </div>
             ))}
           </div>
@@ -80,5 +101,3 @@ export default function ProductListManager() {
     </div>
   );
 }
-
-
