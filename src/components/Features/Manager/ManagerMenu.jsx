@@ -30,6 +30,17 @@ export default function ManagerMenu() {
             </Button>
           </li>
           <li className=" px-8 text-nowrap ">
+            <Button
+              component={Link}
+              to="/add-product"
+              className=" px-8 rounded-sm text-black font-medium"
+            >
+              {" "}
+              <h2 className="font-bold">Add Product</h2>{" "}
+            </Button>
+          </li>
+          
+          <li className=" px-8 text-nowrap ">
             <Button className=" px-8 rounded-sm text-black font-medium">
               {" "}
               <h2 className="font-bold">View Promotion</h2>{" "}

@@ -24,7 +24,7 @@ import ViewStaffList from "./components/Features/Manager/ViewStaffList";
 import EditStaff from "./components/Features/Manager/EditStaff";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import AddProduct from "./components/Features/Manager/AddProduct";
 import ProductDetailManager from "./components/Features/Manager/ProductDetailManager";
 import ProductDetailStaff from "./components/Features/Staff/ProductDetailStaff";
 import ViewOrderList from "./components/Features/Staff/ViewOrderList";
@@ -57,7 +57,7 @@ function App() {
         <Route path="/staff" element={<Staff />} />
         <Route path="/manager" element={<Manager />} />
         <Route path="/products/:id" element={<ProductDetail />} />
-       
+       <Route path="/add-product" element={<AddProduct />} />
         <Route path="/edit-staff/:id" element={<EditStaff />} />
 
         <Route path="/edit-manager/:id" element={<EditManager />} />

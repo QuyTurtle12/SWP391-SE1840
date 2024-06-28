@@ -46,16 +46,32 @@ export default function ProductDetailManager() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:8080/api/v2/products/${id}?name=${product.name}&price=${product.price}
-      &refundPrice=${product.refundPrice}&description=${product.description}
-      &goldWeight=${product.goldWeight}&laborCost=${product.laborCost}
-      &stoneCost=${product.stoneCost}&stock=${product.stock}
-      &category=${product.category}&promotionID=${product.promotionID}&img=${product.img}`);
+      const params = new URLSearchParams({
+        name: product.name,
+        price: product.price,
+        refundPrice: product.refundPrice,
+        description: product.description,
+        goldWeight: product.goldWeight,
+        laborCost: product.laborCost,
+        stoneCost: product.stoneCost,
+        stock: product.stock,
+        categoryID: product.category,
+        promotionID: product.promotionID,
+        img: product.img,
+      });
+  
+      await axios.put(`http://localhost:8080/api/v2/products/${id}?${params.toString()}`, null, {
+        headers: {
+          'Content-Type': 'application/json',
+          // Include any other necessary headers like authentication tokens here
+        },
+      });
+  
       toast.success("Product updated successfully!");
       navigate(`/productlist2`);
     } catch (error) {
       console.error("Error updating product", error);
-      toast.error("Failed to update product.");
+      toast.error("Failed to update product. " + (error.response ? error.response.data : ""));
     }
   };
 
