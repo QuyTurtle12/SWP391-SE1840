@@ -11,6 +11,8 @@ public interface ICategoryService {
 
     Category getCategory(int ID);
 
+    Category getCategoryByName(String name);
+
     boolean removeCategory(int ID);
 
     boolean isNotNullCategory(int ID);

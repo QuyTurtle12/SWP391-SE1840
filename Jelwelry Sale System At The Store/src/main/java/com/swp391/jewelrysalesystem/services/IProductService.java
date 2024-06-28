@@ -22,6 +22,6 @@ public interface IProductService {
 
     boolean isNotNullProduct(int ID);
 
-    String isGeneralValidated(String name, int categoryID, double price, double refundPrice, 
+    String isGeneralValidated(String name, double price, double refundPrice, 
     double goldWeight, double laborCost, double stoneCost, int stock, String img, int promotionID);
 }

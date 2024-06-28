@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.swp391.jewelrysalesystem.models.Customer;
 import com.swp391.jewelrysalesystem.services.ICustomerService;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @RestController
 @RequestMapping("/api")

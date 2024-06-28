@@ -60,4 +60,14 @@ public class CategoryService implements ICategoryService{
         return true;
     }
 
+    @Override
+    public Category getCategoryByName(String name) {
+        try {
+            return genericService.getByField(name, "name", "category", Category.class);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }
