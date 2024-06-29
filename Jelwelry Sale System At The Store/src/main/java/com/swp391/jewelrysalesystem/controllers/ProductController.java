@@ -158,7 +158,7 @@ public class ProductController {
                 String categoryName = categoryService.getCategory(product.getCategoryID()).getName();
 
                 Map<String, Object> productMap = new HashMap<>();
-                productMap.put("ID", product.getID());
+                productMap.put("id", product.getID());
                 productMap.put("img", product.getImg());
                 productMap.put("name", product.getName());
                 productMap.put("price", product.getPrice());
@@ -191,7 +191,7 @@ public class ProductController {
             String categoryName = categoryService.getCategory(product.getCategoryID()).getName();
             // Create a map to hold the product details
             Map<String, Object> productMap = new HashMap<>();
-            productMap.put("ID", product.getID());
+            productMap.put("id", product.getID());
             productMap.put("img", product.getImg());
             productMap.put("name", product.getName());
             productMap.put("price", product.getPrice());
@@ -239,7 +239,7 @@ public class ProductController {
                 String categoryName = categoryService.getCategory(product.getCategoryID()).getName();
 
                 Map<String, Object> productMap = new HashMap<>();
-                productMap.put("ID", product.getID());
+                productMap.put("id", product.getID());
                 productMap.put("img", product.getImg());
                 productMap.put("name", product.getName());
                 productMap.put("price", product.getPrice());
@@ -277,7 +277,7 @@ public class ProductController {
                 String categoryName = categoryService.getCategory(product.getCategoryID()).getName();
 
                 Map<String, Object> productMap = new HashMap<>();
-                productMap.put("ID", product.getID());
+                productMap.put("id", product.getID());
                 productMap.put("img", product.getImg());
                 productMap.put("name", product.getName());
                 productMap.put("price", product.getPrice());
@@ -318,7 +318,7 @@ public class ProductController {
                 String categoryName = categoryService.getCategory(product.getCategoryID()).getName();
 
                 Map<String, Object> productMap = new HashMap<>();
-                productMap.put("ID", product.getID());
+                productMap.put("id", product.getID());
                 productMap.put("img", product.getImg());
                 productMap.put("name", product.getName());
                 productMap.put("price", product.getPrice());
