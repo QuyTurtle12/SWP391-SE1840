@@ -23,7 +23,7 @@ export default function ProductListManager() {
   }, []);
 
   const handleProductClick = (id) => {
-    navigate(`/productlist2/${id}`);
+    navigate(`/productdetail2/${id}`);
   };
 
   const handleDeleteProduct = async (id) => {
@@ -73,7 +73,7 @@ export default function ProductListManager() {
                       onClick={() => handleProductClick(product.id)}
                       className="bg-white text-gray-900 py-2 px-6 rounded-full font-bold hover:bg-gray-300"
                     >
-                      View Product
+                      Update Product
                     </button>
                   </div>
                 </div>
@@ -89,7 +89,7 @@ export default function ProductListManager() {
                 {/* Delete button */}
                 <button
                   onClick={() => handleDeleteProduct(product.id)}
-                  className="mt-4 bg-red-500 text-white py-2 px-4 rounded-full font-bold hover:bg-red-700"
+                  className="mt-2 bg-cyan-600 text-white py-2 px-2 rounded-full font-bold "
                 >
                   Delete Product
                 </button>
