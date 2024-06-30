@@ -1,5 +1,5 @@
 import "./App.scss";
-
+import ViewCategory from "./components/Features/Manager/ViewCategoryList";
 import Login from "./components/Login/Login";
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
@@ -36,6 +36,7 @@ import ViewOrderRefund from "./components/Features/Staff/ViewOrderRefund";
 import RefundDetail from "./components/Features/Staff/RefundDetail";
 import RefundPurity from "./components/Features/Staff/RefundPurity";
 import ProductListManager from "./components/Features/Manager/ProductList-manager";
+import AddCategory from "./components/Features/Manager/AddCategory";
 function App() {
   return (
     <div className="overflow-hidden">
@@ -59,7 +60,7 @@ function App() {
         <Route path="/products/:id" element={<ProductDetail />} />
        <Route path="/add-product" element={<AddProduct />} />
         <Route path="/edit-staff/:id" element={<EditStaff />} />
-
+        <Route path="/view-category" element={<ViewCategory />} />
         <Route path="/edit-manager/:id" element={<EditManager />} />
         <Route path="/viewcart" element={<ViewCart />} />
         <Route path="/productlist" element={<ProductList />} />
@@ -74,6 +75,7 @@ function App() {
         <Route path="/refund-viewcart" element={<RefundViewCart />} />
         <Route path="/refund-purity/:id/:productID" element={<RefundPurity />} />
         <Route path="/order-refund" element={<ViewOrderRefund />} />
+        <Route path="/add-category" element={<AddCategory />} />
       </Routes>
       <Routes></Routes>
       <Footer />
