@@ -9,7 +9,7 @@ export const apost = async (path, data) => {
     return axios.post(url, data, {
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            // 'Authorization': `Bearer ${token}`
         },
     })
         .then(response => {

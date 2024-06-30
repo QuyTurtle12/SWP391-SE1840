@@ -1,4 +1,5 @@
 import "./App.scss";
+
 import Login from "./components/Login/Login";
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
@@ -23,8 +24,8 @@ import ViewStaffList from "./components/Features/Manager/ViewStaffList";
 import EditStaff from "./components/Features/Manager/EditStaff";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-
+import AddProduct from "./components/Features/Manager/AddProduct";
+import ProductDetailManager from "./components/Features/Manager/ProductDetailManager";
 import ProductDetailStaff from "./components/Features/Staff/ProductDetailStaff";
 import ViewOrderList from "./components/Features/Staff/ViewOrderList";
 import OrderDetail from "./components/Features/Staff/OrderDetail";
@@ -34,6 +35,7 @@ import RefundForm from "./components/Features/Staff/RefundForm";
 import ViewOrderRefund from "./components/Features/Staff/ViewOrderRefund";
 import RefundDetail from "./components/Features/Staff/RefundDetail";
 import RefundPurity from "./components/Features/Staff/RefundPurity";
+import ProductListManager from "./components/Features/Manager/ProductList-manager";
 function App() {
   return (
     <div className="overflow-hidden">
@@ -55,14 +57,16 @@ function App() {
         <Route path="/staff" element={<Staff />} />
         <Route path="/manager" element={<Manager />} />
         <Route path="/products/:id" element={<ProductDetail />} />
-
+       <Route path="/add-product" element={<AddProduct />} />
         <Route path="/edit-staff/:id" element={<EditStaff />} />
 
         <Route path="/edit-manager/:id" element={<EditManager />} />
         <Route path="/viewcart" element={<ViewCart />} />
         <Route path="/productlist" element={<ProductList />} />
+        <Route path="/productlist2" element={<ProductListManager />} />
         <Route path="/order-list" element={<ViewOrderList />} />
         <Route path="/productdetail/:id" element={<ProductDetailStaff />} />
+        <Route path="/productdetail2/:id" element={<ProductDetailManager />} />
         <Route path="/orderdetail/:id" element={<OrderDetail />} />
         <Route path="/refund-detail/:id" element={<RefundDetail />} />
         <Route path="/refund-form/:id" element={<RefundForm />} />
