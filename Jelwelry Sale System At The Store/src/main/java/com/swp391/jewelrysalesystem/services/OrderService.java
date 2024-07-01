@@ -3,8 +3,11 @@ package com.swp391.jewelrysalesystem.services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.regex.Pattern;
 
+import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.google.api.core.ApiFuture;
@@ -19,7 +22,7 @@ import com.swp391.jewelrysalesystem.models.OrderDTO;
 import com.swp391.jewelrysalesystem.models.User;
 
 @Service
-public class OrderService implements IOrderService{
+public class OrderService implements IOrderService {
 
     private IGenericService<Order> genericService;
     private ICustomerService customerService;
@@ -27,13 +30,13 @@ public class OrderService implements IOrderService{
     private ICounterService counterService;
 
     @Autowired
-    public OrderService(IGenericService<Order> genericService, ICustomerService customerService, IUserService userService, ICounterService counterService){
+    public OrderService(IGenericService<Order> genericService, ICustomerService customerService,
+            IUserService userService, ICounterService counterService) {
         this.genericService = genericService;
         this.customerService = customerService;
         this.userService = userService;
         this.counterService = counterService;
     }
-
 
     @Override
     public List<Order> getOrderList() {
@@ -76,7 +79,7 @@ public class OrderService implements IOrderService{
             default:
                 break;
         }
-        
+
         return searchedOrderList;
     }
 
@@ -89,7 +92,7 @@ public class OrderService implements IOrderService{
     public boolean saveOrderDTO(OrderDTO orderDTO) {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         DocumentReference orderRef = dbFirestore.collection("order").document(String.valueOf(orderDTO.getOrderID()))
-        .collection("orderDTO").document(String.valueOf(orderDTO.getProductID()));
+                .collection("orderDTO").document(String.valueOf(orderDTO.getProductID()));
 
         try {
             ApiFuture<WriteResult> future = orderRef.set(orderDTO);
@@ -132,9 +135,9 @@ public class OrderService implements IOrderService{
 
     @Override
     public List<OrderDTO> getOrderDetailList(int orderID) {
-        Firestore dbFirestore =FirestoreClient.getFirestore();
+        Firestore dbFirestore = FirestoreClient.getFirestore();
         CollectionReference collectionReference = dbFirestore.collection("order").document(String.valueOf(orderID))
-        .collection("orderDTO");
+                .collection("orderDTO");
 
         try {
             ApiFuture<QuerySnapshot> future = collectionReference.get();
@@ -146,5 +149,33 @@ public class OrderService implements IOrderService{
             return null;
         }
     }
-    
+
+    @Override
+    public String isGeneralValidated(int staffID, int counterID, String customerGender, String customerName,
+            double discountApplied) {
+
+        if (!isNotNullStaff(staffID)) {
+            return "Staff ID " + staffID + " is not existing";
+        }
+
+        if (!isNotNullCounter(counterID)) {
+            return "Counter ID " + counterID + " is not existing";
+        }
+
+        if (!customerGender.equals("Male") && !customerGender.equals("Female") && !customerGender.equals("Other")) {
+            return "Incorrect gender format";
+        }
+
+        if (!Pattern.matches("^[a-zA-Z]+$", customerName)) {
+            return "Incorrect name format! Must contain only alphabetic characters";
+        }
+
+        // For example 0.1 stand for 10%
+        if (discountApplied < 0 || discountApplied > 1) {
+            return "Incorrect discount input! input must be in range between 0 and 1";
+        }
+
+        return null;
+    }
+
 }
