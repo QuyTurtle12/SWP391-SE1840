@@ -13,7 +13,8 @@ function ViewCart() {
   const [counterID, setCounterID] = useState(""); // Example counter ID, should be fetched dynamically
   const [customerPhone, setCustomerPhone] = useState(""); // Example customer ID, should be fetched dynamically
   const [discountApplied, setDiscountApplied] = useState(0); // Example discount
-
+  const [customerGender,setCustomerGender ] = useState("");
+  const [customerName,setCustomerName ] = useState("");
   useEffect(() => {
     fetchCartData();
   }, []);
@@ -78,7 +79,7 @@ function ViewCart() {
 
     axios
       .post(
-        `http://localhost:8080/api/v2/orders?totalPrice=${subtotal}&orderID=${orderID}&staffID=${staffID}&counterID=${counterID}&customerPhone=${customerPhone}&discountApplied=${discountApplied}`,
+        `http://localhost:8080/api/v2/orders?totalPrice=${subtotal}&orderID=${orderID}&staffID=${staffID}&counterID=${counterID}&customerPhone=${customerPhone}&customerName=${customerName}&customerGender=${customerGender}&discountApplied=${discountApplied}`,
         cart
       )
       .then((response) => {
@@ -319,6 +320,32 @@ function ViewCart() {
                   readOnly
                   className="bg-gray-100 border border-gray-300 text-gray-700 py-2 px-4 rounded" // Tailwind CSS classes
                 />
+              </Form.Group>
+
+              <Form.Group controlId="formCustomerName">
+                <Form.Label>Customer Name</Form.Label>
+                <Form.Control
+                  required
+                  placeholder="Enter customer Name"
+                  value={customerName}
+                  onChange={(e) => setCustomerName(e.target.value)}
+                />
+              </Form.Group>
+
+              <Form.Group controlId="formCustomerGender">
+                <Form.Label>Customer Gender</Form.Label>
+                <Form.Control
+                as="select"
+                  required
+                  placeholder="Enter customer gender"
+                  value={customerGender}
+                  onChange={(e) => setCustomerGender(e.target.value)}
+                >
+                <option value="" disabled>Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+                </Form.Control>
               </Form.Group>
 
               <Form.Group controlId="formCustomerPhone">

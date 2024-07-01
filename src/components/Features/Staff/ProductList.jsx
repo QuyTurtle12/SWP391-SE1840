@@ -10,6 +10,7 @@ function ProductList() {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
   const navigate = useNavigate();
+  const [searchInput, setSearchInput] = useState("");
 
   useEffect(() => {
     axios
@@ -23,6 +24,18 @@ function ProductList() {
     fetchCartData();
   }, []);
 
+  const searchProduct = () =>{
+    axios
+    .get(`http://localhost:8080/api/v2/products/search?input=${searchInput}&filter=ByName`)
+    .then((respone) =>{
+      setProducts(respone.data);
+   
+    })
+    .catch((error) => console.error("Error searching products:", error));
+  }
+  const handleSearchInputChange = (event) => {
+    setSearchInput(event.target.value);
+  };
   const fetchCartData = () => {
     axios
       .get("http://localhost:8080/cart")
@@ -82,6 +95,21 @@ function ProductList() {
               </div>
             </div>
           </h2>
+          <div className="mb-8">
+            <input
+              type="text"
+              value={searchInput}
+              onChange={handleSearchInputChange}
+              placeholder="Search products..."
+              className="border p-2 mr-2"
+            />
+            <button
+              onClick={searchProduct}
+              className="bg-gray-900 text-white py-2 px-4 rounded-full font-bold hover:bg-gray-500"
+            >
+              Search
+            </button>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {products.map((product) => (
               <div key={product.id} className="bg-white rounded-lg shadow-lg p-8">

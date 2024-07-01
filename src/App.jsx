@@ -57,14 +57,14 @@ function App() {
         <Route path="/staff" element={<Staff />} />
         <Route path="/manager" element={<Manager />} />
         <Route path="/products/:id" element={<ProductDetail />} />
-       <Route path="/add-product" element={<AddProduct />} />
+        <Route path="/add-product" element={<AddProduct />} />
         <Route path="/edit-staff/:id" element={<EditStaff />} />
-
         <Route path="/edit-manager/:id" element={<EditManager />} />
         <Route path="/viewcart" element={<ViewCart />} />
         <Route path="/productlist" element={<ProductList />} />
         <Route path="/productlist2" element={<ProductListManager />} />
         <Route path="/order-list" element={<ViewOrderList />} />
+        <Route path="/order-list/:cusphone" element={<ViewOrderList />} />
         <Route path="/productdetail/:id" element={<ProductDetailStaff />} />
         <Route path="/productdetail2/:id" element={<ProductDetailManager />} />
         <Route path="/orderdetail/:id" element={<OrderDetail />} />

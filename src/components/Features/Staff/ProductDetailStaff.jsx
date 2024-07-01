@@ -146,7 +146,7 @@ function ProductDetailStaff() {
                   <span className="text-2xl font-bold text-gray-700">
                     Category:
                     <span className="text-gray-800 text-xl ml-6">
-                    {product.categoryID}
+                    {product.categoryName}
                   </span>
                   </span>
                   <span className="text-gray-800 text-xl ml-6">
