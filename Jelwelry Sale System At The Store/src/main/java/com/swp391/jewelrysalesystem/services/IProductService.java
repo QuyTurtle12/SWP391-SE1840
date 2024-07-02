@@ -24,4 +24,6 @@ public interface IProductService {
 
     String isGeneralValidated(String name, double price, double refundPrice, 
     double goldWeight, double laborCost, double stoneCost, int stock, String img, int promotionID);
+
+    int generateID();
 }

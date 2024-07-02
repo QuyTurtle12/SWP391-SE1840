@@ -178,4 +178,9 @@ public class OrderService implements IOrderService {
         return null;
     }
 
+    @Override
+    public int generateID() {
+        return genericService.generateID("order", Order.class, Order::getID);
+    }
+
 }

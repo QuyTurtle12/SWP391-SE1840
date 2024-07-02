@@ -14,7 +14,7 @@ public class CounterService implements ICounterService {
     private IGenericService<Counter> genericService;
 
     @Autowired
-    public CounterService(IGenericService<Counter> genericService){
+    public CounterService(IGenericService<Counter> genericService) {
         this.genericService = genericService;
     }
 
@@ -57,5 +57,10 @@ public class CounterService implements ICounterService {
     public boolean isNotNullCounter(int ID) {
         return getCounter(ID) != null ? true : false;
     }
-    
+
+    @Override
+    public int generateID() {
+        return genericService.generateID("counter", Counter.class, Counter::getID);
+    }
+
 }

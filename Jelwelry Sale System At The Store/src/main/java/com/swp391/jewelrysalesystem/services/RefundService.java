@@ -172,4 +172,9 @@ public class RefundService implements IRefundService {
             return null;
         }
     }
+
+    @Override
+    public int generateID() {
+        return genericService.generateID("refund", Refund.class, Refund::getID);
+    }
 }

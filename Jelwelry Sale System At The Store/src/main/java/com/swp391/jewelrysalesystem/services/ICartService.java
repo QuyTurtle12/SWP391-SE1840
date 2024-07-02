@@ -6,19 +6,19 @@ import com.swp391.jewelrysalesystem.models.CartItem;
 import com.swp391.jewelrysalesystem.models.Product;
 
 public interface ICartService {
-    public void addItem(Product product, int quantity, double price);
+    void addItem(String userId, Product product, int quantity, double price);
 
-    public void deleteItem(int productID);
+    void deleteItem(String userId, int productID);
 
-    public boolean updateCart(Product product, int newQuantity);
+    boolean updateCart(String userId, Product product, int newQuantity);
 
-    public List<CartItem> viewCart();
-   
-    public List<CartItem> viewRefundedCart();
+    List<CartItem> viewCart(String userId);
 
-    public void updatePriceOfEachProduct();
-   
-    public void updateRefundPriceOfEachProduct();
+    List<CartItem> viewRefundedCart(String userId);
 
-    public boolean clearCart();
+    void updatePriceOfEachProduct(String userId);
+
+    void updateRefundPriceOfEachProduct(String userId);
+
+    boolean clearCart(String userId);
 }

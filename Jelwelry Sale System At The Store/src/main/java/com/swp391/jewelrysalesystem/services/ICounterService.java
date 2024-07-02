@@ -16,4 +16,6 @@ public interface ICounterService {
     boolean changeStatus(int ID);
 
     boolean isNotNullCounter(int ID);
+
+    int generateID();
 }

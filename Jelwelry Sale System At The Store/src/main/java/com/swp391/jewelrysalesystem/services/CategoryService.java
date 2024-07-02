@@ -70,4 +70,9 @@ public class CategoryService implements ICategoryService{
         return null;
     }
 
+    @Override
+    public int generateID() {
+        return genericService.generateID("category", Category.class, Category::getID);
+    }
+
 }

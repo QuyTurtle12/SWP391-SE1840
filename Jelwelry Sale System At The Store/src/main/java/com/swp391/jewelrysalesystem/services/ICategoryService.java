@@ -17,4 +17,5 @@ public interface ICategoryService {
 
     boolean isNotNullCategory(int ID);
 
+    int generateID();
 }

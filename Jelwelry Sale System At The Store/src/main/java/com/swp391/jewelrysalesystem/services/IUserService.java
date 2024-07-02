@@ -35,4 +35,6 @@ public interface IUserService {
     boolean isMyEmail(int ID, String email);
 
     String isGeneralValidated(String fullName, String gender, String contactInfo, int counterID);
+
+    int generateID();
 }

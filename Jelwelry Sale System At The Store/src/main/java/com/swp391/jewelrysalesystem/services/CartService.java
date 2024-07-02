@@ -1,8 +1,10 @@
 package com.swp391.jewelrysalesystem.services;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
@@ -11,10 +13,11 @@ import com.swp391.jewelrysalesystem.models.Product;
 
 @Service
 public class CartService implements ICartService {
-    private List<CartItem> cartItems = new ArrayList<>();
+    private Map<String, List<CartItem>> userCarts = new HashMap<>();
 
     @Override
-    public void addItem(Product product, int quantity, double price) {
+    public void addItem(String userId, Product product, int quantity, double price) {
+        List<CartItem> cartItems = userCarts.computeIfAbsent(userId, k -> new ArrayList<>());
         int count = 0;
         int index = 0;
         for (CartItem cartItem : cartItems) {
@@ -24,8 +27,7 @@ public class CartService implements ICartService {
             }
             index++;
         }
-        
-        
+
         if (count == 1) {
             int currentProductQuantity = cartItems.get(index).getQuantity();
             cartItems.get(index).setQuantity(currentProductQuantity + 1);
@@ -35,19 +37,28 @@ public class CartService implements ICartService {
     }
 
     @Override
-    public void deleteItem(int productID) {
+    public void deleteItem(String userId, int productID) {
+        List<CartItem> cartItems = userCarts.get(userId);
+        if (cartItems == null) {
+            return;
+        }
+
         Iterator<CartItem> iterator = cartItems.iterator();
         while (iterator.hasNext()) {
             CartItem cartItem = iterator.next();
             if (cartItem.getProduct().getID() == productID) {
-                iterator.remove(); // Xóa cartItem khỏi danh sách cartItems
+                iterator.remove();
                 break;
             }
         }
     }
 
     @Override
-    public boolean updateCart(Product product, int newQuantity) {
+    public boolean updateCart(String userId, Product product, int newQuantity) {
+        List<CartItem> cartItems = userCarts.get(userId);
+        if (cartItems == null) {
+            return false;
+        }
         for (CartItem item : cartItems) {
             if (item.getProduct().getID() == product.getID()) {
                 item.setQuantity(newQuantity);
@@ -57,43 +68,57 @@ public class CartService implements ICartService {
         return false;
     }
 
-    public double totalPriceCal(List<CartItem> cart){
+    public double totalPriceCal(String userId) {
         double totalPrice = 0;
-        for (CartItem cartItem : cart) {
+        List<CartItem> cartItems = userCarts.get(userId);
+        if (cartItems != null) {
+
+        }
+        for (CartItem cartItem : cartItems) {
             totalPrice += cartItem.getPrice() * cartItem.getQuantity();
         }
-        return totalPrice; 
-    }
-    @Override
-    public List<CartItem> viewCart() {
-        updatePriceOfEachProduct();
-        return cartItems;
+        return totalPrice;
     }
 
     @Override
-    public void updatePriceOfEachProduct() {
-        for (CartItem cartItem : cartItems) {
-            cartItem.setPrice(cartItem.getQuantity() * cartItem.getProduct().getPrice());
+    public List<CartItem> viewCart(String userId) {
+        updatePriceOfEachProduct(userId);
+        return userCarts.getOrDefault(userId, new ArrayList<>());
+    }
+
+    @Override
+    public void updatePriceOfEachProduct(String userId) {
+        List<CartItem> cartItems = userCarts.get(userId);
+        if (cartItems != null) {
+            for (CartItem cartItem : cartItems) {
+                cartItem.setPrice(cartItem.getQuantity() * cartItem.getProduct().getPrice());
+            }
         }
     }
 
     @Override
-    public boolean clearCart() {
-        cartItems.clear();;
-        return true;
+    public boolean clearCart(String userId) {
+        List<CartItem> cartItems = userCarts.get(userId);
+        if (cartItems != null) {
+            cartItems.clear();
+            return true;
+        }
+        return false;
     }
 
     @Override
-    public void updateRefundPriceOfEachProduct() {
-        for (CartItem cartItem : cartItems) {
-            cartItem.setPrice(cartItem.getQuantity() * cartItem.getProduct().getRefundPrice());
+    public void updateRefundPriceOfEachProduct(String userId) {
+        List<CartItem> cartItems = userCarts.get(userId);
+        if (cartItems != null) {
+            for (CartItem cartItem : cartItems) {
+                cartItem.setPrice(cartItem.getQuantity() * cartItem.getProduct().getRefundPrice());
+            }
         }
     }
 
     @Override
-    public List<CartItem> viewRefundedCart() {
-        updateRefundPriceOfEachProduct();
-        return cartItems;
+    public List<CartItem> viewRefundedCart(String userId) {
+        updateRefundPriceOfEachProduct(userId);
+        return userCarts.getOrDefault(userId, new ArrayList<>());
     }
-
 }

@@ -118,28 +118,6 @@ public class CustomerService implements ICustomerService {
     }
 
     public int generateCustomerID() {
-        Firestore dbFirestore = FirestoreClient.getFirestore();
-        CollectionReference collectionReference = dbFirestore.collection("customer");
-
-        try {
-            ApiFuture<QuerySnapshot> future = collectionReference.get();
-            QuerySnapshot querySnapshot = future.get();
-
-            List<Customer> customers = querySnapshot.toObjects(Customer.class);
-
-            int maxID = 0; // default ID value is 1 but to return 1 we have to start with 0 because we add
-                           // 1 when we return
-            if (!customers.isEmpty()) {
-                maxID = customers.stream()
-                        .max(Comparator.comparingInt(Customer::getID))
-                        .get()
-                        .getID();
-            }
-
-            return maxID + 1;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 0;
-        }
+        return genericService.generateID("customer", Customer.class, Customer::getID);
     }
 }

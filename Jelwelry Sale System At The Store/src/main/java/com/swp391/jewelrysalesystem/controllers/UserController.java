@@ -36,7 +36,6 @@ public class UserController {
 
     @PostMapping("v2/accounts/{role}")
     public ResponseEntity<String> addUserV2(
-            @RequestParam int ID,
             @RequestParam String fullName,
             @RequestParam String gender,
             @RequestParam String email,
@@ -45,9 +44,9 @@ public class UserController {
             @RequestParam String contactInfo,
             @RequestParam int counterID) {
         
-        if (userService.isNotNullUser(ID) || !userService.isNotExistedPhoneNum(contactInfo) || !customerService.isNotExistedPhoneNum(contactInfo) || !userService.isNotExistedEmail(email)) {
+        if (!userService.isNotExistedPhoneNum(contactInfo) || !customerService.isNotExistedPhoneNum(contactInfo) || !userService.isNotExistedEmail(email)) {
             return ResponseEntity.status(HttpStatus.SC_CONFLICT)
-                    .body("This user has been existed! Please, check ID or contact info or email");
+                    .body("This user has been existed! Please, check contact info or email");
         }
 
         if (!isValidEmail(email)) {
@@ -75,6 +74,9 @@ public class UserController {
             default:
                 throw new IllegalArgumentException("Invalid role: " + role);
         }
+
+        int ID = userService.generateID();
+        
         User newUser = new User();
         newUser.setID(ID);
         newUser.setFullName(fullName);
@@ -199,129 +201,4 @@ public class UserController {
         String emailPattern = "^[\\w-\\.]+@(gmail\\.com|yahoo\\.com)$";
         return Pattern.compile(emailPattern).matcher(email).matches();
     }
-
-    // Old endpoints version below here
-    @PostMapping("/account/{role}/register")
-    public User addUser(
-            @RequestParam int ID,
-            @RequestParam String fullName,
-            @RequestParam String gender,
-            @RequestParam String email,
-            @PathVariable String role,
-            @RequestParam String password,
-            @RequestParam String contactInfo,
-            @RequestParam int counterID) {
-
-        int roleID = 0;
-        switch (role) {
-            case "MANAGER":
-                roleID = 2;
-                break;
-            case "STAFF":
-                roleID = 1;
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid role: " + role);
-        }
-        User newUser = new User();
-        newUser.setID(ID);
-        newUser.setFullName(fullName);
-        newUser.setEmail(email);
-        newUser.setPassword(password);
-        newUser.setGender(gender);
-        newUser.setContactInfo(contactInfo);
-        newUser.setCounterID(counterID);
-        newUser.setRoleID(roleID);
-        newUser.setStatus(true);
-
-        userService.saveUser(newUser);
-        return null;
-    }
-
-    @PutMapping("/account/{role}/update-info")
-    public User updateUserInfo(
-            @RequestParam int ID,
-            @RequestParam String fullName,
-            @RequestParam String gender,
-            @RequestParam String contactInfo,
-            @RequestParam int counterID)
-            throws InterruptedException, ExecutionException {
-
-        User existingUser = userService.getUserByField(ID, "id", "user");
-
-        if (existingUser != null) {
-            existingUser.setFullName(fullName);
-            existingUser.setGender(gender);
-            existingUser.setContactInfo(contactInfo);
-            existingUser.setCounterID(counterID);
-
-            userService.saveUser(existingUser);
-            return null;
-        } else {
-            throw new RuntimeException("User with ID " + ID + " not found.");
-        }
-    }
-
-    @PutMapping("/account/{role}/change-status")
-    public boolean changeUserStatus(@RequestParam int ID) {
-        return userService.changeUserStatus(ID);
-    }
-
-    @GetMapping("/account/dashboard")
-    public RedirectView viewDashboard() {
-        // Replace with actual dashboard URL
-        String dashboardUrl = "localhost:8080/dashboard";
-        return new RedirectView(dashboardUrl);
-    }
-
-    @GetMapping("/account/{role}/list")
-    public ResponseEntity<List<User>> getUserListByRole(@PathVariable String role) {
-        try {
-            List<User> users = userService.getUserListByField(role, "roleID", "user");
-            if (users != null && !users.isEmpty()) {
-                return ResponseEntity.ok(users);
-            } else {
-                return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
-            }
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
-        }
-    }
-
-    @GetMapping("/account/getUser")
-    public ResponseEntity<User> getUserByUserID(@RequestParam int id) {
-        try {
-            User user = userService.getUserByField(id, "id", "user");
-            if (user != null) {
-                return ResponseEntity.ok(user);
-            } else {
-                return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
-            }
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
-        }
-    }
-
-    // Search by name, status, counter ID, contactInfo
-    @GetMapping("/account/{role}/list/searchUser")
-    public ResponseEntity<List<User>> searchUser(
-            @PathVariable String role,
-            @RequestParam String input,
-            @RequestParam String filter) {
-        try {
-            List<User> users = userService.getUserListByField(role, "roleID", "user");
-            List<User> searchedUserList = userService.searchUser(input, filter, users);
-            if (users != null && !users.isEmpty()) {
-                return ResponseEntity.ok(searchedUserList);
-            } else {
-                return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
-            }
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
-        }
-    }
-
 }

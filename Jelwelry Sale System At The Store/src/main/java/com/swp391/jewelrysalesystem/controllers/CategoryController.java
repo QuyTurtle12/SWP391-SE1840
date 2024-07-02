@@ -31,10 +31,9 @@ public class CategoryController {
     }
 
     @PostMapping("/categories")
-    public ResponseEntity<String> addCategory(@RequestParam int ID, @RequestParam String categoryName) {
-        if (categoryService.isNotNullCategory(ID)) {
-            return ResponseEntity.status(HttpStatus.SC_CONFLICT).body("This ID " + ID + " has been existed");
-        }
+    public ResponseEntity<String> addCategory(@RequestParam String categoryName) {
+
+        int ID = categoryService.generateID();
 
         Category category = new Category(ID, categoryName);
 

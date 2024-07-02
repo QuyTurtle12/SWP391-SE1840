@@ -25,4 +25,6 @@ public interface IOrderService {
     boolean isNotNullCounter(int ID);
 
     String isGeneralValidated(int staffID, int counterID, String customerGender, String customerName, double discountApplied);
+
+    int generateID();
 }

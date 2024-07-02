@@ -191,4 +191,9 @@ public class ProductService implements IProductService {
             return false;
         }
     }
+
+    @Override
+    public int generateID() {
+        return genericService.generateID("product", Product.class, Product::getID);
+    }
 }

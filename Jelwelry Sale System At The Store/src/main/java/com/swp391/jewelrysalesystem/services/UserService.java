@@ -333,5 +333,10 @@ public class UserService implements IUserService {
         return null;
     }
 
+    @Override
+    public int generateID() {
+        return genericService.generateID("user", User.class, User::getID);
+    }
+
 
 }

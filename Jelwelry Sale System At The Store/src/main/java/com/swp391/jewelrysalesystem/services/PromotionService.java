@@ -88,4 +88,9 @@ public class PromotionService implements IPromotionService {
         return true;
     }
 
+    @Override
+    public int generateID() {
+        return genericService.generateID("promotion", Promotion.class, Promotion::getID);
+    }
+
 }

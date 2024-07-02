@@ -16,4 +16,6 @@ public interface IPromotionService {
     Promotion getPromotion(int ID);
 
     boolean isNotNullPromotion(int ID);
+
+    int generateID();
 }

@@ -1,5 +1,6 @@
 package com.swp391.jewelrysalesystem.services;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -168,6 +169,28 @@ public class GenericService<T> implements IGenericService<T> {
             System.err.println("Error retrieving document: " + e.getMessage());
             e.printStackTrace();
             return false;
+        }
+    }
+
+
+    @Override
+    public int generateID(String collectionName, Class<T> documentClass, IDExtractor<T> idExtractor) {
+        try {
+            List<T> documents = getList(collectionName, documentClass);
+
+
+            int maxID = 0; // default ID value is 0, assuming IDs start from 1, otherwise set it accordingly
+            if (!documents.isEmpty()) {
+                maxID = documents.stream()
+                        .mapToInt(idExtractor::extractID)
+                        .max()
+                        .getAsInt();
+            }
+
+            return maxID + 1;
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return 0;
         }
     }
 

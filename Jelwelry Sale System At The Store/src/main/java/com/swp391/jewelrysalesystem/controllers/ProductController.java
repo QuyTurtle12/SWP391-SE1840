@@ -30,7 +30,6 @@ public class ProductController {
 
     @PostMapping("/v2/products")
     public ResponseEntity<String> addProductV2(
-            @RequestParam int ID,
             @RequestParam String name,
             @RequestParam double price,
             @RequestParam double refundPrice,
@@ -45,10 +44,6 @@ public class ProductController {
 
         try {
 
-            if (productService.isNotNullProduct(ID)) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("Duplicate ID");
-            }
-
             Category category = categoryService.getCategoryByName(categoryName);
             if (category == null) {
                 return ResponseEntity.badRequest().body("This category is not exist");
@@ -61,6 +56,8 @@ public class ProductController {
             if (error != null) {
                 return ResponseEntity.badRequest().body(error);
             }
+            
+            int ID = productService.generateID();
 
             Product newProduct = new Product(ID, img, name, price, refundPrice, description, goldWeight, laborCost,
                     stoneCost, stock, promotionID, categoryID, true);
@@ -339,170 +336,4 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
-    // Old endpoint version below here.
-
-    @PutMapping("/product/{ID}/update-info")
-    public ResponseEntity<Product> updateProductInfo(
-            @PathVariable int ID,
-            @RequestParam String name,
-            @RequestParam double price,
-            @RequestParam double refundPrice,
-            @RequestParam String description,
-            @RequestParam double goldWeight,
-            @RequestParam double laborCost,
-            @RequestParam double stoneCost,
-            @RequestParam int stock,
-            @RequestParam int categoryID,
-            @RequestParam String img,
-            @RequestParam int promotionID) {
-
-        try {
-            Product existingProduct = productService.getProductByID(ID);
-            if (existingProduct == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
-
-            existingProduct.setName(name);
-            existingProduct.setImg(img);
-            existingProduct.setPrice(price);
-            existingProduct.setRefundPrice(refundPrice);
-            existingProduct.setDescription(description);
-            existingProduct.setGoldWeight(goldWeight);
-            existingProduct.setLaborCost(laborCost);
-            existingProduct.setStoneCost(stoneCost);
-            existingProduct.setStock(stock);
-            existingProduct.setCategoryID(categoryID);
-            existingProduct.setPromotionID(promotionID);
-
-            if (productService.saveProduct(existingProduct)) {
-                return ResponseEntity.ok(existingProduct);
-            } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-            }
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    @GetMapping("/product/list")
-    public ResponseEntity<List<Product>> getProductList() {
-        try {
-            List<Product> productList = productService.getProductList();
-            if (productList.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
-            return ResponseEntity.ok(productList);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    @GetMapping("/product/{ID}/info")
-    public ResponseEntity<Product> getProduct(@PathVariable int ID) {
-        try {
-            Product product = productService.getProductByID(ID);
-            if (product == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
-            return ResponseEntity.ok(product);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    @PutMapping("/product/{ID}/change-status")
-    public ResponseEntity<Product> changeProductStatus(@PathVariable int ID) {
-        try {
-            boolean product = productService.changeProductStatus(ID);
-            if (product == false) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    @GetMapping("/product/list/search")
-    public ResponseEntity<List<Product>> searchProduct(
-            @RequestParam String input,
-            @RequestParam String filter) {
-
-        try {
-            List<Product> productList = productService.searchProduct(input, filter, productService.getProductList());
-            if (productList.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
-            return ResponseEntity.ok(productList);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    @GetMapping("/product/list/sort")
-    public ResponseEntity<List<Product>> sortProductList(
-            @RequestParam String filter,
-            @RequestParam String sortOrder) {
-
-        try {
-            List<Product> productList = productService.sortProduct(filter, sortOrder, productService.getProductList());
-            if (productList.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
-            return ResponseEntity.ok(productList);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    @PostMapping("/product/add")
-    public ResponseEntity<Product> addProduct(
-            @RequestParam int ID,
-            @RequestParam String name,
-            @RequestParam double price,
-            @RequestParam double refundPrice,
-            @RequestParam String description,
-            @RequestParam double goldWeight,
-            @RequestParam double laborCost,
-            @RequestParam double stoneCost,
-            @RequestParam int stock,
-            @RequestParam int categoryID,
-            @RequestParam String img,
-            @RequestParam int promotionID) {
-
-        try {
-            Product newProduct = new Product(ID, img, name, price, refundPrice, description, goldWeight, laborCost,
-                    stoneCost, stock, promotionID, categoryID, true);
-            if (productService.saveProduct(newProduct)) {
-                return ResponseEntity.status(HttpStatus.CREATED).build();
-            } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-            }
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    @GetMapping("/product/list/search/sort")
-    public ResponseEntity<List<Product>> sortSearchedProduct(
-            @RequestParam String input,
-            @RequestParam String filter,
-            @RequestParam String sortFilter,
-            @RequestParam String sortOrder) {
-
-        try {
-            List<Product> productList = productService.searchProduct(input, filter, productService.getProductList());
-            productList = productService.sortProduct(sortFilter, sortOrder, productList);
-            if (productList.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
-            return ResponseEntity.ok(productList);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
 }

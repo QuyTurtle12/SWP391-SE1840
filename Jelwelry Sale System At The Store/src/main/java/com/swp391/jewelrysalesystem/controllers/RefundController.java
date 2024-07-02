@@ -41,15 +41,10 @@ public class RefundController {
 
     @PostMapping("/refunds")
     public ResponseEntity<String> addRefundedOrder(
-            @RequestParam int ID,
             @RequestParam double totalPrice,
             @RequestParam String customerPhone,
             @RequestParam int staffID,
             @RequestBody List<CartItem> cart) throws InterruptedException, ExecutionException {
-
-        if (refundService.isNotNullRefundedOrder(ID)) {
-            return ResponseEntity.status(HttpStatus.SC_CONFLICT).body("The refund ID " + ID + " has been existed.");
-        }
 
         Customer customer = customerService.getCustomerByPhone(customerPhone);
 
@@ -60,8 +55,10 @@ public class RefundController {
 
         int customerID = customer.getID();
 
+        int refundID = refundService.generateID();
+
         Refund refund = new Refund();
-        refund.setID(ID);
+        refund.setID(refundID);
         refund.setTotalPrice(totalPrice);
         refund.setCustomerID(customerID);
         refund.setDate(Timestamp.now());
@@ -71,7 +68,7 @@ public class RefundController {
         List<RefundDTO> refundedProducts = new ArrayList<>();
         for (CartItem cartItem : cart) {
             RefundDTO product = new RefundDTO();
-            product.setRefundID(ID);
+            product.setRefundID(refundID);
             product.setProductID(cartItem.getProduct().getID());
             product.setProductName(productService.getProductByID(product.getProductID()).getName());
             product.setAmount(cartItem.getQuantity());

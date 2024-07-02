@@ -21,4 +21,5 @@ public interface IGenericService<T> {
 
     boolean changeStatus(int ID, String collection, Class<T> clazz);
 
+    int generateID(String collectionName, Class<T> documentClass, IDExtractor<T> idExtractor);
 }
