@@ -3,18 +3,24 @@ import React, { useEffect, useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { ToastContainer, toast } from "react-toastify";
+import { useLocation } from 'react-router-dom';
 
 function ViewCart() {
   const [cart, setCart] = useState([]);
   const [subtotal, setSubtotal] = useState(0);
   const [showModal, setShowModal] = useState(false);
-  const [orderID, setOrderID] = useState(""); // Example order ID, should be generated uniquely
-  const [staffID, setStaffID] = useState(""); // Example staff ID, should be fetched dynamically
-  const [counterID, setCounterID] = useState(""); // Example counter ID, should be fetched dynamically
-  const [customerPhone, setCustomerPhone] = useState(""); // Example customer ID, should be fetched dynamically
-  const [discountApplied, setDiscountApplied] = useState(0); // Example discount
+  const [orderID, setOrderID] = useState(""); 
+  const [staffID, setStaffID] = useState(""); 
+  const [counterID, setCounterID] = useState(""); 
+  const [customerPhone, setCustomerPhone] = useState(""); 
+  const [discountApplied, setDiscountApplied] = useState(0); 
   const [customerGender,setCustomerGender ] = useState("");
   const [customerName,setCustomerName ] = useState("");
+  
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const staffId = queryParams.get('staffId');
+  
   useEffect(() => {
     fetchCartData();
   }, []);
@@ -27,7 +33,7 @@ function ViewCart() {
 
   const fetchCartData = () => {
     axios
-      .get("http://localhost:8080/cart")
+      .get(`http://localhost:8080/cart?staffId=${staffId}`)
       .then((response) => {
         setCart(response.data);
         calculateSubtotal(response.data);
@@ -67,7 +73,6 @@ function ViewCart() {
   const handleCreateOrder = () => {
     if (
       !subtotal ||
-      !orderID ||
       !staffID ||
       !counterID ||
       !customerPhone ||
@@ -76,13 +81,13 @@ function ViewCart() {
       toast.error("Fill all the fields");
       return;
     }
-
+    
     axios
       .post(
-        `http://localhost:8080/api/v2/orders?totalPrice=${subtotal}&orderID=${orderID}&staffID=${staffID}&counterID=${counterID}&customerPhone=${customerPhone}&customerName=${customerName}&customerGender=${customerGender}&discountApplied=${discountApplied}`,
+        `http://localhost:8080/api/v2/orders?totalPrice=${subtotal}&staffID=${staffID}&counterID=${counterID}&customerPhone=${customerPhone}&customerName=${customerName}&customerGender=${customerGender}&discountApplied=${discountApplied}`,
         cart
       )
-      .then((response) => {
+      .then(() => {
         toast.success("Order created successfully!");
         handleClearCart();
         setShowModal(false);
@@ -98,7 +103,7 @@ function ViewCart() {
 
   const handleClearCart = () => {
     axios
-      .put("http://localhost:8080/cart/clear")
+      .put(`http://localhost:8080/cart/clear?staffId=${staffId}`)
       .then((response) => {
         setCart([]);
         setSubtotal(0);
@@ -127,10 +132,10 @@ function ViewCart() {
   const handleUpdateQuantity = (productID, newQuantity) => {
     axios
       .put(
-        `http://localhost:8080/cart?productID=${productID}&quantity=${newQuantity}`,
+        `http://localhost:8080/cart?staffId=${staffId}&productID=${productID}&quantity=${newQuantity}`,
         {}
       )
-      .then((response) => {
+      .then(() => {
         toast.success("Updated successfully with quantity: " + newQuantity);
         fetchCartData();
       })
@@ -143,8 +148,8 @@ function ViewCart() {
 
   const handleRemoveItem = (productID) => {
     axios
-      .delete(`http://localhost:8080/cart?productID=${productID}`)
-      .then((response) => {
+      .delete(`http://localhost:8080/cart?staffId=${staffId}&productID=${productID}`)
+      .then(() => {
         toast.success("Product removed successfully");
         fetchCartData();
       })
@@ -152,7 +157,6 @@ function ViewCart() {
         toast.error("Error removing product", error);
       });
   };
-
   return (
     <>
       <ToastContainer />
@@ -290,16 +294,7 @@ function ViewCart() {
           </Modal.Header>
           <Modal.Body>
             <Form>
-              <Form.Group controlId="formOrderID">
-                <Form.Label>Order ID</Form.Label>
-                <Form.Control
-                  required
-                  type="number"
-                  placeholder="Enter order ID"
-                  value={orderID}
-                  onChange={(e) => setOrderID(e.target.value)}
-                />
-              </Form.Group>
+             
               <Form.Group controlId="formStaffID">
                 <Form.Label>Staff ID</Form.Label>
                 <Form.Control

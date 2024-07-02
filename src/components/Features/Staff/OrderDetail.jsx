@@ -23,7 +23,7 @@ function OrderDetail() {
         setOrderDetail(orderDetailResponse.data);
 
         const customerResponse = await axios.get(
-          `http://localhost:8080/api/customer/get?id=${orderDetailResponse.data.customerID}`
+          `http://localhost:8080/api/v2/customers/customer?id=${orderDetailResponse.data.customerID}`
         );
         setCustomer(customerResponse.data);
         console.log(customerResponse.data);

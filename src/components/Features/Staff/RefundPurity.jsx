@@ -38,7 +38,7 @@ function RefundPurity() {
      
     
  
-    <div className="container h-full">
+    <div className="container min-h-screen h-full">
     <table className="border text-center border-black min-w-full divide-y divide-gray-500 ">
             <thead>
               <tr>
@@ -59,7 +59,7 @@ function RefundPurity() {
               
                 
                   <td className="px-4 py-4 whitespace-nowrap">
-                    {order.purity}
+                    {order.purity} %
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap">
                     {order.amount}

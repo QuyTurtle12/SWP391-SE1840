@@ -11,7 +11,7 @@ function ProductList() {
   const [cart, setCart] = useState([]);
   const navigate = useNavigate();
   const [searchInput, setSearchInput] = useState("");
-
+  const [staffId, setStaffId] = useState("");
   useEffect(() => {
     axios
       .get("http://localhost:8080/api/v2/products")
@@ -38,7 +38,7 @@ function ProductList() {
   };
   const fetchCartData = () => {
     axios
-      .get("http://localhost:8080/cart")
+      .get(`http://localhost:8080/cart?staffId=${staffId}`)
       .then((response) => {
         setCart(response.data);
       })
@@ -46,12 +46,17 @@ function ProductList() {
         console.error("Error fetching cart data:", error);
       });
   };
-
+  const handleStaff = (event) => {
+    setStaffId(event.target.value)
+  }
   const handleProductClick = (id) => {
     navigate(`/productdetail/${id}`);
   };
 
   const addToCart = (product) => {
+    if(!staffId) {
+      toast.error("Please enter staff ID.")
+    }
     if (product.stock <= 0) {
       toast.error("Product is out of stock.");
       return;
@@ -64,16 +69,23 @@ function ProductList() {
     }
 
     axios
-      .post("http://localhost:8080/cart", product)
+      .post(`http://localhost:8080/cart?staffId=${staffId}`, product)
       .then((response) => {
         toast.success("Item added to cart:", response.data);
         setCart([...cart, { product, quantity: 1, price: product.price }]);
       })
       .catch((error) => {
+        toast.error(`${error.response ? error.response.data : error.message}`);
         console.error("Error adding item to cart:", error);
       });
   };
-
+  const handleViewCartClick = () => {
+    if (!staffId) {
+      toast.error('Please enter staff ID.');
+      return;
+    }
+    navigate(`/viewcart?staffId=${staffId}`);
+  };
   return (
     <div>
       <StaffMenu />
@@ -84,8 +96,8 @@ function ProductList() {
             Our Latest Products
             <div className="justify-end flex pr-8">
               <div className="relative">
-                <Button component={Link} to="/viewcart">
-                  <ShoppingCartIcon className="text-black" sx={{ fontSize: 40 }} />
+              <Button onClick={handleViewCartClick} className="text-black">
+                 <ShoppingCartIcon/> <i className="fa fa-shopping-cart" style={{ fontSize: '40px' }}></i>
                 </Button>
                 {cart.length > 0 && (
                   <div className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center">
@@ -95,7 +107,14 @@ function ProductList() {
               </div>
             </div>
           </h2>
-          <div className="mb-8">
+          <div className="mb-8 font-bold">
+         Staff ID <input
+              type="number"
+              value={staffId}
+              onChange={handleStaff}
+              placeholder="enter staff ID..."
+              className="border p-2 mr-2"
+            />
             <input
               type="text"
               value={searchInput}
@@ -103,6 +122,7 @@ function ProductList() {
               placeholder="Search products..."
               className="border p-2 mr-2"
             />
+          
             <button
               onClick={searchProduct}
               className="bg-gray-900 text-white py-2 px-4 rounded-full font-bold hover:bg-gray-500"
