@@ -38,9 +38,13 @@ function RefundForm() {
   }, [id]);
 
   const handlePurityChange = (index, value) => {
-    const updatedPurities = [...productPurities];
-    updatedPurities[index].purity = value;
-    setProductPurities(updatedPurities);
+    if (value >= 0 && value <= 100) {
+      const updatedPurities = [...productPurities];
+      updatedPurities[index].purity = value;
+      setProductPurities(updatedPurities);
+    } else {
+      toast.error("Purity must be between 0 and 100.");
+    }
   };
 
   const handleSubmit = async (event) => {
@@ -131,7 +135,7 @@ function RefundForm() {
                               Purity {i + 1}
                             </label>
                             <input
-                              type="text"
+                              type="number"
                               id={`purity-${order.id}-${i}`}
                               className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5"
                               placeholder=""
@@ -151,6 +155,8 @@ function RefundForm() {
                                   e.target.value
                                 )
                               }
+                              min="0"
+                              max="100"
                             />
                           </div>
                         </React.Fragment>

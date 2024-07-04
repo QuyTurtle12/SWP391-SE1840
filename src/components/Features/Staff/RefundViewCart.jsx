@@ -4,7 +4,7 @@ import { Modal, Button, Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function RefundViewCart() {
   const [cart, setCart] = useState([]);
@@ -14,13 +14,16 @@ function RefundViewCart() {
   const [staffID, setStaffID] = useState(""); 
   const [customerPhone, setCustomerPhone] = useState(""); 
   const navigate = useNavigate();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const staffId = queryParams.get('staffId');
   useEffect(() => {
     fetchCartData();
   }, []);
 
   const fetchCartData = () => {
     axios
-      .get("http://localhost:8080/cart")
+      .get(`http://localhost:8080/cart/refundItem?staffId=${staffId}`)
       .then((response) => {
         setCart(response.data);
         calculateSubtotal(response.data);
@@ -51,7 +54,7 @@ function RefundViewCart() {
   const handleCreateOrder = () => {
     axios
       .post(
-        `http://localhost:8080/api/refunds?ID=${orderID}&totalPrice=${subtotal}&customerPhone=${customerPhone}&staffID=${staffID}`,
+        `http://localhost:8080/api/refunds?totalPrice=${subtotal}&customerPhone=${customerPhone}&staffID=${staffId}`,
         cart
       )
       .then((response) => {
@@ -74,11 +77,12 @@ function RefundViewCart() {
 
   const handleClearCart = () => {
     axios
-      .put("http://localhost:8080/cart/clear")
+      .put(`http://localhost:8080/cart/clear?staffId=${staffId}`)
       .then((response) => {
         setCart([]);
         setSubtotal(0);
         console.log(response.data);
+
       })
       .catch((error) => {
         console.error("Error clearing cart", error);
@@ -99,23 +103,27 @@ function RefundViewCart() {
   const handleUpdateQuantity = (productID, newQuantity) => {
     axios
       .put(
-        `http://localhost:8080/cart?productID=${productID}&quantity=${newQuantity}`,
+        `http://localhost:8080/cart?staffId=${staffId}&productID=${productID}&quantity=${newQuantity}`,
         {}
       )
       .then((response) => {
         console.log(response);
+        toast.success("Quantity updated successfully")
         console.log("Quantity updated successfully" + newQuantity);
         fetchCartData(); // Fetch updated cart data after update
       })
       .catch((error) => {
+        toast.error(`${error.response ? error.response.data : error.message}`);
+
         console.error("Error updating quantity", error);
       });
   };
 
   const handleRemoveItem = (productID) => {
     axios
-      .delete(`http://localhost:8080/cart?productID=${productID}`)
+      .delete(`http://localhost:8080/cart?staffId=${staffId}&productID=${productID}`)
       .then((response) => {
+        toast.success("Product removed successfully");
         console.log("Product removed successfully");
         fetchCartData(); // Fetch updated cart data after removal
       })
@@ -257,22 +265,11 @@ function RefundViewCart() {
         </Modal.Header>
         <Modal.Body>
           <Form>
-            <Form.Group controlId="formOrderID">
-              <Form.Label>Order Refund ID</Form.Label>
-              <Form.Control
-                type="number"
-                placeholder="Enter order ID"
-                value={orderID}
-                onChange={(e) => setOrderID(e.target.value)}
-              />
-            </Form.Group>
+      
             <Form.Group controlId="formStaffID">
               <Form.Label>Staff ID</Form.Label>
               <Form.Control
-                type="number"
-                placeholder="Enter staff ID"
-                value={staffID}
-                onChange={(e) => setStaffID(e.target.value)}
+                value={staffId}
               />
             </Form.Group>
 
