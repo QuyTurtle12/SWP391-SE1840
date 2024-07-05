@@ -12,7 +12,8 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000") // Chỉ định các origin cho phép truy cập, hoặc "*" cho phép tất cả
+                // .allowedOrigins("http://localhost:3000") // Chỉ định các origin cho phép truy cập, hoặc "*" cho phép tất cả
+                .allowedOrigins("https://jewelry-sale-system.vercel.app/") // Chỉ định các origin cho phép truy cập, hoặc "*" cho phép tất cả
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Phương thức HTTP cho phép
                 .allowedHeaders("*") // Các header cho phép
                 .allowCredentials(true); // Cho phép sử dụng cookie khi truy cập từ origin khác
