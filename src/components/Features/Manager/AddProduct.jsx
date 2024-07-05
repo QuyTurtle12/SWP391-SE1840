@@ -42,7 +42,7 @@ const AddProduct = () => {
 
     try {
       console.log('Submitting data:', data);
-      const response = await axios.post('http://localhost:8080/api/v2/products', null, {
+      const response = await axios.post('https://jewelrysalesystem-backend.onrender.com/api/v2/products', null, {
         params: data
       });
 

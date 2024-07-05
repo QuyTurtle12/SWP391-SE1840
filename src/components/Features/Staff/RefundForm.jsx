@@ -15,7 +15,7 @@ function RefundForm() {
     const fetchProduct = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/api/refunds/refund/products?refundID=${id}`
+          `https://jewelrysalesystem-backend.onrender.com/api/refunds/refund/products?refundID=${id}`
         );
         console.log(response.data);
         setOrders(response.data);
@@ -69,7 +69,7 @@ function RefundForm() {
 
     try {
       const response = await axios.post(
-        `http://localhost:8080/api/refunds/itemPurity?refundID=${id}`,
+        `https://jewelrysalesystem-backend.onrender.com/api/refunds/itemPurity?refundID=${id}`,
         consolidatedPurities
       );
       console.log(response.data);

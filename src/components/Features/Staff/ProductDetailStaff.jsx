@@ -25,7 +25,7 @@ function ProductDetailStaff() {
     const fetchProduct = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/api/v2/products/${id}`
+          `https://jewelrysalesystem-backend.onrender.com/api/v2/products/${id}`
         );
         console.log("Fetched data success:", response.data);
         setProduct(response.data);
@@ -36,7 +36,7 @@ function ProductDetailStaff() {
 
     const fetchCart = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/cart");
+        const response = await axios.get("https://jewelrysalesystem-backend.onrender.com/cart");
         setCart(response.data);
       } catch (error) {
         console.error("Error fetching cart data", error);
@@ -54,7 +54,7 @@ function ProductDetailStaff() {
     }
 
     axios
-      .post("http://localhost:8080/cart", product)
+      .post("https://jewelrysalesystem-backend.onrender.com/cart", product)
       .then((response) => {
         console.log("Item added to cart:", response.data);
         setCart([...cart, product]);

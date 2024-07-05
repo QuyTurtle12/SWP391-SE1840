@@ -33,7 +33,7 @@ const AddStaff = () => {
 
 		try {
 			console.log('Submitting data:', data);
-			const response = await axios.post('http://localhost:8080/api/account/STAFF/register', null, {
+			const response = await axios.post('https://jewelrysalesystem-backend.onrender.com/api/account/STAFF/register', null, {
 				params: data
 			});
 

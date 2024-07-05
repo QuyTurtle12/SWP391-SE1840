@@ -8,7 +8,7 @@ function CustomerList() {
   const navigate = useNavigate();
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/v2/customers")
+      .get("https://jewelrysalesystem-backend.onrender.com/api/v2/customers")
       .then((response) => {
         console.log(response.data);
         setCustomers(response.data);

@@ -41,11 +41,36 @@ export default function ManagerMenu() {
           </li>
           
           <li className=" px-8 text-nowrap ">
-            <Button className=" px-8 rounded-sm text-black font-medium">
+            <Button
+              component={Link}
+              to="/add-category"
+              className=" px-8 rounded-sm text-black font-medium"
+            >
               {" "}
-              <h2 className="font-bold">View Promotion</h2>{" "}
+              <h2 className="font-bold">Add category</h2>{" "}
             </Button>
           </li>
+          <li className=" px-8 text-nowrap ">
+            <Button
+              component={Link}
+              to="/add-category"
+              className=" px-8 rounded-sm text-black font-medium"
+            >
+              {" "}
+              <h2 className="font-bold">Add category</h2>{" "}
+            </Button>
+          </li>
+          <li className=" px-8 text-nowrap ">
+            <Button
+              component={Link}
+              to="/view-category"
+              className=" px-8 rounded-sm text-black font-medium"
+            >
+              {" "}
+              <h2 className="font-bold">view category</h2>{" "}
+            </Button>
+          </li>
+          
           <li><Button component={Link} to="/productlist2">
               <h3 className=" px-4 rounded-sm text-black font-bold">
                 View Product Lists

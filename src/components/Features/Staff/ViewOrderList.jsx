@@ -18,7 +18,7 @@ function ViewOrderList() {
 
   const fetchOrders = () => {
     axios
-      .get("http://localhost:8080/api/v2/orders")
+      .get("https://jewelrysalesystem-backend.onrender.com/api/v2/orders")
       .then((response) => {
         console.log(response.data);
         setOrder(response.data);
@@ -28,7 +28,7 @@ function ViewOrderList() {
 
   const searchOrder = (customerPhone) => {
     axios
-      .get(`http://localhost:8080/api/order/list/search?input=${customerPhone}&filter=ByPhoneNumber`)
+      .get(`https://jewelrysalesystem-backend.onrender.com/api/order/list/search?input=${customerPhone}&filter=ByPhoneNumber`)
       .then((response) => {
         setOrder(response.data);
       })

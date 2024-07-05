@@ -9,7 +9,7 @@ function RefundDetail() {
   useEffect(() => {
     const fetchOrder = async () => {
       axios
-      .get(`http://localhost:8080/api/refunds/refund/products?refundID=${id}`)
+      .get(`https://jewelrysalesystem-backend.onrender.com/api/refunds/refund/products?refundID=${id}`)
       .then((respone) => {
         console.log(respone.data);
         setOrder(respone.data);

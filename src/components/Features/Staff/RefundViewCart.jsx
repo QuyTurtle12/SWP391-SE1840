@@ -23,7 +23,7 @@ function RefundViewCart() {
 
   const fetchCartData = () => {
     axios
-      .get(`http://localhost:8080/cart/refundItem?staffId=${staffId}`)
+      .get(`https://jewelrysalesystem-backend.onrender.com/cart/refundItem?staffId=${staffId}`)
       .then((response) => {
         setCart(response.data);
         calculateSubtotal(response.data);
@@ -54,7 +54,7 @@ function RefundViewCart() {
   const handleCreateOrder = () => {
     axios
       .post(
-        `http://localhost:8080/api/refunds?totalPrice=${subtotal}&customerPhone=${customerPhone}&staffID=${staffId}`,
+        `https://jewelrysalesystem-backend.onrender.com/api/refunds?totalPrice=${subtotal}&customerPhone=${customerPhone}&staffID=${staffId}`,
         cart
       )
       .then((response) => {
@@ -77,7 +77,7 @@ function RefundViewCart() {
 
   const handleClearCart = () => {
     axios
-      .put(`http://localhost:8080/cart/clear?staffId=${staffId}`)
+      .put(`https://jewelrysalesystem-backend.onrender.com/cart/clear?staffId=${staffId}`)
       .then((response) => {
         setCart([]);
         setSubtotal(0);
@@ -103,7 +103,7 @@ function RefundViewCart() {
   const handleUpdateQuantity = (productID, newQuantity) => {
     axios
       .put(
-        `http://localhost:8080/cart?staffId=${staffId}&productID=${productID}&quantity=${newQuantity}`,
+        `https://jewelrysalesystem-backend.onrender.com/cart?staffId=${staffId}&productID=${productID}&quantity=${newQuantity}`,
         {}
       )
       .then((response) => {
@@ -121,7 +121,7 @@ function RefundViewCart() {
 
   const handleRemoveItem = (productID) => {
     axios
-      .delete(`http://localhost:8080/cart?staffId=${staffId}&productID=${productID}`)
+      .delete(`https://jewelrysalesystem-backend.onrender.com/cart?staffId=${staffId}&productID=${productID}`)
       .then((response) => {
         toast.success("Product removed successfully");
         console.log("Product removed successfully");

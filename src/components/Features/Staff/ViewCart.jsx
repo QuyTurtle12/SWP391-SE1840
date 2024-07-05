@@ -33,7 +33,7 @@ function ViewCart() {
 
   const fetchCartData = () => {
     axios
-      .get(`http://localhost:8080/cart?staffId=${staffId}`)
+      .get(`https://jewelrysalesystem-backend.onrender.com/cart?staffId=${staffId}`)
       .then((response) => {
         setCart(response.data);
         calculateSubtotal(response.data);
@@ -45,7 +45,7 @@ function ViewCart() {
 
   const fetchStaffDetails = (staffID) => {
     axios
-      .get(`http://localhost:8080/api/v2/accounts/user?id=${staffID}`)
+      .get(`https://jewelrysalesystem-backend.onrender.com/api/v2/accounts/user?id=${staffID}`)
       .then((response) => {
         setCounterID(response.data.counterID);
       })
@@ -84,7 +84,7 @@ function ViewCart() {
     
     axios
       .post(
-        `http://localhost:8080/api/v2/orders?totalPrice=${subtotal}&staffID=${staffID}&counterID=${counterID}&customerPhone=${customerPhone}&customerName=${customerName}&customerGender=${customerGender}&discountApplied=${discountApplied}`,
+        `https://jewelrysalesystem-backend.onrender.com/api/v2/orders?totalPrice=${subtotal}&staffID=${staffID}&counterID=${counterID}&customerPhone=${customerPhone}&customerName=${customerName}&customerGender=${customerGender}&discountApplied=${discountApplied}`,
         cart
       )
       .then(() => {
@@ -103,7 +103,7 @@ function ViewCart() {
 
   const handleClearCart = () => {
     axios
-      .put(`http://localhost:8080/cart/clear?staffId=${staffId}`)
+      .put(`https://jewelrysalesystem-backend.onrender.com/cart/clear?staffId=${staffId}`)
       .then((response) => {
         setCart([]);
         setSubtotal(0);
@@ -132,7 +132,7 @@ function ViewCart() {
   const handleUpdateQuantity = (productID, newQuantity) => {
     axios
       .put(
-        `http://localhost:8080/cart?staffId=${staffId}&productID=${productID}&quantity=${newQuantity}`,
+        `https://jewelrysalesystem-backend.onrender.com/cart?staffId=${staffId}&productID=${productID}&quantity=${newQuantity}`,
         {}
       )
       .then(() => {
@@ -148,7 +148,7 @@ function ViewCart() {
 
   const handleRemoveItem = (productID) => {
     axios
-      .delete(`http://localhost:8080/cart?staffId=${staffId}&productID=${productID}`)
+      .delete(`https://jewelrysalesystem-backend.onrender.com/cart?staffId=${staffId}&productID=${productID}`)
       .then(() => {
         toast.success("Product removed successfully");
         fetchCartData();

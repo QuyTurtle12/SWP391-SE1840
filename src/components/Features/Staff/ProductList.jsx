@@ -14,7 +14,7 @@ function ProductList() {
   const [staffId, setStaffId] = useState("");
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/v2/products")
+      .get("https://jewelrysalesystem-backend.onrender.com/api/v2/products")
       .then((response) => {
         console.log(response.data);
         setProducts(response.data);
@@ -26,7 +26,7 @@ function ProductList() {
 
   const searchProduct = () =>{
     axios
-    .get(`http://localhost:8080/api/v2/products/search?input=${searchInput}&filter=ByName`)
+    .get(`https://jewelrysalesystem-backend.onrender.com/search?input=${searchInput}&filter=ByName`)
     .then((respone) =>{
       setProducts(respone.data);
    
@@ -38,7 +38,7 @@ function ProductList() {
   };
   const fetchCartData = () => {
     axios
-      .get(`http://localhost:8080/cart?staffId=${staffId}`)
+      .get(`https://jewelrysalesystem-backend.onrender.com/cart?staffId=${staffId}`)
       .then((response) => {
         setCart(response.data);
       })
@@ -69,7 +69,7 @@ function ProductList() {
     }
 
     axios
-      .post(`http://localhost:8080/cart?staffId=${staffId}`, product)
+      .post(`https://jewelrysalesystem-backend.onrender.com/cart?staffId=${staffId}`, product)
       .then((response) => {
         toast.success("Item added to cart:", response.data);
         setCart([...cart, { product, quantity: 1, price: product.price }]);

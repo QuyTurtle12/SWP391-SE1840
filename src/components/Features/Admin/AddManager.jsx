@@ -31,7 +31,7 @@ const AddManager = () => {
     try {
       console.log("Submitting data:", data);
       const response = await axios.post(
-        "http://localhost:8080/api/v2/accounts/MANAGER",
+        "https://jewelrysalesystem-backend.onrender.com/api/v2/accounts/MANAGER",
         null,
         {
           params: data,

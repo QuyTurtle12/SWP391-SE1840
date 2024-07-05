@@ -20,7 +20,7 @@ function EditManager() {
     const fetchManager = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/api/v2/accounts/user?id=${id}`
+          `https://jewelrysalesystem-backend.onrender.com/api/v2/accounts/user?id=${id}`
         );
         console.log("Fetched manager data:", response.data);
         setManager(response.data);
@@ -46,7 +46,7 @@ function EditManager() {
     try {
       const { fullName, gender, contactInfo, counterID } = manager; // Lấy các giá trị từ object manager
       const response = await axios.put(
-        `http://localhost:8080/api/v2/accounts/MANAGER?ID=${parseInt(
+        `https://jewelrysalesystem-backend.onrender.com/api/v2/accounts/MANAGER?ID=${parseInt(
           id
         )}&fullName=${fullName}&gender=${gender}&contactInfo=${contactInfo}&counterID=${counterID}`
       );

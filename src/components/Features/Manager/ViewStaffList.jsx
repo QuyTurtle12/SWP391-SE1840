@@ -11,7 +11,7 @@ function ViewManagerList() {
   const [staffToDelete, setStaffToDelete] = useState(null); // State để lưu thông tin của manager đang được chọn để xóa
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/account/STAFF/list")
+      .get("https://jewelrysalesystem-backend.onrender.com/api/account/STAFF/list")
       .then((response) => {
         console.log(response.data);
         setStaffs(response.data);
@@ -39,7 +39,7 @@ function ViewManagerList() {
     try {
       // Thực hiện xóa
       await axios.put(
-        `http://localhost:8080/api/account/STAFF/change-status?ID=${staffToDelete}`
+        `https://jewelrysalesystem-backend.onrender.com/api/account/STAFF/change-status?ID=${staffToDelete}`
       );
       // Cập nhật trạng thái của staff trong mảng staff
       const updatedStaffs = staffs.map(staff => {

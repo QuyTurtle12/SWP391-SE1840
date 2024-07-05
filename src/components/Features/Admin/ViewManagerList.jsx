@@ -11,7 +11,7 @@ function ViewManagerList() {
   useEffect(() => {
     
     axios
-      .get("http://localhost:8080/api/v2/accounts/MANAGER")
+      .get("https://jewelrysalesystem-backend.onrender.com/api/v2/accounts/MANAGER")
       .then((response) => {
         console.log(response.data);
         setManagers(response.data);
@@ -37,7 +37,7 @@ function ViewManagerList() {
     try {
       // Thực hiện xóa
       await axios.put(
-        `http://localhost:8080/api/v2/accounts/MANAGER/status?ID=${managerToDelete}`
+        `https://jewelrysalesystem-backend.onrender.com/api/v2/accounts/MANAGER/status?ID=${managerToDelete}`
       );
       // Cập nhật trạng thái của manager trong mảng managers
       const updatedManagers = managers.map(manager => {

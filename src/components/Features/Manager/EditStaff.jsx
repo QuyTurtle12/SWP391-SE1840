@@ -18,7 +18,7 @@ function EditStaff() {
     const fetchStaff = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/api/account/getUser?id=${id}`
+          `https://jewelrysalesystem-backend.onrender.com/api/account/getUser?id=${id}`
         );
         console.log("Fetched staff data:", response.data);
         setStaff(response.data);
@@ -41,7 +41,7 @@ function EditStaff() {
     try {
       const { fullName, gender, contactInfo, counterID } = staff; // Lấy các giá trị từ object manager
       const response = await axios.put(
-        `http://localhost:8080/api/account/STAFF/update-info?ID=${parseInt(
+        `https://jewelrysalesystem-backend.onrender.com/api/account/STAFF/update-info?ID=${parseInt(
           id
         )}&fullName=${fullName}&gender=${gender}&contactInfo=${contactInfo}&counterID=${counterID}`
       );

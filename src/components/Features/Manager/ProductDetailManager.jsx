@@ -27,7 +27,7 @@ export default function ProductDetailManager() {
     const fetchProduct = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/api/v2/products/${id}`
+          `https://jewelrysalesystem-backend.onrender.com/api/v2/products/${id}`
         );
         setProduct(response.data);
       } catch (error) {
@@ -60,7 +60,7 @@ export default function ProductDetailManager() {
         img: product.img,
       });
   
-      await axios.put(`http://localhost:8080/api/v2/products/${id}?${params.toString()}`, null, {
+      await axios.put(`https://jewelrysalesystem-backend.onrender.com/api/v2/products/${id}?${params.toString()}`, null, {
         headers: {
           'Content-Type': 'application/json',
           // Include any other necessary headers like authentication tokens here

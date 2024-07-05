@@ -13,22 +13,22 @@ function OrderDetail() {
     const fetchOrderData = async () => {
       try {
         const orderProductsResponse = await axios.get(
-          `http://localhost:8080/api/v2/orders/order/products?id=${id}`
+          `https://jewelrysalesystem-backend.onrender.com/api/v2/orders/order/products?id=${id}`
         );
         setOrders(orderProductsResponse.data);
 
         const orderDetailResponse = await axios.get(
-          `http://localhost:8080/api/v2/orders/order?id=${id}`
+          `https://jewelrysalesystem-backend.onrender.com/api/v2/orders/order?id=${id}`
         );
         setOrderDetail(orderDetailResponse.data);
 
         const customerResponse = await axios.get(
-          `http://localhost:8080/api/v2/customers/customer?id=${orderDetailResponse.data.customerID}`
+          `https://jewelrysalesystem-backend.onrender.com/api/v2/customers/customer?id=${orderDetailResponse.data.customerID}`
         );
         setCustomer(customerResponse.data);
         console.log(customerResponse.data);
         const staffResponse = await axios.get(
-          `http://localhost:8080/api/v2/accounts/user?id=${orderDetailResponse.data.staffID}`
+          `https://jewelrysalesystem-backend.onrender.com/api/v2/accounts/user?id=${orderDetailResponse.data.staffID}`
         );
         setStaff(staffResponse.data);
         console.log(staffResponse.data);

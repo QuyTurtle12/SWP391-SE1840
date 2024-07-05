@@ -9,7 +9,7 @@ function RefundPurity() {
   useEffect(() => {
     const fetchOrder = async () => {
       axios
-      .get(`http://localhost:8080/api/refunds/refund/products/product?refundID=${id}&productID=${productID}`)
+      .get(`https://jewelrysalesystem-backend.onrender.com/api/refunds/refund/products/product?refundID=${id}&productID=${productID}`)
       .then((respone) => {
         console.log(respone.data);
         setOrder(respone.data);

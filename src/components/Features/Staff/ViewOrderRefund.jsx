@@ -9,7 +9,7 @@ function ViewOrderRefund() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/refunds",[])
+      .get("https://jewelrysalesystem-backend.onrender.com/api/refunds",[])
       .then((respone) => {
         console.log(respone.data);
         setOrder(respone.data);

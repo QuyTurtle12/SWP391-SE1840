@@ -14,7 +14,7 @@ export default function ProductListManager() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/v2/products")
+      .get("https://jewelrysalesystem-backend.onrender.com/api/v2/products")
       .then((response) => {
         console.log(response.data);
         setProducts(response.data);
@@ -23,12 +23,12 @@ export default function ProductListManager() {
   }, []);
 
   const handleProductClick = (id) => {
-    navigate(`/productlist2/${id}`);
+    navigate(`/productdetail2/${id}`);
   };
 
   const handleDeleteProduct = async (id) => {
     try {
-      const response = await axios.delete(`http://localhost:8080/api/v2/products/${id}`);
+      const response = await axios.delete(`https://jewelrysalesystem-backend.onrender.com/api/v2/products/${id}`);
       if (response.status === 200) {
         toast.success("Product deleted successfully!");
         setProducts(products.filter((product) => product.id !== id));
@@ -73,7 +73,7 @@ export default function ProductListManager() {
                       onClick={() => handleProductClick(product.id)}
                       className="bg-white text-gray-900 py-2 px-6 rounded-full font-bold hover:bg-gray-300"
                     >
-                      View Product
+                      Update Product
                     </button>
                   </div>
                 </div>
@@ -89,7 +89,7 @@ export default function ProductListManager() {
                 {/* Delete button */}
                 <button
                   onClick={() => handleDeleteProduct(product.id)}
-                  className="mt-4 bg-red-500 text-white py-2 px-4 rounded-full font-bold hover:bg-red-700"
+                  className="mt-2 bg-cyan-600 text-white py-2 px-2 rounded-full font-bold "
                 >
                   Delete Product
                 </button>
