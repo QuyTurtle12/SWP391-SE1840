@@ -21,7 +21,7 @@ services:
       dockerfile: Dockerfile
       args:
         TAG: latest # Custom build argument
-    image: jewelrysalesystem:latest # Custom image name and tag
+    image: itturtle/jewelrysalesystem:latest # Custom image name and tag
     container_name: jss # Custom container name
     ports:
       - "8080:8080" # Custom port mapping (host:container)
