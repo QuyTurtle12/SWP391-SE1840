@@ -7,6 +7,7 @@ import java.util.concurrent.ExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.swp391.jewelrysalesystem.models.Product;
 import com.swp391.jewelrysalesystem.models.Promotion;
 
 @Service
@@ -15,8 +16,9 @@ public class PromotionService implements IPromotionService {
 
     private IGenericService<Promotion> genericService;
 
+
     @Autowired
-    public PromotionService(IGenericService<Promotion> genericService){
+    public PromotionService(IGenericService<Promotion> genericService) {
         this.genericService = genericService;
     }
 
@@ -68,7 +70,7 @@ public class PromotionService implements IPromotionService {
     @Override
     public Promotion getPromotion(int ID) {
         try {
-            return genericService.getByField(ID, "id", "null", Promotion.class);
+            return genericService.getByField(ID, "id", "promotion", Promotion.class);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             return null;
@@ -77,7 +79,7 @@ public class PromotionService implements IPromotionService {
 
     @Override
     public boolean isNotNullPromotion(int ID) {
-        
+
         if (ID == NO_PROMOTION) {
             return true;
         }

@@ -26,4 +26,6 @@ public interface IProductService {
     double goldWeight, double laborCost, double stoneCost, int stock, String img, int promotionID);
 
     int generateID();
+
+    boolean disableProductPromotionID (int promotionID);
 }

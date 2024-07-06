@@ -82,6 +82,8 @@ public class OrderController {
 
         int orderID = orderService.generateID();
 
+        totalPrice = totalPrice - (totalPrice * discountApplied); //Discount range from 0 to 1
+
         Order newOrder = new Order();
         newOrder.setID(orderID);
         newOrder.setDate(Timestamp.now());

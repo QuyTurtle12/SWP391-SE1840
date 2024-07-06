@@ -91,7 +91,7 @@ public class CartService implements ICartService {
         List<CartItem> cartItems = userCarts.get(userId);
         if (cartItems != null) {
             for (CartItem cartItem : cartItems) {
-                cartItem.setPrice(cartItem.getQuantity() * cartItem.getProduct().getPrice());
+                cartItem.setPrice(cartItem.getQuantity() * cartItem.getProduct().getDiscountPrice());
             }
         }
     }

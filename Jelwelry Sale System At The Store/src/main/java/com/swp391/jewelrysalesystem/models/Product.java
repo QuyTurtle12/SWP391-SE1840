@@ -14,6 +14,7 @@ public class Product implements StatusUpdatable {
     private String name;
     private double price;
     private double refundPrice;
+    private double discountPrice;
     private String description;
     private double goldWeight;
     private double laborCost;

@@ -10,20 +10,20 @@ import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.swp391.jewelrysalesystem.models.Category;
 import com.swp391.jewelrysalesystem.models.Product;
 
 @Service
 public class ProductService implements IProductService {
     private IGenericService<Product> genericService;
-    private ICategoryService categoryService;
     private IPromotionService promotionService;
+    private ICategoryService categoryService;
 
     @Autowired
-    public ProductService(IGenericService<Product> genericService, ICategoryService categoryService, IPromotionService promotionService) {
+    public ProductService(IGenericService<Product> genericService, ICategoryService categoryService,
+            IPromotionService promotionService) {
         this.genericService = genericService;
         this.categoryService = categoryService;
         this.promotionService = promotionService;
@@ -62,9 +62,14 @@ public class ProductService implements IProductService {
                 }
 
                 break;
-            case "ByCategory":
+            case "ByCategoryName":
                 for (Product product : productList) {
-                    if (product.getCategoryID() == Integer.parseInt(input)) {
+                    Category category = categoryService.getCategoryByName(input);
+                    if (category == null) {
+                        break;
+                    }
+                    int categoryID = category.getID();
+                    if (product.getCategoryID() == categoryID) {
                         newProductList.add(product);
                     }
                 }
@@ -73,6 +78,14 @@ public class ProductService implements IProductService {
             case "ByStatus":
                 for (Product product : productList) {
                     if (product.getStatus().toString().toLowerCase().equals(input.toLowerCase())) {
+                        newProductList.add(product);
+                    }
+                }
+
+                break;
+            case "ByPromotionID":
+                for (Product product : productList) {
+                    if (product.getPromotionID() == Integer.parseInt(input)) {
                         newProductList.add(product);
                     }
                 }
@@ -195,5 +208,22 @@ public class ProductService implements IProductService {
     @Override
     public int generateID() {
         return genericService.generateID("product", Product.class, Product::getID);
+    }
+
+    @Override
+    public boolean disableProductPromotionID(int promotionID) {
+        try {
+            List<Product> products = searchProduct(String.valueOf(promotionID), "ByPromotionID", getProductList());
+            for (Product product : products) {
+                product.setPromotionID(0);
+                product.setDiscountPrice(product.getPrice());
+                saveProduct(product);
+            }
+            return true;
+        } catch (InterruptedException | ExecutionException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        }
     }
 }

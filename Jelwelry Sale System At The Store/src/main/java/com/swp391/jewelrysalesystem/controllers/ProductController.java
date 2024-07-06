@@ -12,20 +12,28 @@ import org.springframework.web.bind.annotation.*;
 
 import com.swp391.jewelrysalesystem.models.Category;
 import com.swp391.jewelrysalesystem.models.Product;
+import com.swp391.jewelrysalesystem.models.Promotion;
 import com.swp391.jewelrysalesystem.services.ICategoryService;
 import com.swp391.jewelrysalesystem.services.IProductService;
+import com.swp391.jewelrysalesystem.services.IPromotionService;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @RestController
 @RequestMapping("/api")
 public class ProductController {
 
-    private final IProductService productService;
-    private final ICategoryService categoryService;
+    private IProductService productService;
+    private ICategoryService categoryService;
+    private IPromotionService promotionService;
 
     @Autowired
-    public ProductController(IProductService productService, ICategoryService categoryService) {
+    public ProductController(IProductService productService, ICategoryService categoryService,
+            IPromotionService promotionService) {
         this.productService = productService;
         this.categoryService = categoryService;
+        this.promotionService = promotionService;
     }
 
     @PostMapping("/v2/products")
@@ -56,10 +64,17 @@ public class ProductController {
             if (error != null) {
                 return ResponseEntity.badRequest().body(error);
             }
-            
+
             int ID = productService.generateID();
 
-            Product newProduct = new Product(ID, img, name, price, refundPrice, description, goldWeight, laborCost,
+            Promotion promotion = promotionService.getPromotion(promotionID);
+            double discountPrice = price;
+            if (promotion != null) {
+                double discountRate = promotion.getDiscountRate();
+                discountPrice = price - (price * discountRate);
+            }
+
+            Product newProduct = new Product(ID, img, name, price, refundPrice, discountPrice, description, goldWeight, laborCost,
                     stoneCost, stock, promotionID, categoryID, true);
             if (productService.saveProduct(newProduct)) {
                 return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -106,12 +121,20 @@ public class ProductController {
                 return ResponseEntity.badRequest().body(error);
             }
 
+            Promotion promotion = promotionService.getPromotion(promotionID);
+            double discountPrice = price;
+            if (promotion != null) {
+                double discountRate = promotion.getDiscountRate();
+                discountPrice = price - (price * discountRate);
+            }
+
             Product existingProduct = productService.getProductByID(ID);
 
             existingProduct.setName(name);
             existingProduct.setImg(img);
             existingProduct.setPrice(price);
             existingProduct.setRefundPrice(refundPrice);
+            existingProduct.setDiscountPrice(discountPrice);
             existingProduct.setDescription(description);
             existingProduct.setGoldWeight(goldWeight);
             existingProduct.setLaborCost(laborCost);
@@ -160,6 +183,7 @@ public class ProductController {
                 productMap.put("name", product.getName());
                 productMap.put("price", product.getPrice());
                 productMap.put("refundPrice", product.getRefundPrice());
+                productMap.put("discountPrice", product.getDiscountPrice());
                 productMap.put("description", product.getDescription());
                 productMap.put("goldWeight", product.getGoldWeight());
                 productMap.put("laborCost", product.getLaborCost());
@@ -186,13 +210,14 @@ public class ProductController {
             }
 
             String categoryName = categoryService.getCategory(product.getCategoryID()).getName();
-            // Create a map to hold the product details
+
             Map<String, Object> productMap = new HashMap<>();
             productMap.put("id", product.getID());
             productMap.put("img", product.getImg());
             productMap.put("name", product.getName());
             productMap.put("price", product.getPrice());
             productMap.put("refundPrice", product.getRefundPrice());
+            productMap.put("discountPrice", product.getDiscountPrice());
             productMap.put("description", product.getDescription());
             productMap.put("goldWeight", product.getGoldWeight());
             productMap.put("laborCost", product.getLaborCost());
@@ -241,6 +266,7 @@ public class ProductController {
                 productMap.put("name", product.getName());
                 productMap.put("price", product.getPrice());
                 productMap.put("refundPrice", product.getRefundPrice());
+                productMap.put("discountPrice", product.getDiscountPrice());
                 productMap.put("description", product.getDescription());
                 productMap.put("goldWeight", product.getGoldWeight());
                 productMap.put("laborCost", product.getLaborCost());
@@ -279,6 +305,7 @@ public class ProductController {
                 productMap.put("name", product.getName());
                 productMap.put("price", product.getPrice());
                 productMap.put("refundPrice", product.getRefundPrice());
+                productMap.put("discountPrice", product.getDiscountPrice());
                 productMap.put("description", product.getDescription());
                 productMap.put("goldWeight", product.getGoldWeight());
                 productMap.put("laborCost", product.getLaborCost());
@@ -320,6 +347,7 @@ public class ProductController {
                 productMap.put("name", product.getName());
                 productMap.put("price", product.getPrice());
                 productMap.put("refundPrice", product.getRefundPrice());
+                productMap.put("discountPrice", product.getDiscountPrice());
                 productMap.put("description", product.getDescription());
                 productMap.put("goldWeight", product.getGoldWeight());
                 productMap.put("laborCost", product.getLaborCost());
@@ -336,4 +364,18 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @PostMapping("/v2/products/disable")
+    public ResponseEntity<String> disablePromotionID(@RequestParam int promotionID) {
+        if (!promotionService.isNotNullPromotion(promotionID)) {
+            return ResponseEntity.badRequest().body("Promotion ID " + promotionID + " is not exist");
+        }
+
+        if (productService.disableProductPromotionID(promotionID)) {
+            return ResponseEntity.ok().body("Disabled promotion of products which have promotion ID " + promotionID + " successfully");
+        } else {
+            return ResponseEntity.internalServerError().body("Error disabling promotion ID " + promotionID);
+        }
+    }
+    
 }

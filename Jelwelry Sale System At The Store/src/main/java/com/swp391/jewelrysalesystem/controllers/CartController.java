@@ -38,7 +38,7 @@ public class CartController {
     @PostMapping("")
     public ResponseEntity<String> addItemV2(@RequestParam int staffId, @RequestBody Product product) {
         int quantity = 1;
-        double price = product.getPrice();
+        double price = product.getDiscountPrice();
 
         if (product.getStock() <= 0) {
             return ResponseEntity.badRequest().body("This item is out of stock");

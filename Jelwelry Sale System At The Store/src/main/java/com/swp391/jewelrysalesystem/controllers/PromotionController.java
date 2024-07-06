@@ -3,10 +3,10 @@ package com.swp391.jewelrysalesystem.controllers;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.swp391.jewelrysalesystem.models.Promotion;
+import com.swp391.jewelrysalesystem.services.IProductService;
 import com.swp391.jewelrysalesystem.services.IPromotionService;
 
 import java.util.List;
-
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,10 +22,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 public class PromotionController {
     private IPromotionService promotionService;
+    private IProductService productService;
 
     @Autowired
-    public PromotionController(IPromotionService promotionService) {
+    public PromotionController(IPromotionService promotionService, IProductService productService) {
         this.promotionService = promotionService;
+        this.productService = productService;
     }
 
     @PostMapping("v2/promotions")
@@ -80,6 +82,22 @@ public class PromotionController {
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body("Error updating promotion!");
+    }
+
+    @GetMapping("v2/promotions/promotion")
+    public ResponseEntity<Promotion> getPromotionV2(@RequestParam int promotionID) {
+        try {
+            Promotion promotion = promotionService.getPromotion(promotionID);
+
+            if (promotion == null) {
+                return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
+            }
+
+            return ResponseEntity.ok(promotion);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     @GetMapping("v2/promotions")
