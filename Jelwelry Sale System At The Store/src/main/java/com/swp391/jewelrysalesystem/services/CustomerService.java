@@ -109,11 +109,15 @@ public class CustomerService implements ICustomerService {
 
     @Override
     public boolean saveCustomer(Customer customer) {
-        int newID = generateCustomerID();
-        if (newID == 0) {
+        int ID = customer.getID();
+        if (ID == 0) {
+            ID = generateCustomerID();
+        }
+        
+        if (ID == 0) {
             return false; // error
         }
-        customer.setID(newID);
+        customer.setID(ID);
         return genericService.saveObject(customer, "customer", customer.getID());
     }
 

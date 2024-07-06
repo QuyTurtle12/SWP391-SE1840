@@ -36,6 +36,8 @@ public class OrderController {
     private ICustomerService customerService;
     private IUserService userService;
 
+    private final int ACCEPTABLE_TOTAL_PRICE = 100;
+
     @Autowired
     public OrderController(IOrderService orderService, IProductService productService, ICustomerService customerService,
             IUserService userService) {
@@ -66,7 +68,7 @@ public class OrderController {
 
         if (customer == null) {
             Customer newCustomer = new Customer();
-            newCustomer.setID(0);
+            newCustomer.setID(0);   
             newCustomer.setName(customerName);
             newCustomer.setGender(customerGender);
             newCustomer.setContactInfo(customerPhone);
@@ -94,6 +96,13 @@ public class OrderController {
         newOrder.setDiscountApplied(discountApplied);
         try {
             orderService.saveOrder(newOrder);
+            if (totalPrice >= ACCEPTABLE_TOTAL_PRICE) {
+                double currentPoints = customer.getPoint();
+                double additionalPoints = totalPrice/100;
+                customer.setPoint(currentPoints + additionalPoints);
+                customerService.saveCustomer(customer);
+            }
+
             List<OrderDTO> orderDTOs = new ArrayList<>();
             for (CartItem item : cart) {
                 OrderDTO orderDTO = new OrderDTO();
