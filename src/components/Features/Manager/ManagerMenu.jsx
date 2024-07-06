@@ -77,6 +77,18 @@ export default function ManagerMenu() {
               </h3>
             </Button>
             </li>
+            <li><Button component={Link} to="/view-counter">
+              <h3 className=" px-4 rounded-sm text-black font-bold">
+                View counter
+              </h3>
+            </Button>
+            </li>
+            <li><Button component={Link} to="/create-counter">
+              <h3 className=" px-4 rounded-sm text-black font-bold">
+                create counter
+              </h3>
+            </Button>
+            </li>
         </ul>
       </div>
     </>
