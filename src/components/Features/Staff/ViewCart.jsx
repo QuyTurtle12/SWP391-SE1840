@@ -143,6 +143,7 @@ function ViewCart() {
         toast.error(`${error.response ? error.response.data : error.message}`);
         console.error("Error updating quantity", error);
         fetchCartData();
+
       });
   };
 

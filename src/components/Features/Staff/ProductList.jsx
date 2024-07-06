@@ -26,7 +26,8 @@ function ProductList() {
 
   const searchProduct = () =>{
     axios
-    .get(`https://jewelrysalesystem-backend.onrender.com/search?input=${searchInput}&filter=ByName`)
+    .get(`https://jewelrysalesystem-backend.onrender.com/api/v2/products/search?input=${searchInput}&filter=ByName
+`)
     .then((respone) =>{
       setProducts(respone.data);
    

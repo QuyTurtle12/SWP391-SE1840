@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
 
 function EditManager() {
   const { id } = useParams(); // Lấy id từ URL
   const navigate = useNavigate(); // Để điều hướng sau khi cập nhật thành công
-  const handleButtonX = () => {
-    navigate("/view-manager-list");
-  };
-
+  const [counters, setCounters] = useState([]);
   const [manager, setManager] = useState({
     fullName: "",
     gender: "",
     contactInfo: "",
     counterID: "",
   });
+
+  const handleButtonX = () => {
+    navigate("/view-manager-list");
+  };
 
   useEffect(() => {
     const fetchManager = async () => {
@@ -29,6 +31,19 @@ function EditManager() {
       }
     };
 
+    const handleCounterList = async () => {
+      try {
+        const response = await axios.get(
+          "https://jewelrysalesystem-backend.onrender.com/api/v2/counters"
+        );
+        console.log(response.data);
+        setCounters(response.data);
+      } catch (error) {
+        console.error("Error fetching counters", error);
+      }
+    };
+
+    handleCounterList();
     fetchManager();
   }, [id]);
 
@@ -39,8 +54,6 @@ function EditManager() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-  
 
     console.log("Submitting form with data:", manager);
     try {
@@ -53,11 +66,7 @@ function EditManager() {
       console.log("Update response:", response);
       navigate("/view-manager-list"); // Điều hướng quay lại danh sách manager sau khi cập nhật thành công
     } catch (error) {
-      console.error(
-        "Error updating manager",
-        error.response ? error.response.data : error.message
-      );
-      alert("Error updating manager. Please try again.");
+      toast.error(`${error.response ? error.response.data : error.message}`);
     }
   };
 
@@ -71,6 +80,8 @@ function EditManager() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
+          <ToastContainer/>
+
       <div className="bg-white rounded-lg shadow relative w-full max-w-2xl p-10">
         <div className="flex items-start justify-between p-5 border-b rounded-t">
           <h3 className="text-xl font-semibold">Edit Manager</h3>
@@ -158,7 +169,6 @@ function EditManager() {
                 >
                   Counter ID
                 </label>
-
                 <select
                   id="counterID"
                   value={manager.counterID}
@@ -166,12 +176,11 @@ function EditManager() {
                   className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5"
                   required
                 >
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                  <option value="6">6</option>
+                  {counters.map((counter) => (
+                    <option key={counter.id} value={counter.id}>
+                      {counter.id}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>

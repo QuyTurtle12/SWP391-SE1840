@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import AdminMenu from "./AdminMenu";
@@ -13,7 +13,20 @@ const AddManager = () => {
   const [password, setPassword] = useState("");
   const [contactInfo, setContactInfo] = useState("");
   const [counterID, setCounterID] = useState("");
+  const [counters, setCounters] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchCounters = async () => {
+      try {
+        const response = await axios.get("https://jewelrysalesystem-backend.onrender.com/api/v2/counters");
+        setCounters(response.data);
+      } catch (error) {
+        console.error("Error fetching counters data", error);
+      }
+    };
+    fetchCounters();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -55,11 +68,8 @@ const AddManager = () => {
         "Error adding manager:",
         error.response ? error.response.data : error.message
       );
-      toast.error(
-        `Failed to add manager. Error: ${
-          error.response ? error.response.data.error : error.message
-        }`
-      );
+      toast.error(`${error.response ? error.response.data : error.message}`);
+
     }
   };
 
@@ -158,7 +168,6 @@ const AddManager = () => {
                   <select
                     id="counterID"
                     name="counterID"
-                    type="number"
                     placeholder="Counter ID"
                     required
                     value={counterID}
@@ -168,26 +177,13 @@ const AddManager = () => {
                     <option value="" disabled>
                       Select Counter
                     </option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
+                    {counters.map((counter) => (
+                      <option key={counter.id} value={counter.id}>
+                        {counter.id}
+                      </option>
+                    ))}
                   </select>
                 </div>
-                {/* <select
-									id="gender"
-									value={gender}
-									onChange={(e) => setGender(e.target.value)}
-									className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5"
-									required
-								>
-									<option value="" disabled>Select Gender</option>
-									<option value="Male">Male</option>
-									<option value="Female">Female</option>
-									<option value="Other">Other</option>
-								</select> */}
               </div>
               <div className="mt-6">
                 <label className="block text-sm font-medium leading-5 text-gray-700">
