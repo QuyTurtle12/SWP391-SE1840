@@ -6,6 +6,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import com.google.firebase.cloud.FirestoreClient;
 import com.google.api.core.ApiFuture;
@@ -18,12 +20,14 @@ import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 
 import com.swp391.jewelrysalesystem.models.User;
+import java.util.logging.Logger;
 
 @Service
 public class UserService implements IUserService {
 
     @Autowired
     private PasswordService passwordService;
+    private static final Logger LOGGER = Logger.getLogger(UserService.class.getName());
 
     // @Autowired
     // public FirebaseService firebaseService;
@@ -70,6 +74,23 @@ public class UserService implements IUserService {
                 return null;
             }
         }
+    }
+
+    public List<GrantedAuthority> getAuthorities(int roleID) {
+        return List.of(roleID).stream()
+                .map(role -> {
+                    switch (role) {
+                        case 1:
+                            return new SimpleGrantedAuthority("ROLE_STAFF");
+                        case 2:
+                            return new SimpleGrantedAuthority("ROLE_MANAGER");
+                        case 3:
+                            return new SimpleGrantedAuthority("ROLE_ADMIN");
+                        default:
+                            throw new IllegalArgumentException("Invalid role ID: " + role);
+                    }
+                })
+                .collect(Collectors.toList());
     }
 
     // Get user data base on uid
@@ -327,31 +348,18 @@ public class UserService implements IUserService {
         }
     }
 
-    // Function to register a new user with hashed password
-    /*
-     * public boolean registerUser(User user) {
-     * Firestore dbFirestore = FirestoreClient.getFirestore();
-     * user.setPassword(passwordService.hashPassword(user.getPassword()));
-     * DocumentReference documentReference =
-     * dbFirestore.collection("user").document(String.valueOf(user.getID()));
-     * 
-     * try {
-     * // First, set the user document
-     * ApiFuture<com.google.cloud.firestore.WriteResult> future =
-     * documentReference.set(user);
-     * future.get(); // Wait for the write operation to complete
-     * 
-     * // Then, add the new entry with auto-increment ID
-     * String collectionName = "user";
-     * firebaseService.addNewEntry(collectionName, user.toMap());
-     * 
-     * return true;
-     * } catch (Exception e) {
-     * System.err.println("Error saving user document: " + e.getMessage());
-     * e.printStackTrace();
-     * return false;
-     * }
-     * }
-     */
+    public boolean checkIfEmailExists(String email) {
+        Firestore db = FirestoreClient.getFirestore();
+        ApiFuture<QuerySnapshot> query = db.collection("user").whereEqualTo("email", email).get();
+        try {
+            QuerySnapshot querySnapshot = query.get();
+            boolean exists = !querySnapshot.isEmpty();
+            LOGGER.info("Email check for " + email + ": " + exists);
+            return exists;
+        } catch (InterruptedException | ExecutionException e) {
+            LOGGER.severe("Error checking email existence: " + e.getMessage());
+            return false;
+        }
+    }
 
 }

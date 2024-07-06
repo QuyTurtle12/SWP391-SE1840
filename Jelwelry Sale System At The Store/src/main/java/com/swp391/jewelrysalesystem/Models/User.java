@@ -14,7 +14,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class User {
     private int ID;
-    private int roleID;
+    private int roleID;// 1 for STAFF, 2 for MANAGER, 3 for ADMIN
     private String fullName;
     private String password;
     private String email;

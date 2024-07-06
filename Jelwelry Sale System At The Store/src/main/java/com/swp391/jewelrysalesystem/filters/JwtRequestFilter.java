@@ -4,6 +4,7 @@ import com.swp391.jewelrysalesystem.services.JwtUtil;
 import com.swp391.jewelrysalesystem.services.UserService;
 import com.swp391.jewelrysalesystem.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -16,8 +17,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
@@ -63,8 +66,24 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
             if (user != null && jwtUtil.validateToken(jwt, user.getEmail())) {
                 LOGGER.info("JWT Token validated for user: " + email);
+
+                List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+                switch (user.getRoleID()) {
+                    case 1:
+                        authorities.add(new SimpleGrantedAuthority("ROLE_STAFF"));
+                        break;
+                    case 2:
+                        authorities.add(new SimpleGrantedAuthority("ROLE_MANAGER"));
+                        break;
+                    case 3:
+                        authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Invalid role ID: " + user.getRoleID());
+                }
+
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                        user, null, Collections.emptyList());
+                        user, null, authorities);
                 usernamePasswordAuthenticationToken
                         .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
