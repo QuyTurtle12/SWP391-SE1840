@@ -46,6 +46,16 @@
             <version>2.5.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-core</artifactId>
+            <version>1.42.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-xds</artifactId>
+            <version>1.42.0</version>
+        </dependency>
         <!-- Spring Security JWT -->
         <dependency>
             <groupId>org.springframework.security</groupId>
