@@ -13,6 +13,9 @@ import org.springframework.web.servlet.view.RedirectView;
 import java.util.List;
 import com.swp391.jewelrysalesystem.models.User;
 import com.swp391.jewelrysalesystem.services.IUserService;
+import com.swp391.jewelrysalesystem.services.JwtUtil;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,10 +29,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class UserController {
 
     private IUserService userService;
+    private JwtUtil jwtUtil;
 
     @Autowired
-    public UserController(IUserService userService) {
+    public UserController(IUserService userService, JwtUtil jwtUtil) {
         this.userService = userService;
+        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping("v2/accounts/{role}")
@@ -181,6 +186,22 @@ public class UserController {
     public ResponseEntity<User> getUserByUserIDV2(@RequestParam String id) {
         try {
             User user = userService.getUserByUserID(Integer.parseInt(id));
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).build();
+            }
+            return ResponseEntity.ok(user);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("this-info")
+    public ResponseEntity<User> getThisUser(HttpServletRequest request) {
+        try {
+            String token = request.getHeader("Authorization").substring(7);
+            int userID = Integer.parseInt(jwtUtil.extractUserID(token));
+            User user = userService.getUserByUserID(userID);
             if (user == null) {
                 return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).build();
             }
