@@ -40,19 +40,17 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         final String authorizationHeader = request.getHeader("Authorization");
 
         String email = null;
+        String userID = null;
         String jwt = null;
-
-        LOGGER.info("Authorization Header: " + authorizationHeader);
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7);
             try {
                 email = jwtUtil.extractUsername(jwt);
+                userID = jwtUtil.extractUserID(jwt); // Extract userID
             } catch (Exception e) {
                 LOGGER.severe("JWT Token extraction failed: " + e.getMessage());
             }
-            LOGGER.info("JWT Token extracted: " + jwt);
-            LOGGER.info("Email extracted from JWT: " + email);
         }
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -65,8 +63,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             }
 
             if (user != null && jwtUtil.validateToken(jwt, user.getEmail())) {
-                LOGGER.info("JWT Token validated for user: " + email);
-
                 List<SimpleGrantedAuthority> authorities = new ArrayList<>();
                 switch (user.getRoleID()) {
                     case 1:
@@ -87,8 +83,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 usernamePasswordAuthenticationToken
                         .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-            } else {
-                LOGGER.warning("JWT Token validation failed for user: " + email);
+
+                // You can now use the userID as needed
+                LOGGER.info("User ID: " + userID);
             }
         }
         chain.doFilter(request, response);

@@ -47,7 +47,8 @@ public class AuthController {
             List<String> roles = List.of(user.getRoleID() == 1 ? "ROLE_STAFF"
                     : user.getRoleID() == 2 ? "ROLE_MANAGER" : user.getRoleID() == 3 ? "ROLE_ADMIN" : "");
 
-            final String jwt = jwtUtil.generateToken(user.getEmail(), roles);
+            final String jwt = jwtUtil.generateToken(user.getEmail(),
+                    String.valueOf(userService.getUserByEmail(user.getEmail()).getID()), roles);
             LOGGER.info("JWT Token generated for user: " + authenticationRequest.getEmail());
             return ResponseEntity.ok(new AuthenticationResponse(jwt, 200));
         } catch (Exception e) {

@@ -29,6 +29,10 @@ public class JwtUtil {
         return (String) extractAllClaims(token).get("sub");
     }
 
+    public String extractUserID(String token) {
+        return (String) extractAllClaims(token).get("userID");
+    }
+
     public Date extractExpiration(String token) {
         // Cast the expiration claim to a Number and convert to a Long
         Number expiration = (Number) extractAllClaims(token).get("exp");
@@ -53,9 +57,10 @@ public class JwtUtil {
         return extractExpiration(token).before(new Date());
     }
 
-    public String generateToken(String username, List<String> roles) {
+    public String generateToken(String username, String userID, List<String> roles) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("roles", roles);
+        claims.put("userID", userID); // Add userID to the claims
         return createToken(claims, username);
     }
 

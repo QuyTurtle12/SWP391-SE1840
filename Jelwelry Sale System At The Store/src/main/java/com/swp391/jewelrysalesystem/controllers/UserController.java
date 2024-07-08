@@ -13,6 +13,9 @@ import java.util.List;
 import com.swp391.jewelrysalesystem.models.User;
 import com.swp391.jewelrysalesystem.services.ICustomerService;
 import com.swp391.jewelrysalesystem.services.IUserService;
+import com.swp391.jewelrysalesystem.services.JwtUtil;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,11 +30,13 @@ public class UserController {
 
     private IUserService userService;
     private ICustomerService customerService;
+    private JwtUtil jwtUtil;
 
     @Autowired
-    public UserController(IUserService userService, ICustomerService customerService) {
+    public UserController(IUserService userService, ICustomerService customerService, JwtUtil jwtUtil) {
         this.userService = userService;
         this.customerService = customerService;
+        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping("v2/accounts/{role}")
@@ -166,6 +171,22 @@ public class UserController {
     public ResponseEntity<User> getUserByUserIDV2(@RequestParam int id) {
         try {
             User user = userService.getUserByField(id, "id", "user");
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).build();
+            }
+            return ResponseEntity.ok(user);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("this-info")
+    public ResponseEntity<User> getThisUser(HttpServletRequest request) {
+        try {
+            String token = request.getHeader("Authorization").substring(7);
+            int userID = Integer.parseInt(jwtUtil.extractUserID(token));
+            User user = userService.getUserByField(userID, "id", "user");
             if (user == null) {
                 return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).build();
             }
