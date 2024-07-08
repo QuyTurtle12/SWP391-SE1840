@@ -8,7 +8,10 @@ import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,6 +19,7 @@ public class JwtUtil {
     private final String SECRET_KEY = "your_secret_key_your_secret_key_your_secret_key_your_secret_key";
     private final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private Set<String> invalidatedTokens = new HashSet<>();
 
     public String extractUsername(String token) {
         return (String) extractAllClaims(token).get("sub");
@@ -63,6 +67,43 @@ public class JwtUtil {
 
     public Boolean validateToken(String token, String username) {
         final String extractedUsername = extractUsername(token);
-        return (extractedUsername.equals(username) && !isTokenExpired(token));
+        return (extractedUsername.equals(username) && !isTokenExpired(token) && !isTokenInvalidated(token));
     }
+
+    public void invalidateToken(String token) {
+        invalidatedTokens.add(token);
+    }
+
+    private boolean isTokenInvalidated(String token) {
+        return invalidatedTokens.contains(token);
+    }
+
+    public String generatePasswordResetToken(String email) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("email", email);
+        return createPasswordResetToken(claims, email);
+    }
+
+    private String createPasswordResetToken(Map<String, Object> claims, String subject) {
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(subject)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30)) // 30 minutes expiry
+                .signWith(SignatureAlgorithm.HS256, key)
+                .compact();
+    }
+
+    public String validatePasswordResetToken(String token) {
+        try {
+            String email = extractUsername(token);
+            if (isTokenExpired(token)) {
+                return null;
+            }
+            return email;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 }

@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
@@ -42,7 +43,11 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7);
-            email = jwtUtil.extractUsername(jwt);
+            try {
+                email = jwtUtil.extractUsername(jwt);
+            } catch (Exception e) {
+                LOGGER.severe("JWT Token extraction failed: " + e.getMessage());
+            }
             LOGGER.info("JWT Token extracted: " + jwt);
             LOGGER.info("Email extracted from JWT: " + email);
         }
@@ -59,7 +64,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             if (user != null && jwtUtil.validateToken(jwt, user.getEmail())) {
                 LOGGER.info("JWT Token validated for user: " + email);
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                        user, null, new ArrayList<>()); // Add roles/authorities here if needed
+                        user, null, Collections.emptyList());
                 usernamePasswordAuthenticationToken
                         .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);

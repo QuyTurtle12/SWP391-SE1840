@@ -14,21 +14,25 @@ import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.Query;
 import com.google.cloud.firestore.QuerySnapshot;
-import com.swp391.jewelrysalesystem.models.User;;
+import com.swp391.jewelrysalesystem.models.User;
 
 @Service
 public class UserService implements IUserService {
 
     @Autowired
     private PasswordService passwordService;
-
     private IGenericService<User> genericService;
     private ICounterService counterService;
 
     @Autowired
-    public UserService(IGenericService<User> genericService, ICounterService counterService){
+    public UserService(IGenericService<User> genericService, ICounterService counterService) {
         this.genericService = genericService;
         this.counterService = counterService;
+    }
+
+    // Method to get a user by email
+    public User getUserByEmail(String email) throws InterruptedException, ExecutionException {
+        return genericService.getByField(email, "email", "user", User.class);
     }
 
     public User getUserByEmailAndPassword(String email, String rawPassword)
@@ -59,7 +63,19 @@ public class UserService implements IUserService {
 
     @Override
     public boolean saveUser(User user) {
-        return genericService.saveObject(user, "user", user.getID());
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        // user.setPassword(passwordService.hashPassword(user.getPassword()));
+        DocumentReference documentReference = dbFirestore.collection("user").document(String.valueOf(user.getID()));
+
+        ApiFuture<com.google.cloud.firestore.WriteResult> future = documentReference.set(user);
+        try {
+            future.get();
+            return true;
+        } catch (Exception e) {
+            System.err.println("Error saving user document: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
@@ -150,15 +166,13 @@ public class UserService implements IUserService {
             if (existedPhoneNum == null) {
                 return true;
             }
-            
+
             return false;
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             return false;
         }
     }
-
-
 
     // Function to register a new user with hashed password
     public boolean registerUser(User user) {
@@ -195,7 +209,6 @@ public class UserService implements IUserService {
                 }
             }
         } catch (InterruptedException | ExecutionException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             return false;
         }
@@ -211,7 +224,7 @@ public class UserService implements IUserService {
             if (userWithThisEmail == null) {
                 return true;
             }
-            
+
             return false;
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
@@ -269,14 +282,14 @@ public class UserService implements IUserService {
         } else {
             query = users.whereEqualTo(field, value);
         }
-        
+
         // Retrieve query results
         ApiFuture<QuerySnapshot> querySnapshot = query.get();
 
         try {
             return querySnapshot.get().toObjects(User.class);
         } catch (InterruptedException | ExecutionException e) {
-            System.err.println("Error retrieving users by: "+ field + ": " + e.getMessage());
+            System.err.println("Error retrieving users by: " + field + ": " + e.getMessage());
             throw e;
         } catch (Exception e) {
             System.err.println("Unexpected error: " + e.getMessage());
@@ -285,7 +298,7 @@ public class UserService implements IUserService {
         }
     }
 
-    public int getRoleID(String roleName){
+    public int getRoleID(String roleName) {
         switch (roleName) {
             case "ADMIN":
                 return 3;
@@ -322,7 +335,7 @@ public class UserService implements IUserService {
         if (!contactInfo.matches("0\\d+")) {
             return "Contact Info must contain only numeric characters and start with zero!";
         }
-        
+
         if (contactInfo.length() < 10 || contactInfo.length() > 11) {
             return "Phone Number must be in range 10 - 11";
         }
@@ -337,6 +350,4 @@ public class UserService implements IUserService {
     public int generateID() {
         return genericService.generateID("user", User.class, User::getID);
     }
-
-
 }

@@ -12,9 +12,11 @@ public interface IUserService {
 
     User getUserByField(int value, String field, String collection) throws InterruptedException, ExecutionException;
 
-    List<User> getUserListByField(String value, String field, String collection) throws InterruptedException, ExecutionException;
+    List<User> getUserListByField(String value, String field, String collection)
+            throws InterruptedException, ExecutionException;
 
-    List<User> getUserListByField(int value, String field, String collection) throws InterruptedException, ExecutionException;
+    List<User> getUserListByField(int value, String field, String collection)
+            throws InterruptedException, ExecutionException;
 
     boolean saveUser(User user);
 
@@ -37,4 +39,9 @@ public interface IUserService {
     String isGeneralValidated(String fullName, String gender, String contactInfo, int counterID);
 
     int generateID();
+
+    User getUserByEmail(String email) throws InterruptedException, ExecutionException;
+
+    User getUserByEmailAndPassword(String email, String rawPassword)
+            throws InterruptedException, ExecutionException;
 }

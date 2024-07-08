@@ -2,6 +2,9 @@ package com.swp391.jewelrysalesystem.models;
 
 import com.swp391.jewelrysalesystem.services.StatusUpdatable;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,6 +30,20 @@ public class User implements StatusUpdatable{
     @Override
     public Boolean getStatus(){
         return status;
+    }
+
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> result = new HashMap<>();
+        result.put("ID", ID);
+        result.put("fullName", fullName);
+        result.put("email", email);
+        result.put("password", password);
+        result.put("contactInfo", contactInfo);
+        result.put("roleID", roleID);
+        result.put("status", status);
+        result.put("counterID", counterID);
+        return result;
     }
 
 }

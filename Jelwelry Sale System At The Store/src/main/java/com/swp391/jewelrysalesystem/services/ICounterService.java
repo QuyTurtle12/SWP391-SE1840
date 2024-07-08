@@ -8,7 +8,7 @@ public interface ICounterService {
     boolean saveCounter(Counter counter);
 
     boolean removeCounter(int ID);
-    
+
     List<Counter> getCountersList();
 
     Counter getCounter(int ID);
@@ -16,6 +16,9 @@ public interface ICounterService {
     boolean changeStatus(int ID);
 
     boolean isNotNullCounter(int ID);
+
+    double calculateCounterSale(int counterID);
+
 
     int generateID();
 }

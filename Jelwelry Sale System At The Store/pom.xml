@@ -110,18 +110,18 @@
         </dependency>
 
         <!-- Firebase Admin SDK -->
-        <dependency>
-            <groupId>com.google.firebase</groupId>
-            <artifactId>firebase-admin</artifactId>
-            <version>9.2.0</version>
-        </dependency>
+<dependency>
+    <groupId>com.google.firebase</groupId>
+    <artifactId>firebase-admin</artifactId>
+    <version>8.1.0</version>
+</dependency>
 
         <!-- Google Cloud Firestore -->
-        <dependency>
-            <groupId>com.google.cloud</groupId>
-            <artifactId>google-cloud-firestore</artifactId>
-            <version>3.21.2</version>
-        </dependency>
+<dependency>
+    <groupId>com.google.cloud</groupId>
+    <artifactId>google-cloud-firestore</artifactId>
+    <version>3.0.0</version>
+</dependency>
 
         <dependency>
             <groupId>com.google.cloud</groupId>
@@ -176,6 +176,13 @@
             <version>5.0.0</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- Spring Boot Mail -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
