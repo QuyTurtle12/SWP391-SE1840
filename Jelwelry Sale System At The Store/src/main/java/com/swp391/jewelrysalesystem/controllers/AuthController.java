@@ -83,7 +83,7 @@ public class AuthController {
             }
 
             String token = jwtUtil.generatePasswordResetToken(request.getEmail());
-            String resetLink = "http://localhost:8080/api/auth/reset-password?token=" + token;
+            String resetLink = "https://jewelry-sale-system.vercel.app/reset-password?token=" + token;
 
             emailService.sendPasswordResetEmail(request.getEmail(), resetLink);
             LOGGER.info("Password reset email sent to: " + request.getEmail());
