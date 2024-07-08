@@ -11,12 +11,17 @@ import com.swp391.jewelrysalesystem.models.RefundDTO;
 import com.swp391.jewelrysalesystem.services.ICustomerService;
 import com.swp391.jewelrysalesystem.services.IProductService;
 import com.swp391.jewelrysalesystem.services.IRefundService;
+import com.swp391.jewelrysalesystem.services.IUserService;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,13 +35,15 @@ public class RefundController {
     private IRefundService refundService;
     private IProductService productService;
     private ICustomerService customerService;
+    private IUserService userService;
 
     @Autowired
     public RefundController(IRefundService refundService, IProductService productService,
-            ICustomerService customerService) {
+            ICustomerService customerService, IUserService userService) {
         this.refundService = refundService;
         this.productService = productService;
         this.customerService = customerService;
+        this.userService = userService;
     }
 
     @PostMapping("/refunds")
@@ -95,25 +102,53 @@ public class RefundController {
     }
 
     @GetMapping("/refunds")
-    public ResponseEntity<List<Refund>> getRefundList() {
+    public ResponseEntity<List<Map<String, Object>>> getRefundList() throws InterruptedException, ExecutionException {
         List<Refund> refunds = refundService.getRefundedOrderList();
 
         if (refunds.isEmpty() || refunds == null) {
             return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
         }
 
-        return ResponseEntity.ok(refunds);
+        List<Map<String, Object>> response = new ArrayList<>();
+        for (Refund refund : refunds) {
+            String customerName = customerService.getCustomer(refund.getID()).getName();
+            String staffName = userService.getUserByField(refund.getStaffID(), "id", "user").getFullName();
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("ID", refund.getID());
+            map.put("date", refund.getDate());
+            map.put("totalPrice", refund.getTotalPrice());
+            map.put("customerName", customerName);
+            map.put("staffID", refund.getStaffID());
+            map.put("staffName", staffName);
+
+            response.add(map);
+        }
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/refunds/refund")
-    public ResponseEntity<Refund> getRefund(@RequestParam int ID) {
-        Refund refunds = refundService.getRefundedOrder(ID);
+    public ResponseEntity<Map<String, Object>> getRefund(@RequestParam int ID) throws InterruptedException, ExecutionException {
+        Refund refund = refundService.getRefundedOrder(ID);
 
-        if (refunds == null) {
+        if (refund == null) {
             return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
         }
 
-        return ResponseEntity.ok(refunds);
+            String customerName = customerService.getCustomer(refund.getID()).getName();
+            String staffName = userService.getUserByField(refund.getStaffID(), "id", "user").getFullName();
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("ID", refund.getID());
+            map.put("date", refund.getDate());
+            map.put("totalPrice", refund.getTotalPrice());
+            map.put("customerName", customerName);
+            map.put("staffID", refund.getStaffID());
+            map.put("staffName", staffName);
+
+
+        return ResponseEntity.ok(map);
     }
 
     @GetMapping("/refunds/refund/products")

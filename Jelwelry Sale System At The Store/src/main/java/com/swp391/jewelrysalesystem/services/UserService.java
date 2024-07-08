@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import com.google.firebase.cloud.FirestoreClient;
@@ -15,12 +17,15 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.Query;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.swp391.jewelrysalesystem.models.User;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService implements IUserService {
 
     @Autowired
     private PasswordService passwordService;
+    private static final Logger LOGGER = Logger.getLogger(UserService.class.getName());
     private IGenericService<User> genericService;
     private ICounterService counterService;
 
@@ -60,6 +65,46 @@ public class UserService implements IUserService {
             }
         }
     }
+
+    public List<GrantedAuthority> getAuthorities(int roleID) {
+        return List.of(roleID).stream()
+                .map(role -> {
+                    switch (role) {
+                        case 1:
+                            return new SimpleGrantedAuthority("ROLE_STAFF");
+                        case 2:
+                            return new SimpleGrantedAuthority("ROLE_MANAGER");
+                        case 3:
+                            return new SimpleGrantedAuthority("ROLE_ADMIN");
+                        default:
+                            throw new IllegalArgumentException("Invalid role ID: " + role);
+                    }
+                })
+                .collect(Collectors.toList());
+    }
+
+    // Get user data base on uid
+    public User getUserData(String userId) throws InterruptedException, ExecutionException {
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        DocumentReference documentReference = dbFirestore.collection("user").document(userId);
+
+        try {
+            ApiFuture<DocumentSnapshot> future = documentReference.get();
+            DocumentSnapshot document = future.get();
+
+            if (document.exists()) {
+                return document.toObject(User.class);
+            } else {
+                System.out.println("User document with ID " + userId + " does not exist.");
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            System.err.println("Error retrieving user document: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
 
     @Override
     public boolean saveUser(User user) {
@@ -350,4 +395,18 @@ public class UserService implements IUserService {
     public int generateID() {
         return genericService.generateID("user", User.class, User::getID);
     }
+    public boolean checkIfEmailExists(String email) {
+        Firestore db = FirestoreClient.getFirestore();
+        ApiFuture<QuerySnapshot> query = db.collection("user").whereEqualTo("email", email).get();
+        try {
+            QuerySnapshot querySnapshot = query.get();
+            boolean exists = !querySnapshot.isEmpty();
+            LOGGER.info("Email check for " + email + ": " + exists);
+            return exists;
+        } catch (InterruptedException | ExecutionException e) {
+            LOGGER.severe("Error checking email existence: " + e.getMessage());
+            return false;
+        }
+    }
+
 }

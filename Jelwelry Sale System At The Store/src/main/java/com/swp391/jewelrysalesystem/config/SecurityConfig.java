@@ -27,7 +27,9 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**","/api/**","/cart/**","/swagger-ui/**","/v3/api-docs/**","/upload/**").permitAll() // Allow access to auth endpoints
+                        .requestMatchers("/api/auth/login","/api/auth/forgot-password","/api/auth/reset-password", "/swagger-ui/**").permitAll() // Allow access
+                        .requestMatchers("/api/auth/admin/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/api/auth/manager/**").hasAnyAuthority("ROLE_MANAGER", "ROLE_ADMIN")
                         .anyRequest().authenticated()) // Secure other endpoints
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
