@@ -209,18 +209,45 @@ public class OrderController {
     }
 
     @GetMapping("/v2/orders/search")
-    public ResponseEntity<List<Order>> searchOrderListV2(
+    public ResponseEntity<List<Map<String, Object>>> searchOrderListV2(
             @RequestParam String input,
             @RequestParam String filter) {
         try {
-            List<Order> orderList = orderService.searchOrderList(input, filter, orderService.getOrderList());
+            List<Order> orderList =  new ArrayList<>();
+            orderList = orderService.searchOrderList(input, filter, orderService.getOrderList());
 
-            if (orderList == null && orderList.isEmpty()) {
+            if (orderList == null || orderList.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
 
             }
 
-            return ResponseEntity.ok(orderList);
+            List<Map<String, Object>> responseList = new ArrayList<>();
+            for (Order order : orderList) {
+                Map<String, Object> orderMap = new HashMap<>();
+                orderMap.put("id", order.getID());
+                orderMap.put("date", order.getDate());
+                orderMap.put("staffID", order.getStaffID());
+                orderMap.put("counterID", order.getCounterID());
+                orderMap.put("totalPrice", order.getTotalPrice());
+                orderMap.put("discountApplied", order.getDiscountApplied());
+
+                Customer customer = customerService.getCustomer(order.getCustomerID());
+                String customerName = customer.getName();
+                String customerPhone = customer.getContactInfo();
+                orderMap.put("customerName", customerName);
+                orderMap.put("customerPhone", customerPhone);
+
+                User staff = userService.getUserByField(order.getStaffID(), "id", "user");
+                String staffName = "N/A";
+                if (staff != null) {
+                    staffName = staff.getFullName();
+                }
+                orderMap.put("staffName", staffName);
+
+                responseList.add(orderMap);
+            }
+
+            return ResponseEntity.ok(responseList);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
