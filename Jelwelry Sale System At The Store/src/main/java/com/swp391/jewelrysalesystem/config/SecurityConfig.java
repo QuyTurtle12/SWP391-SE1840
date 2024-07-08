@@ -27,10 +27,20 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login","/api/auth/forgot-password","/api/auth/reset-password", "/swagger-ui/**").permitAll() // Allow access
-                        .requestMatchers("/api/auth/admin/**").hasAuthority("ROLE_ADMIN")
-                        .requestMatchers("/api/auth/manager/**", "/api/v2/counters/**").hasAuthority("ROLE_MANAGER")
-                        .requestMatchers("/api/auth/staff/**").hasAuthority("ROLE_STAFF")
+                        .requestMatchers("/api/auth/login", "/api/auth/forgot-password", "/api/auth/reset-password",
+                                "/swagger-ui/**")
+                        .permitAll() // Allow access
+                        .requestMatchers("/api/auth/admin/**", "/api/v2/accounts/MANAGER/**",
+                                "/api/v2/accounts/dashboard", "/api/v2/accounts/user")
+                        .hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/api/auth/manager/**", "/api/v2/counters/**", "/categories/**",
+                                "/v2/counters/**", "/upload/image/**", "/api/v2/accounts/STAFF/**",
+                                "/api/v2/accounts/user", "/api/v2/products/**", "/apiv2/promotions/**")
+                        .hasAuthority("ROLE_MANAGER")
+                        .requestMatchers("/api/auth/staff/**", "/cart/**", "/v2/customers/**", "/api/v2/orders/**",
+                                "/refunds/**", "/api/v2/products/{ID}", "/api/v2/products", "/api/v2/products/sort",
+                                "/api/v2/products/search", "/api/v2/products/search/sort")
+                        .hasAuthority("ROLE_STAFF")
                         .anyRequest().authenticated()) // Secure other endpoints
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
