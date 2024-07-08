@@ -29,7 +29,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login","/api/auth/forgot-password","/api/auth/reset-password", "/swagger-ui/**").permitAll() // Allow access
                         .requestMatchers("/api/auth/admin/**").hasAuthority("ROLE_ADMIN")
-                        .requestMatchers("/api/auth/manager/**").hasAnyAuthority("ROLE_MANAGER", "ROLE_ADMIN")
+                        .requestMatchers("/api/auth/manager/**", "/api/v2/counters/**").hasAuthority("ROLE_MANAGER")
+                        .requestMatchers("/api/auth/staff/**").hasAuthority("ROLE_STAFF")
                         .anyRequest().authenticated()) // Secure other endpoints
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
