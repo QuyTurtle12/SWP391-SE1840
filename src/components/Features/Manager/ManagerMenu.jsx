@@ -1,97 +1,94 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import Button from "@mui/material/Button";
+
 export default function ManagerMenu() {
   return (
-    <>
-      <div className="flex py-6 rounded-lg bg-white justify-between h-24 w-full ">
-        <Button title="back to admin menu" component={Link} to="/admin">
-          <h1 className="w-full px-6 text-black text-3xl font-bold"> Manager </h1>
+    <div className="bg-white shadow-md py-6 px-4 md:px-8 rounded-lg">
+      <div className="flex flex-col md:flex-row justify-between items-center">
+        <Button
+          title="Back to Admin Menu"
+          component={Link}
+          to="/"
+          className="w-full md:w-auto"
+        >
+          <h1 className="text-black text-3xl font-bold">Manager</h1>
         </Button>
-        <ul className="flex my-auto">
-          <li className=" px-8 text-nowrap ">
+        <ul className="flex flex-wrap justify-center md:justify-end mt-4 md:mt-0">
+          <li className="px-4 py-2">
             <Button
               component={Link}
               to="/view-staff-list"
-              className=" px-8 rounded-sm text-black font-medium"
+              className="text-black font-medium"
             >
-              {" "}
               <h2 className="font-bold">View Staff List</h2>
             </Button>
           </li>
-          <li className=" px-8 text-nowrap ">
+          <li className="px-4 py-2">
             <Button
               component={Link}
               to="/add-staff"
-              className=" px-8 rounded-sm text-black font-medium"
+              className="text-black font-medium"
             >
-              {" "}
-              <h2 className="font-bold">Add Staff</h2>{" "}
+              <h2 className="font-bold">Add Staff</h2>
             </Button>
           </li>
-          <li className=" px-8 text-nowrap ">
+          <li className="px-4 py-2">
             <Button
               component={Link}
               to="/add-product"
-              className=" px-8 rounded-sm text-black font-medium"
+              className="text-black font-medium"
             >
-              {" "}
-              <h2 className="font-bold">Add Product</h2>{" "}
+              <h2 className="font-bold">Add Product</h2>
             </Button>
           </li>
-          
-          <li className=" px-8 text-nowrap ">
+          <li className="px-4 py-2">
             <Button
               component={Link}
               to="/add-category"
-              className=" px-8 rounded-sm text-black font-medium"
+              className="text-black font-medium"
             >
-              {" "}
-              <h2 className="font-bold">Add category</h2>{" "}
+              <h2 className="font-bold">Add Category</h2>
             </Button>
           </li>
-          <li className=" px-8 text-nowrap ">
-            <Button
-              component={Link}
-              to="/add-category"
-              className=" px-8 rounded-sm text-black font-medium"
-            >
-              {" "}
-              <h2 className="font-bold">Add category</h2>{" "}
-            </Button>
-          </li>
-          <li className=" px-8 text-nowrap ">
+          <li className="px-4 py-2">
             <Button
               component={Link}
               to="/view-category"
-              className=" px-8 rounded-sm text-black font-medium"
+              className="text-black font-medium"
             >
-              {" "}
-              <h2 className="font-bold">view category</h2>{" "}
+              <h2 className="font-bold">View Category</h2>
             </Button>
           </li>
-          
-          <li><Button component={Link} to="/productlist2">
-              <h3 className=" px-4 rounded-sm text-black font-bold">
-                View Product Lists
-              </h3>
+          <li className="px-4 py-2">
+            <Button
+              component={Link}
+              to="/productlist2"
+              className="text-black font-bold"
+            >
+              <h3>View Product Lists</h3>
             </Button>
-            </li>
-            <li><Button component={Link} to="/view-counter">
-              <h3 className=" px-4 rounded-sm text-black font-bold">
-                View counter
-              </h3>
+          </li>
+          <li className="px-4 py-2">
+            <Button
+              component={Link}
+              to="/view-counter"
+              className="text-black font-bold"
+            >
+              <h3>View Counter</h3>
             </Button>
-            </li>
-            <li><Button component={Link} to="/create-counter">
-              <h3 className=" px-4 rounded-sm text-black font-bold">
-                create counter
-              </h3>
+          </li>
+          <li className="px-4 py-2">
+            <Button
+              component={Link}
+              to="/create-counter"
+              className="text-black font-bold"
+            >
+              <h3>Create Counter</h3>
             </Button>
-            </li>
+          </li>
         </ul>
       </div>
-    </>
+    </div>
   );
 }
-

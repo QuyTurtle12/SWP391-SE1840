@@ -19,9 +19,12 @@ export default function ProductDetailManager() {
     stoneCost: "",
     stock: "",
     promotionID: "",
-    category: "",
+    categoryName: "",
     status: "",
   });
+  const [categories, setCategories] = useState([]);
+  const [promotions, setPromotions] = useState([]);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -35,7 +38,31 @@ export default function ProductDetailManager() {
       }
     };
 
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get(
+          "https://jewelrysalesystem-backend.onrender.com/api/categories"
+        );
+        setCategories(response.data);
+      } catch (error) {
+        console.error("Error fetching categories", error);
+      }
+    };
+
+    const fetchPromotions = async () => {
+      try {
+        const response = await axios.get(
+          "https://jewelrysalesystem-backend.onrender.com/api/v2/promotions"
+        );
+        setPromotions(response.data);
+      } catch (error) {
+        console.error("Error fetching promotions", error);
+      }
+    };
+
     fetchProduct();
+    fetchCategories();
+    fetchPromotions();
   }, [id]);
 
   const handleInputChange = (e) => {
@@ -43,10 +70,33 @@ export default function ProductDetailManager() {
     setProduct((prevProduct) => ({ ...prevProduct, [name]: value }));
   };
 
+  const handleFileChange = (e) => {
+    setSelectedFile(e.target.files[0]);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const params = new URLSearchParams({
+      let imageUrl = product.img;
+
+      if (selectedFile) {
+        const formData = new FormData();
+        formData.append("file", selectedFile);
+
+        const uploadResponse = await axios.post(
+          "https://jewelrysalesystem-backend.onrender.com/upload/image",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        imageUrl = uploadResponse.data;
+      }
+
+      const params = {
         name: product.name,
         price: product.price,
         refundPrice: product.refundPrice,
@@ -55,18 +105,16 @@ export default function ProductDetailManager() {
         laborCost: product.laborCost,
         stoneCost: product.stoneCost,
         stock: product.stock,
-        categoryID: product.category,
+        categoryName: product.categoryName,
         promotionID: product.promotionID,
-        img: product.img,
-      });
-  
-      await axios.put(`https://jewelrysalesystem-backend.onrender.com/api/v2/products/${id}?${params.toString()}`, null, {
-        headers: {
-          'Content-Type': 'application/json',
-          // Include any other necessary headers like authentication tokens here
-        },
-      });
-  
+        img: imageUrl,
+      };
+
+      await axios.put(
+        `https://jewelrysalesystem-backend.onrender.com/api/v2/products/${id}`,
+        params
+      );
+
       toast.success("Product updated successfully!");
       navigate(`/productlist2`);
     } catch (error) {
@@ -159,22 +207,34 @@ export default function ProductDetailManager() {
                   />
                 </Form.Group>
                 <Form.Group as={Col} controlId="formGridPromotionID">
-                  <Form.Label>Promotion ID</Form.Label>
+                  <Form.Label>Promotion</Form.Label>
                   <Form.Control
-                    type="text"
+                    as="select"
                     name="promotionID"
                     value={product.promotionID}
                     onChange={handleInputChange}
-                  />
+                  >
+                    {promotions.map((promotion) => (
+                      <option key={promotion.id} value={promotion.description}>
+                        {promotion.description}
+                      </option>
+                    ))}
+                  </Form.Control>
                 </Form.Group>
                 <Form.Group as={Col} controlId="formGridCategory">
                   <Form.Label>Category</Form.Label>
                   <Form.Control
-                    type="text"
-                    name="category"
-                    value={product.category}
+                    as="select"
+                    name="categoryName"
+                    value={product.categoryName}
                     onChange={handleInputChange}
-                  />
+                  >
+                    {categories.map((category) => (
+                      <option key={category.id} value={category.name}>
+                        {category.name}
+                      </option>
+                    ))}
+                  </Form.Control>
                 </Form.Group>
                 <Form.Group as={Col} controlId="formGridDescription">
                   <Form.Label>Description</Form.Label>
@@ -185,6 +245,10 @@ export default function ProductDetailManager() {
                     value={product.description}
                     onChange={handleInputChange}
                   />
+                </Form.Group>
+                <Form.Group as={Col} controlId="formFile">
+                  <Form.Label>Upload Image</Form.Label>
+                  <Form.Control type="file" onChange={handleFileChange} />
                 </Form.Group>
                 <Button variant="primary" type="submit" className="mt-4">
                   Update Product
