@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { Button, Form, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function ProductDetailManager() {
   const { id } = useParams();
@@ -76,6 +77,23 @@ export default function ProductDetailManager() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    const numericFields = {
+      price: product.price,
+      refundPrice: product.refundPrice,
+      goldWeight: product.goldWeight,
+      laborCost: product.laborCost,
+      stoneCost: product.stoneCost,
+      stock: product.stock,
+    };
+
+    for (const [field, value] of Object.entries(numericFields)) {
+      if (value <= 0) {
+        toast.error(`${field.charAt(0).toUpperCase() + field.slice(1)} cannot be 0 or lower`);
+        return;
+      }
+    }
+
     try {
       let imageUrl = product.img;
 
@@ -117,7 +135,6 @@ export default function ProductDetailManager() {
           params: params // These are the query parameters
         }
       );
-      
 
       toast.success("Product updated successfully!");
       navigate(`/productlist2`);
@@ -219,7 +236,7 @@ export default function ProductDetailManager() {
                     onChange={handleInputChange}
                   >
                     {promotions.map((promotion) => (
-                      <option key={promotion.id} value={promotion.description}>
+                      <option key={promotion.id} value={promotion.id}>
                         {promotion.description}
                       </option>
                     ))}

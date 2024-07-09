@@ -3,6 +3,7 @@ import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Modal from './PromotionForm';
+import ManagerMenu from './ManagerMenu';
 
 const ViewPromotion = () => {
   const [promotions, setPromotions] = useState([]);
@@ -96,6 +97,8 @@ const ViewPromotion = () => {
   };
 
   return (
+    <div className="flex flex-col min-h-screen h-screen overflow-hidden">
+      <ManagerMenu />
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Promotion List</h1>
       {error && <p className="text-red-500">{error}</p>}
@@ -164,6 +167,7 @@ const ViewPromotion = () => {
         setDiscountRate={setDiscountRate}
       />
       <ToastContainer />
+    </div>
     </div>
   );
 };
