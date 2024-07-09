@@ -12,52 +12,82 @@ function ProductList() {
   const navigate = useNavigate();
   const [searchInput, setSearchInput] = useState("");
   const [staffId, setStaffId] = useState("");
-  useEffect(() => {
-    axios
-      .get("https://jewelrysalesystem-backend.onrender.com/api/v2/products")
-      .then((response) => {
-        console.log(response.data);
-        setProducts(response.data);
-      })
-      .catch((error) => console.error("Error fetching products:", error));
-    
-    fetchCartData();
-  }, []);
+  const token = localStorage.getItem('token'); // Fetch the token from local storage
 
-  const searchProduct = () =>{
-    axios
-    .get(`https://jewelrysalesystem-backend.onrender.com/api/v2/products/search?input=${searchInput}&filter=ByName
-`)
-    .then((respone) =>{
-      setProducts(respone.data);
-   
-    })
-    .catch((error) => console.error("Error searching products:", error));
-  }
+  useEffect(() => {
+    if (token) {
+      axios
+        .get("https://jewelrysalesystem-backend.onrender.com/api/v2/products", {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        .then((response) => {
+          console.log(response.data);
+          setProducts(response.data);
+        })
+        .catch((error) => console.error("Error fetching products:", error));
+
+      fetchCartData();
+    } else {
+      console.error("No token found");
+    }
+  }, [token]);
+
+  const searchProduct = () => {
+    if (token) {
+      axios
+        .get(`https://jewelrysalesystem-backend.onrender.com/api/v2/products/search?input=${searchInput}&filter=ByName`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        .then((response) => {
+          setProducts(response.data);
+        })
+        .catch((error) => console.error("Error searching products:", error));
+    } else {
+      console.error("No token found");
+    }
+  };
+
   const handleSearchInputChange = (event) => {
     setSearchInput(event.target.value);
   };
+
   const fetchCartData = () => {
-    axios
-      .get(`https://jewelrysalesystem-backend.onrender.com/cart?staffId=${staffId}`)
-      .then((response) => {
-        setCart(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching cart data:", error);
-      });
+    if (token) {
+      axios
+        .get(`https://jewelrysalesystem-backend.onrender.com/cart?staffId=${staffId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        .then((response) => {
+          setCart(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching cart data:", error);
+        });
+    } else {
+      console.error("No token found");
+    }
   };
+
   const handleStaff = (event) => {
-    setStaffId(event.target.value)
-  }
+    setStaffId(event.target.value);
+  };
+
   const handleProductClick = (id) => {
     navigate(`/productdetail/${id}`);
   };
 
   const addToCart = (product) => {
-    if(!staffId) {
-      toast.error("Please enter staff ID.")
+    if (!staffId) {
+      toast.error("Please enter staff ID.");
+      return;
     }
+
     if (product.stock <= 0) {
       toast.error("Product is out of stock.");
       return;
@@ -69,17 +99,26 @@ function ProductList() {
       return;
     }
 
-    axios
-      .post(`https://jewelrysalesystem-backend.onrender.com/cart?staffId=${staffId}`, product)
-      .then((response) => {
-        toast.success("Item added to cart:", response.data);
-        setCart([...cart, { product, quantity: 1, price: product.price }]);
-      })
-      .catch((error) => {
-        toast.error(`${error.response ? error.response.data : error.message}`);
-        console.error("Error adding item to cart:", error);
-      });
+    if (token) {
+      axios
+        .post(`https://jewelrysalesystem-backend.onrender.com/cart?staffId=${staffId}`, product, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        .then((response) => {
+          toast.success("Item added to cart:", response.data);
+          setCart([...cart, { product, quantity: 1, price: product.price }]);
+        })
+        .catch((error) => {
+          toast.error(`${error.response ? error.response.data : error.message}`);
+          console.error("Error adding item to cart:", error);
+        });
+    } else {
+      console.error("No token found");
+    }
   };
+
   const handleViewCartClick = () => {
     if (!staffId) {
       toast.error('Please enter staff ID.');
@@ -87,6 +126,7 @@ function ProductList() {
     }
     navigate(`/viewcart?staffId=${staffId}`);
   };
+
   return (
     <div>
       <StaffMenu />
@@ -97,8 +137,8 @@ function ProductList() {
             Our Latest Products
             <div className="justify-end flex pr-8">
               <div className="relative">
-              <Button onClick={handleViewCartClick} className="text-black">
-                 <ShoppingCartIcon/> <i className="fa fa-shopping-cart" style={{ fontSize: '40px' }}></i>
+                <Button onClick={handleViewCartClick} className="text-black">
+                  <ShoppingCartIcon /> <i className="fa fa-shopping-cart" style={{ fontSize: '40px' }}></i>
                 </Button>
                 {cart.length > 0 && (
                   <div className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center">
@@ -109,11 +149,11 @@ function ProductList() {
             </div>
           </h2>
           <div className="mb-8 font-bold">
-         Staff ID <input
+            Staff ID <input
               type="number"
               value={staffId}
               onChange={handleStaff}
-              placeholder="enter staff ID..."
+              placeholder="Enter staff ID..."
               className="border p-2 mr-2"
             />
             <input
@@ -123,7 +163,6 @@ function ProductList() {
               placeholder="Search products..."
               className="border p-2 mr-2"
             />
-          
             <button
               onClick={searchProduct}
               className="bg-gray-900 text-white py-2 px-4 rounded-full font-bold hover:bg-gray-500"
