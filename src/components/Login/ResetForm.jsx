@@ -15,7 +15,7 @@ function ResetForm() {
     e.preventDefault();
     try {
       const response = await axios.post(
-        `http://localhost:8080/api/auth/reset-password?token=${token}&newPassword=${password}`
+        `https://jewelrysalesystem-backend.onrender.com/api/auth/reset-password?token=${token}&newPassword=${password}`
       );
       console.log("Token:", token);
       console.log("Password reset successfully", response.data);

@@ -8,7 +8,7 @@ function ForgetForm() {
       email,
     };
     const respone = await axios.post(
-      "http://localhost:8080/api/auth/forgot-password",
+      "https://jewelrysalesystem-backend.onrender.com/api/auth/forgot-password",
       data
     );
     try {
