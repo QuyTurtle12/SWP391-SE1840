@@ -37,6 +37,8 @@ import RefundDetail from "./components/Features/Staff/RefundDetail";
 import RefundPurity from "./components/Features/Staff/RefundPurity";
 import ProductListManager from "./components/Features/Manager/ProductList-manager";
 import AddCategory from "./components/Features/Manager/AddCategory";
+import ForgetForm from "./components/Login/ForgetForm";
+import ResetForm from "./components/Login/ResetForm";
 function App() {
   return (
     <div className="overflow-hidden">
@@ -77,6 +79,9 @@ function App() {
         <Route path="/refund-purity/:id/:productID" element={<RefundPurity />} />
         <Route path="/order-refund" element={<ViewOrderRefund />} />
         <Route path="/add-category" element={<AddCategory />} />
+
+        <Route path="/reset-password" element={<ResetForm/>} />
+        <Route path="/forget-form" element={<ForgetForm />} />
       </Routes>
       <Routes></Routes>
       <Footer />

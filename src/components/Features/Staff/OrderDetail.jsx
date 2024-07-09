@@ -8,27 +8,49 @@ function OrderDetail() {
   const [orderDetail, setOrderDetail] = useState({});
   const [customer, setCustomer] = useState({});
   const [staff, setStaff] = useState({});
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchOrderData = async () => {
       try {
         const orderProductsResponse = await axios.get(
-          `https://jewelrysalesystem-backend.onrender.com/api/v2/orders/order/products?id=${id}`
+          `https://jewelrysalesystem-backend.onrender.com/api/v2/orders/order/products?id=${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         setOrders(orderProductsResponse.data);
 
         const orderDetailResponse = await axios.get(
-          `https://jewelrysalesystem-backend.onrender.com/api/v2/orders/order?id=${id}`
+          `https://jewelrysalesystem-backend.onrender.com/api/v2/orders/order?id=${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         setOrderDetail(orderDetailResponse.data);
 
         const customerResponse = await axios.get(
-          `https://jewelrysalesystem-backend.onrender.com/api/v2/customers/customer?id=${orderDetailResponse.data.customerID}`
+          `https://jewelrysalesystem-backend.onrender.com/api/v2/customers/customer?id=${orderDetailResponse.data.customerID}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         setCustomer(customerResponse.data);
         console.log(customerResponse.data);
+
         const staffResponse = await axios.get(
-          `https://jewelrysalesystem-backend.onrender.com/api/v2/accounts/user?id=${orderDetailResponse.data.staffID}`
+          `https://jewelrysalesystem-backend.onrender.com/api/v2/accounts/user?id=${orderDetailResponse.data.staffID}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         setStaff(staffResponse.data);
         console.log(staffResponse.data);
@@ -38,7 +60,7 @@ function OrderDetail() {
     };
 
     fetchOrderData();
-  }, [id]);
+  }, [id, token]);
 
   const formatTotalPrice = (price) => {
     if (typeof price !== "number") return "";
@@ -165,7 +187,6 @@ function OrderDetail() {
                       <li className="pb-2">Gender: {staff.gender}</li>
                       <li className="pb-2">Email: {staff.email}</li>
                       <li className="pb-2">Contact: {staff.contactInfo}</li>
-                     
                     </ul>
                   </p>
                 </div>

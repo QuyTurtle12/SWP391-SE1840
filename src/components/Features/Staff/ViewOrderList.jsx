@@ -7,6 +7,7 @@ function ViewOrderList() {
   const [orders, setOrder] = useState([]);
   const navigate = useNavigate();
   const { cusphone } = useParams();
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     if (cusphone) {
@@ -18,25 +19,38 @@ function ViewOrderList() {
 
   const fetchOrders = () => {
     axios
-      .get("https://jewelrysalesystem-backend.onrender.com/api/v2/orders")
+      .get("https://jewelrysalesystem-backend.onrender.com/api/v2/orders", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
         console.log(response.data);
         setOrder(response.data);
       })
       .catch((error) => console.error("Error at fetching data", error));
+    console.log(token);
   };
 
   const searchOrder = (customerPhone) => {
     axios
-      .get(`https://jewelrysalesystem-backend.onrender.com/api/v2/orders/search?input=${customerPhone}&filter=ByPhoneNumber`)
+      .get(
+        `https://jewelrysalesystem-backend.onrender.com/api/v2/orders/search?input=${customerPhone}&filter=ByPhoneNumber`
+      ,{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
         setOrder(response.data);
       })
       .catch((error) => console.error("Error order customer:", error));
+      console.log(token);
+
   };
 
   const handleOrder = (orderId) => {
-    navigate(`/orderdetail/${orderId}`,{state: {orderId}});
+    navigate(`/orderdetail/${orderId}`, { state: { orderId } });
   };
 
   return (
@@ -81,12 +95,24 @@ function ViewOrderList() {
                 {orders.map((order) => (
                   <tr key={order.id}>
                     <td className="px-4 py-4 whitespace-nowrap">{order.id}</td>
-                    <td className="px-4 py-4 whitespace-nowrap">{order.customerName}</td>
-                    <td className="px-4 py-4 whitespace-nowrap">{new Date(order.date.seconds * 1000).toLocaleString()}</td>
-                    <td className="px-4 py-4 whitespace-nowrap">{order.discountApplied}</td>
-                    <td className="px-4 py-4 whitespace-nowrap">{order.staffID}</td>
-                    <td className="px-4 py-4 whitespace-nowrap">{order.counterID}</td>
-                    <td className="px-4 py-4 whitespace-nowrap">${order.totalPrice.toLocaleString("en-US")}</td>
+                    <td className="px-4 py-4 whitespace-nowrap">
+                      {order.customerName}
+                    </td>
+                    <td className="px-4 py-4 whitespace-nowrap">
+                      {new Date(order.date.seconds * 1000).toLocaleString()}
+                    </td>
+                    <td className="px-4 py-4 whitespace-nowrap">
+                      {order.discountApplied}
+                    </td>
+                    <td className="px-4 py-4 whitespace-nowrap">
+                      {order.staffID}
+                    </td>
+                    <td className="px-4 py-4 whitespace-nowrap">
+                      {order.counterID}
+                    </td>
+                    <td className="px-4 py-4 whitespace-nowrap">
+                      ${order.totalPrice.toLocaleString("en-US")}
+                    </td>
                     <td className="px-4 py-4 whitespace-nowrap">
                       <button
                         onClick={() => handleOrder(order.id)}
