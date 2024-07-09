@@ -30,7 +30,7 @@ export default function ProductDetailManager() {
     const fetchProduct = async () => {
       try {
         const response = await axios.get(
-          `https://jewelrysalesystem-backend.onrender.com/api/v2/products/${id}`
+          `http://localhost:8080/api/v2/products/${id}`
         );
         setProduct(response.data);
       } catch (error) {
@@ -41,7 +41,7 @@ export default function ProductDetailManager() {
     const fetchCategories = async () => {
       try {
         const response = await axios.get(
-          "https://jewelrysalesystem-backend.onrender.com/api/categories"
+          "http://localhost:8080/api/categories"
         );
         setCategories(response.data);
       } catch (error) {
@@ -52,7 +52,7 @@ export default function ProductDetailManager() {
     const fetchPromotions = async () => {
       try {
         const response = await axios.get(
-          "https://jewelrysalesystem-backend.onrender.com/api/v2/promotions"
+          "http://localhost:8080/api/v2/promotions"
         );
         setPromotions(response.data);
       } catch (error) {
@@ -84,7 +84,7 @@ export default function ProductDetailManager() {
         formData.append("file", selectedFile);
 
         const uploadResponse = await axios.post(
-          "https://jewelrysalesystem-backend.onrender.com/upload/image",
+          "http://localhost:8080/upload/image",
           formData,
           {
             headers: {
@@ -109,11 +109,15 @@ export default function ProductDetailManager() {
         promotionID: product.promotionID,
         img: imageUrl,
       };
-
+      
       await axios.put(
-        `https://jewelrysalesystem-backend.onrender.com/api/v2/products/${id}`,
-        params
+        `http://localhost:8080/api/v2/products/${id}`,
+        null, // No request body
+        {
+          params: params // These are the query parameters
+        }
       );
+      
 
       toast.success("Product updated successfully!");
       navigate(`/productlist2`);

@@ -24,6 +24,7 @@ import ViewStaffList from "./components/Features/Manager/ViewStaffList";
 import EditStaff from "./components/Features/Manager/EditStaff";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ViewCounter from "./components/Features/Manager/ViewCounter";
 import AddProduct from "./components/Features/Manager/AddProduct";
 import ProductDetailManager from "./components/Features/Manager/ProductDetailManager";
 import ProductDetailStaff from "./components/Features/Staff/ProductDetailStaff";
@@ -77,6 +78,7 @@ function App() {
         <Route path="/refund-purity/:id/:productID" element={<RefundPurity />} />
         <Route path="/order-refund" element={<ViewOrderRefund />} />
         <Route path="/add-category" element={<AddCategory />} />
+        <Route path="/view-counter" element={<ViewCounter />} />
       </Routes>
       <Routes></Routes>
       <Footer />
