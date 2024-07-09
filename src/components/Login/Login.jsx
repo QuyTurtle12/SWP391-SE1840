@@ -4,7 +4,6 @@ import React, { useState } from "react";
 
 import { useNavigate, Link } from "react-router-dom";
 import { saveToken } from "../Authen/Auth";
-
 import { apost } from "../../net/Axios";
 
 export default function Login() {
@@ -17,27 +16,27 @@ export default function Login() {
     setRequesting(true);
 
     try {
-        const response = await apost("/api/auth/login", {
-            email: email,
-            password: password
-        });
+      const response = await apost("/api/auth/login", {
+        email: email,
+        password: password,
+      });
 
-        console.log(response.data);
-        const { jwt } = response.data;
+      console.log(response.data);
+      const { jwt } = response.data;
 
-        // Lưu token vào Auth
-        saveToken(jwt);
+      // Lưu token vào Auth
+      saveToken(jwt);
 
-        // Navigate to the Home page after successful login
-        navigate("/homepage");
-        window.location.reload();
+      // Navigate to the Home page after successful login
+      navigate("/homepage");
+      window.location.reload();
     } catch (e) {
-        console.error(e);
-        console.error("Login error");
+      console.error(e);
+      console.error("Login error");
     } finally {
-        setRequesting(false);
+      setRequesting(false);
     }
-};
+  };
 
   return (
     <div className="login">
@@ -60,7 +59,7 @@ export default function Login() {
           defaultValue=""
           onChange={(e) => setPassword(e.target.value)}
         />
-
+        <a href="/forget-form">Forgot password?</a>
         {!isRequesting ? (
           <Button
             variant="contained"

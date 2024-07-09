@@ -7,10 +7,15 @@ function OrderCustomer() {
   const [orders, setOrders] = useState([]);
   const navigate = useNavigate();
   const { id } = useParams();
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8080/api/v2/customers/customer?id=${id}`)
+      .get(`http://localhost:8080/api/v2/customers/customer?id=${id}`,{
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
       .then((response) => {
         console.log(response.data);
         setOrders(response.data.orders); // Assuming the response contains orders array
