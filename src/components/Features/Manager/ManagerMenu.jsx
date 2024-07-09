@@ -81,10 +81,10 @@ export default function ManagerMenu() {
           <li className="px-4 py-2">
             <Button
               component={Link}
-              to="/create-counter"
+              to="/view-promotion"
               className="text-black font-bold"
             >
-              <h3>Create Counter</h3>
+              <h3>View Promotion</h3>
             </Button>
           </li>
         </ul>

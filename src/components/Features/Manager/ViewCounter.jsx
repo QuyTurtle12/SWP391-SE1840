@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import AddCounter from './AddCounter';
-
+import ManagerMenu from './ManagerMenu';
 const ViewCounter = () => {
   const [counters, setCounters] = useState([]);
   const [error, setError] = useState('');
@@ -38,7 +38,10 @@ const ViewCounter = () => {
   };
 
   return (
+    <div className="flex flex-col min-h-screen h-screen overflow-hidden">
+      <ManagerMenu/>
     <div className="container mx-auto p-4">
+      
       <h1 className="text-2xl font-bold mb-4">Counter List</h1>
       {error && <p className="text-red-500">{error}</p>}
       <AddCounter onAdd={fetchCounters} />
@@ -75,6 +78,7 @@ const ViewCounter = () => {
           ))}
         </tbody>
       </table>
+    </div>
     </div>
   );
 };
