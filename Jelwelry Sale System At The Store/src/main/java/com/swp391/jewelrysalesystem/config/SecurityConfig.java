@@ -34,13 +34,12 @@ public class SecurityConfig {
                                                 .requestMatchers("/api/auth/admin/**", "/api/v2/accounts/MANAGER/**",
                                                                 "/api/v2/accounts/dashboard")
                                                 .hasAuthority("ROLE_ADMIN")
-                                                .requestMatchers("/api/v2/accounts/user")
+                                                .requestMatchers("/api/v2/accounts/user", "/api/v2/counters/**")
                                                 .hasAnyAuthority("ROLE_ADMIN", "ROLE_MANAGER")
-                                                .requestMatchers("/api/auth/manager/**", "/api/v2/counters/**",
+                                                .requestMatchers("/api/auth/manager/**",
                                                                 "/api/categories/**",
-                                                                "/v2/counters/**",
                                                                 "/api/v2/accounts/STAFF/**",
-                                                                "/apiv2/promotions/**")
+                                                                "/api/v2/promotions/**")
                                                 .hasAuthority("ROLE_MANAGER")
                                                 .requestMatchers("/api/v2/products/{ID}", "/api/v2/products",
                                                                 "/api/v2/products/sort",
@@ -49,7 +48,8 @@ public class SecurityConfig {
                                                                 "/refunds/**",
                                                                 "/upload/image/**", "/api/v2/customers/**")
                                                 .hasAnyAuthority("ROLE_MANAGER", "ROLE_STAFF")
-                                                .requestMatchers("/api/auth/staff/**", "/cart/**", "/api/v2/accounts/staff")
+                                                .requestMatchers("/api/auth/staff/**", "/cart/**",
+                                                                "/api/v2/accounts/staff")
                                                 .hasAuthority("ROLE_STAFF")
                                                 .anyRequest().authenticated()) // Secure other endpoints
                                 .sessionManagement(session -> session
