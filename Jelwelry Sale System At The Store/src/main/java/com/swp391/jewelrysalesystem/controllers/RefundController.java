@@ -81,7 +81,7 @@ public class RefundController {
             refundedProducts.add(product);
             refundService.saveProduct(product);
         }
-        return null;
+        return ResponseEntity.ok().body(String.valueOf(refundID));
     }
 
     @PostMapping("/refunds/itemPurity")
