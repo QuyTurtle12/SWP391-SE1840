@@ -41,7 +41,7 @@ function EditManager() {
     const handleCounterList = async () => {
       try {
         const response = await axios.get(
-          "https://jewelrysalesystem-backend.onrender.com/api/v2/counters",
+          "http://localhost:8080/api/v2/counters",
           {
             headers: {
               Authorization: `Bearer ${token}`,
