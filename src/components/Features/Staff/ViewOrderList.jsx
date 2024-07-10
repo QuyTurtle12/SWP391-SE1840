@@ -19,7 +19,7 @@ function ViewOrderList() {
 
   const fetchOrders = () => {
     axios
-      .get("https://jewelrysalesystem-backend.onrender.com/api/v2/orders", {
+      .get("http://localhost:8080/api/v2/orders", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -35,7 +35,7 @@ function ViewOrderList() {
   const searchOrder = (customerPhone) => {
     axios
       .get(
-        `https://jewelrysalesystem-backend.onrender.com/api/v2/orders/search?input=${customerPhone}&filter=ByPhoneNumber`
+        `http://localhost:8080/api/v2/orders/search?input=${customerPhone}&filter=ByPhoneNumber`
       ,{
         headers: {
           Authorization: `Bearer ${token}`,

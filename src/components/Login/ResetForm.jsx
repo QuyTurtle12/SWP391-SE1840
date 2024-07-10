@@ -1,15 +1,14 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 
 function ResetForm() {
-  // sử dụng useLocation để lấy thông tin URL hiện tại
   const location = useLocation();
-  // tạo URLSearchParams từ location.search
   const queryParams = new URLSearchParams(location.search);
-  // lấy giá trị của parameter 'token'
-  const token = queryParams.get('token');  const [password, setPassword] = useState('');
+  const token = queryParams.get("token");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,6 +19,7 @@ function ResetForm() {
       console.log("Token:", token);
       console.log("Password reset successfully", response.data);
       toast.success("Password reset successfully");
+      navigate("/login");
     } catch (error) {
       console.error("Error at submitting new password", error);
       toast.error("Error to reset password");
@@ -32,7 +32,7 @@ function ResetForm() {
       role="main"
       className="w-full h-screen max-w-md mx-auto p-6"
     >
-      <ToastContainer/>
+      <ToastContainer />
       <div className="mt-7 bg-white rounded-xl shadow-lg dark:bg-gray-800 dark:border-gray-700 border-2 border-indigo-300">
         <div className="p-4 sm:p-7">
           <div className="mt-3">

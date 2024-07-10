@@ -10,27 +10,36 @@ function RefundViewCart() {
   const [cart, setCart] = useState([]);
   const [subtotal, setSubtotal] = useState(0);
   const [showModal, setShowModal] = useState(false);
-  const [orderID, setOrderID] = useState(1);
-  const [staffID, setStaffID] = useState(""); 
+  const [orderID, setOrderID] = useState("");
   const [customerPhone, setCustomerPhone] = useState(""); 
   const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const staffId = queryParams.get('staffId');
+  const token = localStorage.getItem('token');
+
   useEffect(() => {
     fetchCartData();
   }, []);
 
   const fetchCartData = () => {
-    axios
-      .get(`https://jewelrysalesystem-backend.onrender.com/cart/refundItem?staffId=${staffId}`)
-      .then((response) => {
-        setCart(response.data);
-        calculateSubtotal(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching cart data", error);
-      });
+    if (token) {
+      axios
+        .get(`https://jewelrysalesystem-backend.onrender.com/cart/refundItem?staffId=${staffId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        .then((response) => {
+          setCart(response.data);
+          calculateSubtotal(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching cart data", error);
+        });
+    } else {
+      console.error("No token found");
+    }
   };
 
   const calculateSubtotal = (cartItems) => {
@@ -52,41 +61,54 @@ function RefundViewCart() {
   };
 
   const handleCreateOrder = () => {
-    axios
-      .post(
-        `https://jewelrysalesystem-backend.onrender.com/api/refunds?totalPrice=${subtotal}&customerPhone=${customerPhone}&staffID=${staffId}`,
-        cart
-      )
-      .then((response) => {
-        console.log(response.data);
-        toast.success("Create order successfully!");
-
-        // Handle successful order creation
-        handleClearCart(); // clear cart after success checkout
-        setShowModal(false);
-          navigate(`/refund-form/${orderID}`);
-       
-      
-      })
-      .catch((error) => {
-        console.error("Error creating order", error);
-        const errorMessage = error.response ? error.response.data : error.message;
-        toast.error(`${errorMessage}`);
-      });
+    if (token) {
+      axios
+        .post(
+          `https://jewelrysalesystem-backend.onrender.com/api/refunds?totalPrice=${subtotal}&customerPhone=${customerPhone}&staffID=${staffId}`,
+          cart,
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          }
+        )
+        .then((response) => {
+          console.log(response.data);
+          toast.success("Create order successfully!");
+          // Handle successful order creation
+          handleClearCart(); // clear cart after success checkout
+          setShowModal(false);
+          navigate(`/refund-form/${response.data}`);
+        })
+        .catch((error) => {
+          console.error("Error creating order", error);
+          const errorMessage = error.response ? error.response.data : error.message;
+          toast.error(`${errorMessage}`);
+        });
+    } else {
+      console.error("No token found");
+    }
   };
 
   const handleClearCart = () => {
-    axios
-      .put(`https://jewelrysalesystem-backend.onrender.com/cart/clear?staffId=${staffId}`)
-      .then((response) => {
-        setCart([]);
-        setSubtotal(0);
-        console.log(response.data);
-
-      })
-      .catch((error) => {
-        console.error("Error clearing cart", error);
-      });
+    if (token) {
+      axios
+        .put(`https://jewelrysalesystem-backend.onrender.com/cart/clear?staffId=${staffId}`, {}, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        .then((response) => {
+          setCart([]);
+          setSubtotal(0);
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.error("Error clearing cart", error);
+        });
+    } else {
+      console.error("No token found");
+    }
   };
 
   const handleChangeQuantity = (productId, newQuantity) => {
@@ -101,36 +123,52 @@ function RefundViewCart() {
   };
 
   const handleUpdateQuantity = (productID, newQuantity) => {
-    axios
-      .put(
-        `https://jewelrysalesystem-backend.onrender.com/cart?staffId=${staffId}&productID=${productID}&quantity=${newQuantity}`,
-        {}
-      )
-      .then((response) => {
-        console.log(response);
-        toast.success("Quantity updated successfully")
-        console.log("Quantity updated successfully" + newQuantity);
-        fetchCartData(); // Fetch updated cart data after update
-      })
-      .catch((error) => {
-        toast.error(`${error.response ? error.response.data : error.message}`);
-
-        console.error("Error updating quantity", error);
-        fetchCartData();
-      });
+    if (token) {
+      axios
+        .put(
+          `https://jewelrysalesystem-backend.onrender.com/cart?staffId=${staffId}&productID=${productID}&quantity=${newQuantity}`,
+          {},
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          }
+        )
+        .then((response) => {
+          console.log(response);
+          toast.success("Quantity updated successfully");
+          console.log("Quantity updated successfully" + newQuantity);
+          fetchCartData(); // Fetch updated cart data after update
+        })
+        .catch((error) => {
+          toast.error(`${error.response ? error.response.data : error.message}`);
+          console.error("Error updating quantity", error);
+          fetchCartData();
+        });
+    } else {
+      console.error("No token found");
+    }
   };
 
   const handleRemoveItem = (productID) => {
-    axios
-      .delete(`https://jewelrysalesystem-backend.onrender.com/cart?staffId=${staffId}&productID=${productID}`)
-      .then((response) => {
-        toast.success("Product removed successfully");
-        console.log("Product removed successfully");
-        fetchCartData(); // Fetch updated cart data after removal
-      })
-      .catch((error) => {
-        console.error("Error removing product", error);
-      });
+    if (token) {
+      axios
+        .delete(`https://jewelrysalesystem-backend.onrender.com/cart?staffId=${staffId}&productID=${productID}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        .then((response) => {
+          toast.success("Product removed successfully");
+          console.log("Product removed successfully");
+          fetchCartData(); // Fetch updated cart data after removal
+        })
+        .catch((error) => {
+          console.error("Error removing product", error);
+        });
+    } else {
+      console.error("No token found");
+    }
   };
 
   return (
@@ -141,7 +179,7 @@ function RefundViewCart() {
         {cart.length === 0 ? (
           <>
             <div className="bg-white text-red-900 rounded-lg font-bold shadow-md p-6 mb-4">
-              cart refund is empty
+              Cart refund is empty
             </div>
             <a href="/refund-list">
               <button className="bg-white text-black py-1 px-3 font-bold border-2 mb-4 border-black rounded">
@@ -266,25 +304,15 @@ function RefundViewCart() {
         </Modal.Header>
         <Modal.Body>
           <Form>
-      
-            <Form.Group controlId="formStaffID">
-              <Form.Label>Staff ID</Form.Label>
-              <Form.Control
-                value={staffId}
-              />
-            </Form.Group>
-
-            <Form.Group controlId="formCounterID">
+            <Form.Group controlId="formCustomerPhone">
               <Form.Label>Customer Phone</Form.Label>
               <Form.Control
-                type="number"
-                placeholder="Enter counter ID"
+                type="text"
+                placeholder="Enter customer phone number"
                 value={customerPhone}
                 onChange={(e) => setCustomerPhone(e.target.value)}
               />
             </Form.Group>
-
-           
           </Form>
         </Modal.Body>
         <Modal.Footer>

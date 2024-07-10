@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const MASTER_URL = 'https://jewelrysalesystem-backend.onrender.com';
+const MASTER_URL = 'http://localhost:8080';
 
 export const apost = async (path, data) => {
     const url = MASTER_URL + path;

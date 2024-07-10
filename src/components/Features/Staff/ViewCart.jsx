@@ -5,11 +5,20 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { ToastContainer, toast } from "react-toastify";
 import { useLocation } from 'react-router-dom';
 
+const token = localStorage.getItem('token'); // Fetch the token from local storage
+
+// Create an Axios instance with default headers
+const axiosInstance = axios.create({
+  headers: {
+    'Authorization': `Bearer ${token}`
+  }
+});
+
 function ViewCart() {
   const [cart, setCart] = useState([]);
   const [subtotal, setSubtotal] = useState(0);
   const [showModal, setShowModal] = useState(false);
-  const [orderID, setOrderID] = useState(""); 
+  const [staff,setStaff] = useState();
   const [staffID, setStaffID] = useState(""); 
   const [counterID, setCounterID] = useState(""); 
   const [customerPhone, setCustomerPhone] = useState(""); 
@@ -20,20 +29,15 @@ function ViewCart() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const staffId = queryParams.get('staffId');
-  
+
   useEffect(() => {
     fetchCartData();
+    fetchStaff();
   }, []);
 
-  useEffect(() => {
-    if (staffID) {
-      fetchStaffDetails(staffID);
-    }
-  }, [staffID]);
 
   const fetchCartData = () => {
-    axios
-      .get(`https://jewelrysalesystem-backend.onrender.com/cart?staffId=${staffId}`)
+    axiosInstance.get(`https://jewelrysalesystem-backend.onrender.com/cart?staffId=${staffId}`)
       .then((response) => {
         setCart(response.data);
         calculateSubtotal(response.data);
@@ -42,16 +46,24 @@ function ViewCart() {
         console.error("Error fetching cart data", error);
       });
   };
-
-  const fetchStaffDetails = (staffID) => {
-    axios
-      .get(`https://jewelrysalesystem-backend.onrender.com/api/v2/accounts/user?id=${staffID}`)
-      .then((response) => {
-        setCounterID(response.data.counterID);
-      })
-      .catch((error) => {
-        console.error("Error fetching staff details", error);
-      });
+  const fetchStaff = async () => {
+    if (token) {
+      try {
+        const response = await axios.get("https://jewelrysalesystem-backend.onrender.com/api/this-info", {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        console.log(response.data);
+        setCounterID(response.data.counterID)
+        setStaff(response.data);
+        fetchCartData(response.data.id); // Fetch cart data with the staff ID after setting the staff state
+      } catch (error) {
+        console.error("Error fetching staff:", error);
+      }
+    } else {
+      console.error("No token found");
+    }
   };
 
   const calculateSubtotal = (cartItems) => {
@@ -73,8 +85,6 @@ function ViewCart() {
   const handleCreateOrder = () => {
     if (
       !subtotal ||
-      !staffID ||
-      !counterID ||
       !customerPhone ||
       discountApplied === ""
     ) {
@@ -82,9 +92,8 @@ function ViewCart() {
       return;
     }
     
-    axios
-      .post(
-        `https://jewelrysalesystem-backend.onrender.com/api/v2/orders?totalPrice=${subtotal}&staffID=${staffID}&counterID=${counterID}&customerPhone=${customerPhone}&customerName=${customerName}&customerGender=${customerGender}&discountApplied=${discountApplied}`,
+    axiosInstance.post(
+        `https://jewelrysalesystem-backend.onrender.com/api/v2/orders?totalPrice=${subtotal}&staffID=${staffId}&counterID=${counterID}&customerPhone=${customerPhone}&customerName=${customerName}&customerGender=${customerGender}&discountApplied=${discountApplied}`,
         cart
       )
       .then(() => {
@@ -102,8 +111,7 @@ function ViewCart() {
   };
 
   const handleClearCart = () => {
-    axios
-      .put(`https://jewelrysalesystem-backend.onrender.com/cart/clear?staffId=${staffId}`)
+    axiosInstance.put(`https://jewelrysalesystem-backend.onrender.com/cart/clear?staffId=${staffId}`)
       .then((response) => {
         setCart([]);
         setSubtotal(0);
@@ -130,8 +138,7 @@ function ViewCart() {
   };
 
   const handleUpdateQuantity = (productID, newQuantity) => {
-    axios
-      .put(
+    axiosInstance.put(
         `https://jewelrysalesystem-backend.onrender.com/cart?staffId=${staffId}&productID=${productID}&quantity=${newQuantity}`,
         {}
       )
@@ -148,8 +155,7 @@ function ViewCart() {
   };
 
   const handleRemoveItem = (productID) => {
-    axios
-      .delete(`https://jewelrysalesystem-backend.onrender.com/cart?staffId=${staffId}&productID=${productID}`)
+    axiosInstance.delete(`https://jewelrysalesystem-backend.onrender.com/cart?staffId=${staffId}&productID=${productID}`)
       .then(() => {
         toast.success("Product removed successfully");
         fetchCartData();
@@ -158,6 +164,7 @@ function ViewCart() {
         toast.error("Error removing product", error);
       });
   };
+
   return (
     <>
       <ToastContainer />
@@ -295,29 +302,6 @@ function ViewCart() {
           </Modal.Header>
           <Modal.Body>
             <Form>
-             
-              <Form.Group controlId="formStaffID">
-                <Form.Label>Staff ID</Form.Label>
-                <Form.Control
-                  required
-                  type="number"
-                  placeholder="Enter staff ID"
-                  value={staffID}
-                  onChange={(e) => setStaffID(e.target.value)}
-                />
-              </Form.Group>
-
-              <Form.Group controlId="formCounterID">
-                <Form.Label>Counter ID</Form.Label>
-                <Form.Control
-                  required
-                  type="number"
-                  value={counterID}
-                  readOnly
-                  className="bg-gray-100 border border-gray-300 text-gray-700 py-2 px-4 rounded" // Tailwind CSS classes
-                />
-              </Form.Group>
-
               <Form.Group controlId="formCustomerName">
                 <Form.Label>Customer Name</Form.Label>
                 <Form.Control

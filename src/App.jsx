@@ -79,7 +79,6 @@ function App() {
         <Route path="/refund-purity/:id/:productID" element={<RefundPurity />} />
         <Route path="/order-refund" element={<ViewOrderRefund />} />
         <Route path="/add-category" element={<AddCategory />} />
-
         <Route path="/reset-password" element={<ResetForm/>} />
         <Route path="/forget-form" element={<ForgetForm />} />
       </Routes>

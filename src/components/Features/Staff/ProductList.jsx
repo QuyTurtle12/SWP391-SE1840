@@ -11,8 +11,8 @@ function ProductList() {
   const [cart, setCart] = useState([]);
   const navigate = useNavigate();
   const [searchInput, setSearchInput] = useState("");
-  const [staffId, setStaffId] = useState("");
   const token = localStorage.getItem('token'); // Fetch the token from local storage
+  const [staff, setStaff] = useState("");
 
   useEffect(() => {
     if (token) {
@@ -27,12 +27,30 @@ function ProductList() {
           setProducts(response.data);
         })
         .catch((error) => console.error("Error fetching products:", error));
-
-      fetchCartData();
+      fetchStaff();
     } else {
       console.error("No token found");
     }
   }, [token]);
+
+  const fetchStaff = async () => {
+    if (token) {
+      try {
+        const response = await axios.get("https://jewelrysalesystem-backend.onrender.com/api/this-info", {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        console.log(response.data);
+        setStaff(response.data);
+        fetchCartData(response.data.id); // Fetch cart data with the staff ID after setting the staff state
+      } catch (error) {
+        console.error("Error fetching staff:", error);
+      }
+    } else {
+      console.error("No token found");
+    }
+  };
 
   const searchProduct = () => {
     if (token) {
@@ -55,7 +73,7 @@ function ProductList() {
     setSearchInput(event.target.value);
   };
 
-  const fetchCartData = () => {
+  const fetchCartData = (staffId) => {
     if (token) {
       axios
         .get(`https://jewelrysalesystem-backend.onrender.com/cart?staffId=${staffId}`, {
@@ -74,20 +92,11 @@ function ProductList() {
     }
   };
 
-  const handleStaff = (event) => {
-    setStaffId(event.target.value);
-  };
-
   const handleProductClick = (id) => {
     navigate(`/productdetail/${id}`);
   };
 
   const addToCart = (product) => {
-    if (!staffId) {
-      toast.error("Please enter staff ID.");
-      return;
-    }
-
     if (product.stock <= 0) {
       toast.error("Product is out of stock.");
       return;
@@ -101,7 +110,7 @@ function ProductList() {
 
     if (token) {
       axios
-        .post(`https://jewelrysalesystem-backend.onrender.com/cart?staffId=${staffId}`, product, {
+        .post(`https://jewelrysalesystem-backend.onrender.com/cart?staffId=${staff.id}`, product, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -120,12 +129,9 @@ function ProductList() {
   };
 
   const handleViewCartClick = () => {
-    if (!staffId) {
-      toast.error('Please enter staff ID.');
-      return;
-    }
-    navigate(`/viewcart?staffId=${staffId}`);
+    navigate(`/viewcart?staffId=${staff.id}`);
   };
+
 
   return (
     <div>
@@ -149,13 +155,6 @@ function ProductList() {
             </div>
           </h2>
           <div className="mb-8 font-bold">
-            Staff ID <input
-              type="number"
-              value={staffId}
-              onChange={handleStaff}
-              placeholder="Enter staff ID..."
-              className="border p-2 mr-2"
-            />
             <input
               type="text"
               value={searchInput}

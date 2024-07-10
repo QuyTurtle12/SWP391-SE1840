@@ -19,10 +19,17 @@ function EditManager() {
   };
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+
     const fetchManager = async () => {
       try {
         const response = await axios.get(
-          `https://jewelrysalesystem-backend.onrender.com/api/v2/accounts/user?id=${id}`
+          `https://jewelrysalesystem-backend.onrender.com/api/v2/accounts/user?id=${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         console.log("Fetched manager data:", response.data);
         setManager(response.data);
@@ -34,7 +41,12 @@ function EditManager() {
     const handleCounterList = async () => {
       try {
         const response = await axios.get(
-          "https://jewelrysalesystem-backend.onrender.com/api/v2/counters"
+          "https://jewelrysalesystem-backend.onrender.com/api/v2/counters",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         console.log(response.data);
         setCounters(response.data);
@@ -56,12 +68,20 @@ function EditManager() {
     e.preventDefault();
 
     console.log("Submitting form with data:", manager);
+    const token = localStorage.getItem("token");
+
     try {
       const { fullName, gender, contactInfo, counterID } = manager; // Lấy các giá trị từ object manager
       const response = await axios.put(
         `https://jewelrysalesystem-backend.onrender.com/api/v2/accounts/MANAGER?ID=${parseInt(
           id
-        )}&fullName=${fullName}&gender=${gender}&contactInfo=${contactInfo}&counterID=${counterID}`
+        )}&fullName=${fullName}&gender=${gender}&contactInfo=${contactInfo}&counterID=${counterID}`,
+        null,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       console.log("Update response:", response);
       navigate("/view-manager-list"); // Điều hướng quay lại danh sách manager sau khi cập nhật thành công
@@ -77,7 +97,6 @@ function EditManager() {
   const handleCounterChange = (e) => {
     setManager({ ...manager, counterID: e.target.value });
   };
-
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
           <ToastContainer/>

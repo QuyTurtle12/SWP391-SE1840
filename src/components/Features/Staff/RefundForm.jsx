@@ -14,8 +14,14 @@ function RefundForm() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
+        const token = localStorage.getItem('token'); // Get token from localStorage
         const response = await axios.get(
-          `https://jewelrysalesystem-backend.onrender.com/api/refunds/refund/products?refundID=${id}`
+          `https://jewelrysalesystem-backend.onrender.com/api/refunds/refund/products?refundID=${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`  // Add token to the request header
+            }
+          }
         );
         console.log(response.data);
         setOrders(response.data);
@@ -68,9 +74,15 @@ function RefundForm() {
     }, []);
 
     try {
+      const token = localStorage.getItem('token'); // Get token from localStorage
       const response = await axios.post(
         `https://jewelrysalesystem-backend.onrender.com/api/refunds/itemPurity?refundID=${id}`,
-        consolidatedPurities
+        consolidatedPurities,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`  // Add token to the request header
+          }
+        }
       );
       console.log(response.data);
       toast.success("Created refund order successfully!!");

@@ -6,16 +6,26 @@ import { useNavigate } from "react-router-dom";
 function ViewOrderRefund() {
   const [orders, setOrder] = useState([]);
   const navigate = useNavigate();
+  const token = localStorage.getItem('token'); // Fetch the token from local storage
 
   useEffect(() => {
-    axios
-      .get("https://jewelrysalesystem-backend.onrender.com/api/refunds",[])
-      .then((respone) => {
-        console.log(respone.data);
-        setOrder(respone.data);
-      })
-      .catch((error) => console.error("Error at fetching data", error));
-  }, []);
+    if (token) {
+      axios
+        .get("https://jewelrysalesystem-backend.onrender.com/api/refunds", {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        .then((response) => {
+          console.log(response.data);
+          setOrder(response.data);
+        })
+        .catch((error) => console.error("Error fetching data:", error));
+    } else {
+      console.error("No token found");
+    }
+  }, [token]);
+
   const handleOrder = (id) => {
     navigate(`/refund-detail/${id}`);
   }
@@ -36,7 +46,7 @@ function ViewOrderRefund() {
                   Order Refund ID{" "}
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
-                  Customer ID
+                  Customer Name
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                   Date Time
@@ -53,9 +63,9 @@ function ViewOrderRefund() {
             <tbody className="bg-white divide-y divide-gray-500">
               {orders.map((order) => (
                 <tr key={order.id}>
-                  <td className="px-4 py-4 whitespace-nowrap">{order.id} </td>
+                  <td className="px-4 py-4 whitespace-nowrap">{order.ID} </td>
                   <td className="px-4 py-4 whitespace-nowrap">
-                    {order.customerID}
+                    {order.customerName}
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap">
                   {new Date(order.date.seconds * 1000).toLocaleString()} {/* Example formatting */}
@@ -69,7 +79,7 @@ function ViewOrderRefund() {
                   
                   <td className="px-4 py-4 whitespace-nowrap">
                   <button
-                      onClick={() => handleOrder(order.id)}
+                      onClick={() => handleOrder(order.ID )}
                       className="bg-white text-gray-900 py-2 px-6 rounded-full font-bold hover:bg-gray-300"
                     >
                       View 

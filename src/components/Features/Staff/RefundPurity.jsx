@@ -1,24 +1,32 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams ,Link} from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 
 function RefundPurity() {
-  const { id } = useParams();
-  const { productID } = useParams();
+  const { id, productID } = useParams();
   const [orders, setOrder] = useState([]);
+  const token = localStorage.getItem('token'); // Fetch the token from local storage
+
   useEffect(() => {
     const fetchOrder = async () => {
-      axios
-      .get(`https://jewelrysalesystem-backend.onrender.com/api/refunds/refund/products/product?refundID=${id}&productID=${productID}`)
-      .then((respone) => {
-        console.log(respone.data);
-        setOrder(respone.data);
-      })
-      .catch((error) => console.error("Error at fetching data", error));
+      if (token) {
+        axios
+          .get(`https://jewelrysalesystem-backend.onrender.com/api/refunds/refund/products/product?refundID=${id}&productID=${productID}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          })
+          .then((response) => {
+            console.log(response.data);
+            setOrder(response.data);
+          })
+          .catch((error) => console.error("Error fetching data:", error));
+      } else {
+        console.error("No token found");
+      }
     }
-   fetchOrder();
-  }, [id]);
-
+    fetchOrder();
+  }, [id, productID, token]);
   return (
     <>
   <div className="text-3xl justify-between text-center font-bold pt-10 text-black mb-8">

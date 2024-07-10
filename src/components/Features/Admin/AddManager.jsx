@@ -6,7 +6,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 
 const AddManager = () => {
-  const [ID, setID] = useState("");
   const [fullName, setFullName] = useState("");
   const [gender, setGender] = useState("");
   const [email, setEmail] = useState("");
@@ -16,23 +15,28 @@ const AddManager = () => {
   const [counters, setCounters] = useState([]);
   const navigate = useNavigate();
 
+  const token = localStorage.getItem("token");
+
   useEffect(() => {
     const fetchCounters = async () => {
       try {
-        const response = await axios.get("https://jewelrysalesystem-backend.onrender.com/api/v2/counters");
+        const response = await axios.get("https://jewelrysalesystem-backend.onrender.com/api/v2/counters", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setCounters(response.data);
       } catch (error) {
         console.error("Error fetching counters data", error);
       }
     };
     fetchCounters();
-  }, []);
+  }, [token]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const data = {
-      ID: parseInt(ID),
       fullName,
       gender,
       email,
@@ -47,12 +51,14 @@ const AddManager = () => {
         "https://jewelrysalesystem-backend.onrender.com/api/v2/accounts/MANAGER",
         null,
         {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
           params: data,
         }
       );
       toast.success("Manager added successfully!");
       // Optionally reset form fields
-      setID("");
       setFullName("");
       setGender("");
       setEmail("");
@@ -69,10 +75,8 @@ const AddManager = () => {
         error.response ? error.response.data : error.message
       );
       toast.error(`${error.response ? error.response.data : error.message}`);
-
     }
   };
-
   return (
     <div>
       <AdminMenu />
@@ -92,22 +96,7 @@ const AddManager = () => {
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <form onSubmit={handleSubmit}>
-              <div>
-                <label className="block text-sm font-medium leading-5 text-gray-700">
-                  ID
-                </label>
-                <div className="mt-1 relative rounded-md shadow-sm">
-                  <input
-                    id="ID"
-                    name="ID"
-                    placeholder="ID"
-                    required
-                    value={ID}
-                    onChange={(e) => setID(e.target.value)}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-                  />
-                </div>
-              </div>
+             
               <div className="mt-6">
                 <label className="block text-sm font-medium leading-5 text-gray-700">
                   Full Name

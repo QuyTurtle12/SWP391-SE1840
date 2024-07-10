@@ -45,7 +45,7 @@ function OrderDetail() {
         console.log(customerResponse.data);
 
         const staffResponse = await axios.get(
-          `https://jewelrysalesystem-backend.onrender.com/api/v2/accounts/user?id=${orderDetailResponse.data.staffID}`,
+          `http://localhost:8080/api/v2/accounts/staff?id=${orderDetailResponse.data.staffID}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -54,8 +54,9 @@ function OrderDetail() {
         );
         setStaff(staffResponse.data);
         console.log(staffResponse.data);
+        console.log(orderDetailResponse.data.staffID);
       } catch (error) {
-        console.error("Error at fetching data", error);
+        console.error("Error at fetching data staff", error);
       }
     };
 
@@ -158,11 +159,21 @@ function OrderDetail() {
                 <div className="flex justify-start items-start flex-col space-y-2">
                   <p className="text-base text-wrap text-black font-semibold leading-4 text-left">
                     <ul>
-                      <li className="pb-2">ID: {orderDetail.customerID}</li>
-                      <li className="pb-2">Name: {customer.name}</li>
-                      <li className="pb-2">Contact: {customer.contactInfo}</li>
-                      <li className="pb-2">Gender: {customer.gender}</li>
-                      <li className="pb-2">Point: {customer.point}</li>
+                      <li className="pb-2 flex">
+                        ID: <p className="pl-4">{orderDetail.customerID}</p>
+                      </li>
+                      <li className="pb-2 flex">
+                        Name: <p className="pl-4">{customer.name}</p>
+                      </li>
+                      <li className="pb-2 flex">
+                        Contact: <p className="pl-4"> {customer.contactInfo}</p>
+                      </li>
+                      <li className="pb-2 flex">
+                        Gender: <p className="pl-4"> {customer.gender}</p>
+                      </li>
+                      <li className="pb-2 flex">
+                        Point:<p className="pl-4">{customer.point}</p>
+                      </li>
                     </ul>
                   </p>
                 </div>
@@ -180,13 +191,24 @@ function OrderDetail() {
                 <div className="flex justify-start items-start flex-col space-y-2">
                   <p className="text-base text-black font-semibold leading-4 text-left">
                     <ul>
-                      <li className="pb-2">ID: {orderDetail.staffID}</li>
-                      <li className="pb-2">Name: {staff.fullName}</li>
-                      <li className="pb-2">Counter ID: {staff.counterID}</li>
-                      <li className="pb-2">Email: {staff.email}</li>
-                      <li className="pb-2">Gender: {staff.gender}</li>
-                      <li className="pb-2">Email: {staff.email}</li>
-                      <li className="pb-2">Contact: {staff.contactInfo}</li>
+                      <li className="pb-2 flex">
+                        ID: <p className="pl-4 ">{orderDetail.staffID}</p>
+                      </li>
+                      <li className="pb-2 flex">
+                        Name: <p className="pl-4">{staff.fullName}</p>
+                      </li>
+                      <li className="pb-2 flex">
+                        Counter ID: <p className="pl-4">{staff.counterID}</p>
+                      </li>
+                      <li className="pb-2 flex">
+                        Email: <p className="pl-4">{staff.email}</p>
+                      </li>
+                      <li className="pb-2 flex">
+                        Gender: <p className="pl-4">{staff.gender}</p>
+                      </li>
+                      <li className="pb-2 flex">
+                        Contact: <p className="pl-4">{staff.contactInfo}</p>
+                      </li>
                     </ul>
                   </p>
                 </div>

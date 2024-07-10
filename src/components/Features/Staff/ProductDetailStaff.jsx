@@ -4,7 +4,9 @@ import { useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 
 function ProductDetailStaff() {
+  const token = localStorage.getItem(`token`);
   const { id } = useParams();
+  const [staff, setStaff] = useState("");
   const [product, setProduct] = useState({
     img: "",
     name: "",
@@ -25,7 +27,12 @@ function ProductDetailStaff() {
     const fetchProduct = async () => {
       try {
         const response = await axios.get(
-          `https://jewelrysalesystem-backend.onrender.com/api/v2/products/${id}`
+          `https://jewelrysalesystem-backend.onrender.com/api/v2/products/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         console.log("Fetched data success:", response.data);
         setProduct(response.data);
@@ -34,38 +41,85 @@ function ProductDetailStaff() {
       }
     };
 
-    const fetchCart = async () => {
-      try {
-        const response = await axios.get("https://jewelrysalesystem-backend.onrender.com/cart");
-        setCart(response.data);
-      } catch (error) {
-        console.error("Error fetching cart data", error);
+    const fetchStaff = async () => {
+      if (token) {
+        try {
+          const response = await axios.get(
+            "https://jewelrysalesystem-backend.onrender.com/api/this-info",
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          console.log(response.data);
+          setStaff(response.data);
+          fetchCart(response.data.id); 
+        } catch (error) {
+          console.error("Error fetching staff:", error);
+        }
+      } else {
+        console.error("No token found");
+      }
+    };
+
+    const fetchCart = (staffId) => {
+      if (token) {
+        axios
+          .get(
+            `https://jewelrysalesystem-backend.onrender.com/cart?staffId=${staffId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          )
+          .then((response) => {
+            setCart(response.data);
+          })
+          .catch((error) => {
+            console.error("Error fetching cart data:", error);
+          });
+      } else {
+        console.error("No token found");
       }
     };
 
     fetchProduct();
-    fetchCart();
+    fetchStaff();
   }, [id]);
+
   const addToCart = (product) => {
-    const isAlreadyInCart = cart.some((item) => item.id === product.id);
+    const isAlreadyInCart = cart.some((item) => item.product.id === product.id);
     if (isAlreadyInCart) {
       toast.error("Product is already in the cart.");
       return;
     }
 
-    axios
-      .post("https://jewelrysalesystem-backend.onrender.com/cart", product)
-      .then((response) => {
-        console.log("Item added to cart:", response.data);
-        setCart([...cart, product]);
-        toast.success("Item added to cart successfully!");
-      })
-      .catch((error) => {
-        console.error("Error adding item to cart:", error);
-        toast.error("Error adding item to cart!");
-      });
+    if (token) {
+      axios
+        .post(
+          `https://jewelrysalesystem-backend.onrender.com/cart?staffId=${staff.id}`,
+          product,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+        .then((response) => {
+          toast.success("Item added to cart successfully!", response.data);
+          setCart([...cart, { product, quantity: 1, price: product.price }]);
+        })
+        .catch((error) => {
+          toast.error(`${error.response ? error.response.data : error.message}`);
+          console.error("Error adding item to cart:", error);
+        });
+    } else {
+      console.error("No token found");
+    }
   };
-  
+
   return (
     <div className="h-screen">
       <ToastContainer/>

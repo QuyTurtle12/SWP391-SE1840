@@ -5,51 +5,55 @@ import { useNavigate } from "react-router-dom";
 
 function ViewManagerList() {
   const [managers, setManagers] = useState([]);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [managerToDelete, setManagerToDelete] = useState(null);
   const navigate = useNavigate();
-  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false); // State để điều khiển hiển thị popup xác nhận
-  const [managerToDelete, setManagerToDelete] = useState(null); // State để lưu thông tin của manager đang được chọn để xóa
+  const token = localStorage.getItem("token");
+
   useEffect(() => {
-    
-    axios
-      .get("https://jewelrysalesystem-backend.onrender.com/api/v2/accounts/MANAGER")
-      .then((response) => {
-        console.log(response.data);
-        setManagers(response.data);
-      })
-      .catch((error) => console.error("Error at fetching data", error));
-  }, []);
+    if (token) {
+      axios
+        .get("https://jewelrysalesystem-backend.onrender.com/api/v2/accounts/MANAGER", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          console.log(response.data);
+          setManagers(response.data);
+        })
+        .catch((error) => console.error("Error at fetching data", error));
+    }
+  }, [token]);
+
   const handleEditClick = (id) => {
     navigate(`/edit-manager/${id}`);
   };
 
- const handleDelete = async (id) => {
-    try {
-      setShowDeleteConfirmation(true); // Hiển thị popup xác nhận
-      setManagerToDelete(id); // Lưu thông tin của manager đang được chọn để xóa
-    } catch (error) {
-      console.error(
-        "Error updating status",
-        error.response ? error.response.data : error.message
-      );
-    }
+  const handleDelete = async (id) => {
+    setShowDeleteConfirmation(true);
+    setManagerToDelete(id);
   };
+
   const confirmDelete = async () => {
     try {
-      // Thực hiện xóa
       await axios.put(
-        `https://jewelrysalesystem-backend.onrender.com/api/v2/accounts/MANAGER/status?ID=${managerToDelete}`
+        `https://jewelrysalesystem-backend.onrender.com/api/v2/accounts/MANAGER/status?ID=${managerToDelete}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
-      // Cập nhật trạng thái của manager trong mảng managers
-      const updatedManagers = managers.map(manager => {
+
+      const updatedManagers = managers.map((manager) => {
         if (manager.id === managerToDelete) {
-          // Đảo ngược trạng thái của manager
           return { ...manager, status: !manager.status };
         }
         return manager;
       });
-      // Cập nhật mảng managers với trạng thái mới
       setManagers(updatedManagers);
-      // Đặt lại state và thông tin của manager để xóa
       setShowDeleteConfirmation(false);
       setManagerToDelete(null);
     } catch (error) {
@@ -59,12 +63,11 @@ function ViewManagerList() {
       );
     }
   };
+
   const cancelDelete = () => {
-    // Đặt lại state và thông tin của manager để xóa
     setShowDeleteConfirmation(false);
     setManagerToDelete(null);
   };
-  
   return (
     <>
       <AdminMenu />

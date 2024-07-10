@@ -13,6 +13,7 @@ function ForgetForm() {
     );
     try {
       console.log("submitting data", data);
+      console.log(data)
     } catch (error) {
       console.error("error at submitting email");
     }
