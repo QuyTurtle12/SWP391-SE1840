@@ -1,17 +1,19 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-
 import { useNavigate } from "react-router-dom";
 import ManagerMenu from "./ManagerMenu";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
-function ViewManagerList() {
+export default function ViewStaffList() {
   const [staffs, setStaffs] = useState([]);
   const navigate = useNavigate();
-  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false); // State để điều khiển hiển thị popup xác nhận
-  const [staffToDelete, setStaffToDelete] = useState(null); // State để lưu thông tin của manager đang được chọn để xóa
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [staffToUpdate, setStaffToUpdate] = useState(null);
+
   useEffect(() => {
     axios
-      .get("https://jewelrysalesystem-backend.onrender.com/api/account/STAFF/list")
+      .get("http://localhost:8080/api/v2/accounts/STAFF")
       .then((response) => {
         console.log(response.data);
         setStaffs(response.data);
@@ -23,72 +25,63 @@ function ViewManagerList() {
     navigate(`/edit-staff/${id}`);
   };
 
- const handleDelete = async (id) => {
-    try {
-      setShowDeleteConfirmation(true); // Hiển thị popup xác nhận
-      setStaffToDelete(id); // Lưu thông tin của manager đang được chọn để xóa
-    } catch (error) {
-      console.error(
-        "Error updating status",
-        error.response ? error.response.data : error.message
-      );
-    }
+  const handleStatusChange = async (id) => {
+    setShowConfirmation(true);
+    setStaffToUpdate(id);
   };
 
-  const confirmDelete = async () => {
+  const confirmStatusChange = async () => {
     try {
-      // Thực hiện xóa
       await axios.put(
-        `https://jewelrysalesystem-backend.onrender.com/api/account/STAFF/change-status?ID=${staffToDelete}`
+        `http://localhost:8080/api/v2/accounts/STAFF/status?ID=${staffToUpdate}`
       );
-      // Cập nhật trạng thái của staff trong mảng staff
-      const updatedStaffs = staffs.map(staff => {
-        if (staff.id === staffToDelete) {
-          // Đảo ngược trạng thái của manager
+
+      const updatedStaffs = staffs.map((staff) => {
+        if (staff.id === staffToUpdate) {
           return { ...staff, status: !staff.status };
         }
         return staff;
       });
-      // Cập nhật mảng managers với trạng thái mới
+
       setStaffs(updatedStaffs);
-      // Đặt lại state và thông tin của manager để xóa
-      setShowDeleteConfirmation(false);
-      setStaffToDelete(null);
+      setShowConfirmation(false);
+      setStaffToUpdate(null);
+      toast.success("Status updated successfully!");
     } catch (error) {
       console.error(
         "Error updating status",
         error.response ? error.response.data : error.message
       );
+      toast.error("Failed to update status!");
     }
   };
 
-  const cancelDelete = () => {
-    // Đặt lại state và thông tin của manager để xóa
-    setShowDeleteConfirmation(false);
-    setStaffToDelete(null);
+  const cancelStatusChange = () => {
+    setShowConfirmation(false);
+    setStaffToUpdate(null);
   };
-  
+
   return (
     <>
-      <ManagerMenu/>
+      <ManagerMenu />
       <div className="bg-tiffany view-manager-list flex justify-center h-full ">
         <div className="justify-between items-center px-10">
           <table className="min-w-full divide-y divide-gray-200 ">
             <thead>
               <tr>
-                <th className="px-6 py-3 font-bold text-left text-xs  text-black uppercase tracking-wider">
+                <th className="px-6 py-3 font-bold text-left text-xs text-black uppercase tracking-wider">
                   ID
                 </th>
-                <th className="px-6 py-3 font-bold text-left text-xs  text-black uppercase tracking-wider">
+                <th className="px-6 py-3 font-bold text-left text-xs text-black uppercase tracking-wider">
                   Full Name
                 </th>
-                <th className="px-6 py-3 font-bold text-left text-xs  text-black uppercase tracking-wider">
+                <th className="px-6 py-3 font-bold text-left text-xs text-black uppercase tracking-wider">
                   Role ID
                 </th>
-                <th className="px-6 py-3 font-bold text-left text-xs  text-black uppercase tracking-wider">
+                <th className="px-6 py-3 font-bold text-left text-xs text-black uppercase tracking-wider">
                   Email
                 </th>
-                <th className="px-6 py-3 font-bold text-left text-xs  text-black uppercase tracking-wider">
+                <th className="px-6 py-3 font-bold text-left text-xs text-black uppercase tracking-wider">
                   Gender
                 </th>
                 <th className="px-6 py-3 font-bold text-left text-xs text-black uppercase tracking-wider">
@@ -105,30 +98,18 @@ function ViewManagerList() {
                 </th>
               </tr>
             </thead>
-            <tbody className=" bg-white divide-y divide-black">
+            <tbody className="bg-white divide-y divide-black">
               {staffs.map((staff) => (
                 <tr key={staff.id}>
                   <td className="px-6 py-4 whitespace-nowrap">{staff.id}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{staff.fullName}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{staff.roleID}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{staff.email}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{staff.gender}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{staff.contactInfo}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{staff.counterID}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {staff.fullName}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {staff.roleID}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {staff.email}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {staff.gender}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {staff.contactInfo}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {staff.counterID}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {staff.status === true ? (
+                    {staff.status ? (
                       <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                         Active
                       </span>
@@ -137,16 +118,16 @@ function ViewManagerList() {
                         Inactive
                       </span>
                     )}
-                  </td>{" "}
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <button
                       onClick={() => handleEditClick(staff.id)}
-                      className=" px-4 py-2 font-medium text-white bg-blue-600 rounded-md hover:bg-blue-500 focus:outline-none focus:shadow-outline-blue active:bg-blue-600 transition duration-150 ease-in-out"
+                      className="px-4 py-2 font-medium text-white bg-blue-600 rounded-md hover:bg-blue-500 focus:outline-none focus:shadow-outline-blue active:bg-blue-600 transition duration-150 ease-in-out"
                     >
                       Edit
                     </button>
                     <button
-                      onClick={() => handleDelete(staff.id)}
+                      onClick={() => handleStatusChange(staff.id)}
                       className="ml-2 px-4 py-2 font-medium text-white bg-red-600 rounded-md hover:bg-red-500 focus:outline-none focus:shadow-outline-blue active:bg-red-600 transition duration-150 ease-in-out"
                     >
                       Change Status
@@ -158,20 +139,19 @@ function ViewManagerList() {
           </table>
         </div>
       </div>
-       {/* Popup xác nhận */}
-       {showDeleteConfirmation && (
+      {showConfirmation && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75">
           <div className="bg-white rounded-lg p-8">
             <p>Do you want to change status?</p>
             <div className="mt-4 flex justify-center space-x-4">
               <button
-                onClick={cancelDelete}
+                onClick={cancelStatusChange}
                 className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400"
               >
                 No
               </button>
               <button
-                onClick={confirmDelete}
+                onClick={confirmStatusChange}
                 className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600"
               >
                 Yes
@@ -180,8 +160,9 @@ function ViewManagerList() {
           </div>
         </div>
       )}
+      <ToastContainer />
     </>
   );
 }
 
-export default ViewManagerList;
+

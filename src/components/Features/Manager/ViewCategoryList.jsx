@@ -15,7 +15,7 @@ function ViewCategory() {
 
   const fetchCategories = () => {
     axios
-      .get("https://jewelrysalesystem-backend.onrender.com/api/categories")
+      .get("http://localhost:8080/api/categories")
       .then((response) => {
         setCategories(response.data);
       })
@@ -38,7 +38,7 @@ function ViewCategory() {
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
-      .put(`https://jewelrysalesystem-backend.onrender.com/api/categories?ID=${selectedCategory.id}&categoryName=${selectedCategory.name}`,)
+      .put(`http://localhost:8080/api/categories?ID=${selectedCategory.id}&categoryName=${selectedCategory.name}`,)
       .then(() => {
         setShowModal(false);
         fetchCategories();
@@ -51,7 +51,7 @@ function ViewCategory() {
   };
   const handleDeleteClick = (id) => {
     axios
-      .delete(`https://jewelrysalesystem-backend.onrender.com/api/categories?ID=${id}`)
+      .delete(`http://localhost:8080/api/categories?ID=${id}`)
       .then(() => {
         fetchCategories();
         toast.success("Category deleted successfully");

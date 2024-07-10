@@ -1,6 +1,7 @@
 import "./App.scss";
 import ViewCategory from "./components/Features/Manager/ViewCategoryList";
 import Login from "./components/Login/Login";
+import ViewPromotion from "./components/Features/Manager/ViewPromotion";
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
 import { Routes, Route } from "react-router-dom";
@@ -81,6 +82,7 @@ function App() {
         <Route path="/add-category" element={<AddCategory />} />
         <Route path="/reset-password" element={<ResetForm/>} />
         <Route path="/forget-form" element={<ForgetForm />} />
+        <Route path="/view-promotion" element={<ViewPromotion />} />
       </Routes>
       <Routes></Routes>
       <Footer />
