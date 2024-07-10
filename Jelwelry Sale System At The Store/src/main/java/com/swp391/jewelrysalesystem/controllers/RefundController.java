@@ -110,7 +110,7 @@ public class RefundController {
 
         List<Map<String, Object>> response = new ArrayList<>();
         for (Refund refund : refunds) {
-            String customerName = customerService.getCustomer(refund.getID()).getName();
+            String customerName = customerService.getCustomer(refund.getCustomerID()).getName();
             String staffName = userService.getUserByField(refund.getStaffID(), "id", "user").getFullName();
 
             Map<String, Object> map = new HashMap<>();
