@@ -48,8 +48,9 @@ public class UserController {
             @RequestParam String password,
             @RequestParam String contactInfo,
             @RequestParam int counterID) {
-        
-        if (!userService.isNotExistedPhoneNum(contactInfo) || !customerService.isNotExistedPhoneNum(contactInfo) || !userService.isNotExistedEmail(email)) {
+
+        if (!userService.isNotExistedPhoneNum(contactInfo) || !customerService.isNotExistedPhoneNum(contactInfo)
+                || !userService.isNotExistedEmail(email)) {
             return ResponseEntity.status(HttpStatus.SC_CONFLICT)
                     .body("This user has been existed! Please, check contact info or email");
         }
@@ -63,11 +64,11 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body("Password cannot be empty!");
         }
 
-        String error =  userService.isGeneralValidated(fullName, gender, contactInfo, counterID);
+        String error = userService.isGeneralValidated(fullName, gender, contactInfo, counterID);
         if (error != null) {
             return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body(error);
         }
-        
+
         int roleID = 0;
         switch (role) {
             case "MANAGER":
@@ -81,7 +82,7 @@ public class UserController {
         }
 
         int ID = userService.generateID();
-        
+
         User newUser = new User();
         newUser.setID(ID);
         newUser.setFullName(fullName);
@@ -105,18 +106,19 @@ public class UserController {
             @RequestParam String contactInfo,
             @RequestParam int counterID)
             throws InterruptedException, ExecutionException {
-        
+
         if (!userService.isNotNullUser(ID)) {
             return ResponseEntity.status(HttpStatus.SC_CONFLICT)
                     .body("This user is not existing");
         }
 
-        if ((!customerService.isNotExistedPhoneNum(contactInfo) || !userService.isNotExistedPhoneNum(contactInfo)) && !userService.isMyPhoneNum(ID, contactInfo)) {
+        if ((!customerService.isNotExistedPhoneNum(contactInfo) || !userService.isNotExistedPhoneNum(contactInfo))
+                && !userService.isMyPhoneNum(ID, contactInfo)) {
             return ResponseEntity.status(HttpStatus.SC_CONFLICT)
                     .body("This phone number has been registered");
         }
 
-        String error =  userService.isGeneralValidated(fullName, gender, contactInfo, counterID);
+        String error = userService.isGeneralValidated(fullName, gender, contactInfo, counterID);
         if (error != null) {
             return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body(error);
         }
@@ -161,6 +163,20 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).build();
             }
 
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("v2/accounts/staff")
+    public ResponseEntity<User> getStaffByStaffID(@RequestParam int id) {
+        try {
+            User user = userService.getUserByField(id, "id", "user");
+            if (user == null || user.getRoleID() != 1) {
+                return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).build();
+            }
+            return ResponseEntity.ok(user);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).build();

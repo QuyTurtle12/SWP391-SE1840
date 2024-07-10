@@ -49,7 +49,7 @@ public class SecurityConfig {
                                                                 "/refunds/**",
                                                                 "/upload/image/**", "/api/v2/customers/**")
                                                 .hasAnyAuthority("ROLE_MANAGER", "ROLE_STAFF")
-                                                .requestMatchers("/api/auth/staff/**", "/cart/**")
+                                                .requestMatchers("/api/auth/staff/**", "/cart/**", "/api/v2/accounts/staff")
                                                 .hasAuthority("ROLE_STAFF")
                                                 .anyRequest().authenticated()) // Secure other endpoints
                                 .sessionManagement(session -> session
