@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { Button, Form, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function ProductDetailManager() {
   const { id } = useParams();
@@ -30,7 +31,7 @@ export default function ProductDetailManager() {
     const fetchProduct = async () => {
       try {
         const response = await axios.get(
-          `https://jewelrysalesystem-backend.onrender.com/api/v2/products/${id}`
+          `http://localhost:8080/api/v2/products/${id}`
         );
         setProduct(response.data);
       } catch (error) {
@@ -41,7 +42,7 @@ export default function ProductDetailManager() {
     const fetchCategories = async () => {
       try {
         const response = await axios.get(
-          "https://jewelrysalesystem-backend.onrender.com/api/categories"
+          "http://localhost:8080/api/categories"
         );
         setCategories(response.data);
       } catch (error) {
@@ -52,7 +53,7 @@ export default function ProductDetailManager() {
     const fetchPromotions = async () => {
       try {
         const response = await axios.get(
-          "https://jewelrysalesystem-backend.onrender.com/api/v2/promotions"
+          "http://localhost:8080/api/v2/promotions"
         );
         setPromotions(response.data);
       } catch (error) {
@@ -76,6 +77,23 @@ export default function ProductDetailManager() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    const numericFields = {
+      price: product.price,
+      refundPrice: product.refundPrice,
+      goldWeight: product.goldWeight,
+      laborCost: product.laborCost,
+      stoneCost: product.stoneCost,
+      stock: product.stock,
+    };
+
+    for (const [field, value] of Object.entries(numericFields)) {
+      if (value <= 0) {
+        toast.error(`${field.charAt(0).toUpperCase() + field.slice(1)} cannot be 0 or lower`);
+        return;
+      }
+    }
+
     try {
       let imageUrl = product.img;
 
@@ -84,7 +102,7 @@ export default function ProductDetailManager() {
         formData.append("file", selectedFile);
 
         const uploadResponse = await axios.post(
-          "https://jewelrysalesystem-backend.onrender.com/upload/image",
+          "http://localhost:8080/upload/image",
           formData,
           {
             headers: {
@@ -109,10 +127,13 @@ export default function ProductDetailManager() {
         promotionID: product.promotionID,
         img: imageUrl,
       };
-
+      
       await axios.put(
-        `https://jewelrysalesystem-backend.onrender.com/api/v2/products/${id}`,
-        params
+        `http://localhost:8080/api/v2/products/${id}`,
+        null, // No request body
+        {
+          params: params // These are the query parameters
+        }
       );
 
       toast.success("Product updated successfully!");
@@ -215,7 +236,7 @@ export default function ProductDetailManager() {
                     onChange={handleInputChange}
                   >
                     {promotions.map((promotion) => (
-                      <option key={promotion.id} value={promotion.description}>
+                      <option key={promotion.id} value={promotion.id}>
                         {promotion.description}
                       </option>
                     ))}

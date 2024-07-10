@@ -14,7 +14,7 @@ export default function ProductListManager() {
 
   useEffect(() => {
     axios
-      .get("https://jewelrysalesystem-backend.onrender.com/api/v2/products")
+      .get("http://localhost:8080/api/v2/products")
       .then((response) => {
         console.log(response.data);
         setProducts(response.data);
@@ -28,7 +28,7 @@ export default function ProductListManager() {
 
   const handleDeleteProduct = async (id) => {
     try {
-      const response = await axios.delete(`https://jewelrysalesystem-backend.onrender.com/api/v2/products/${id}`);
+      const response = await axios.delete(`http://localhost:8080/api/v2/products/${id}`);
       if (response.status === 200) {
         toast.success("Product deleted successfully!");
         setProducts(products.filter((product) => product.id !== id));

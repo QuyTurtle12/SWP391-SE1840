@@ -22,8 +22,9 @@ import Manager from "./components/Features/Manager/Manager";
 import AddStaff from "./components/Features/Manager/AddStaff";
 import ViewStaffList from "./components/Features/Manager/ViewStaffList";
 import EditStaff from "./components/Features/Manager/EditStaff";
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import ViewCounter from "./components/Features/Manager/ViewCounter";
 import AddProduct from "./components/Features/Manager/AddProduct";
 import ProductDetailManager from "./components/Features/Manager/ProductDetailManager";
 import ProductDetailStaff from "./components/Features/Staff/ProductDetailStaff";
@@ -39,6 +40,7 @@ import ProductListManager from "./components/Features/Manager/ProductList-manage
 import AddCategory from "./components/Features/Manager/AddCategory";
 import ForgetForm from "./components/Login/ForgetForm";
 import ResetForm from "./components/Login/ResetForm";
+import ViewPromotion from "./components/Features/Manager/ViewPromotion";
 function App() {
   return (
     <div className="overflow-hidden">
@@ -76,10 +78,15 @@ function App() {
         <Route path="/refund-form/:id" element={<RefundForm />} />
         <Route path="/refund-list" element={<RefundList />} />
         <Route path="/refund-viewcart" element={<RefundViewCart />} />
-        <Route path="/refund-purity/:id/:productID" element={<RefundPurity />} />
+        <Route
+          path="/refund-purity/:id/:productID"
+          element={<RefundPurity />}
+        />
         <Route path="/order-refund" element={<ViewOrderRefund />} />
         <Route path="/add-category" element={<AddCategory />} />
-        <Route path="/reset-password" element={<ResetForm/>} />
+        <Route path="/view-counter" element={<ViewCounter />} />
+        <Route path="/view-promotion" element={<ViewPromotion />} />
+        <Route path="/reset-password" element={<ResetForm />} />
         <Route path="/forget-form" element={<ForgetForm />} />
       </Routes>
       <Routes></Routes>
