@@ -17,7 +17,7 @@ const ViewCounter = () => {
     try {
       const token = localStorage.getItem('token'); // Retrieve token from localStorage
       const headers = { Authorization: `Bearer ${token}` };
-      const response = await axios.get('http://localhost:8080/api/v2/counters', { headers });
+      const response = await axios.get('https://jewelrysalesystem-backend.onrender.com/api/v2/counters', { headers });
       setCounters(response.data);
     } catch (err) {
       setError('Error fetching counters');
@@ -31,7 +31,7 @@ const ViewCounter = () => {
     try {
       const token = localStorage.getItem('token');
       const headers = { Authorization: `Bearer ${token}` };
-      await axios.delete(`http://localhost:8080/api/v2/counters?id=${id}`, { headers });
+      await axios.delete(`https://jewelrysalesystem-backend.onrender.com/api/v2/counters?id=${id}`, { headers });
       fetchCounters(); // Refresh the counter list
     } catch (err) {
       setError('Error deleting counter');
@@ -45,7 +45,7 @@ const ViewCounter = () => {
     try {
       const token = localStorage.getItem('token');
       const headers = { Authorization: `Bearer ${token}` };
-      await axios.put(`http://localhost:8080/api/v2/counters/${id}/status`, null, { headers });
+      await axios.put(`https://jewelrysalesystem-backend.onrender.com/api/v2/counters/${id}/status`, null, { headers });
       fetchCounters(); // Refresh the counter list
     } catch (err) {
       setError('Error updating counter status');

@@ -38,7 +38,7 @@ export default function ProductListManager() {
   const handleDeleteProduct = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.delete(`http://localhost:8080/api/v2/products/${id}`, {
+      const response = await axios.delete(`https://jewelrysalesystem-backend.onrender.com/api/v2/products/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

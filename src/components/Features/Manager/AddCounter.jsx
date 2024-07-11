@@ -10,7 +10,7 @@ const AddCounter = ({ onAdd }) => {
     try {
       const token = localStorage.getItem('token'); // Retrieve token from localStorage
       const headers = { Authorization: `Bearer ${token}` };
-      await axios.post('http://localhost:8080/api/v2/counters', null, { headers });
+      await axios.post('https://jewelrysalesystem-backend.onrender.com/api/v2/counters', null, { headers });
       onAdd(); // Refresh the counter list after adding a new counter
       // Optionally, clear any previous errors on success
       setError('');

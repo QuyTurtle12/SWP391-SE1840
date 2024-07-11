@@ -32,7 +32,7 @@ export default function ProductDetailManager() {
       try {
         const token = localStorage.getItem('token');
         const response = await axios.get(
-          `http://localhost:8080/api/v2/products/${id}`,
+          `https://jewelrysalesystem-backend.onrender.com/api/v2/products/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`
@@ -49,7 +49,7 @@ export default function ProductDetailManager() {
       try {
         const token = localStorage.getItem('token');
         const response = await axios.get(
-          "http://localhost:8080/api/categories",
+          "https://jewelrysalesystem-backend.onrender.com/api/categories",
           {
             headers: {
               Authorization: `Bearer ${token}`
@@ -66,7 +66,7 @@ export default function ProductDetailManager() {
       try {
         const token = localStorage.getItem('token');
         const response = await axios.get(
-          "http://localhost:8080/api/v2/promotions",
+          "https://jewelrysalesystem-backend.onrender.com/api/v2/promotions",
           {
             headers: {
               Authorization: `Bearer ${token}`
@@ -127,7 +127,7 @@ export default function ProductDetailManager() {
         formData.append("file", selectedFile);
 
         const uploadResponse = await axios.post(
-          "http://localhost:8080/upload/image",
+          "https://jewelrysalesystem-backend.onrender.com/upload/image",
           formData,
           {
             headers: {
@@ -155,7 +155,7 @@ export default function ProductDetailManager() {
       };
       
       const updateResponse = await axios.put(
-        `http://localhost:8080/api/v2/products/${id}`,
+        `https://jewelrysalesystem-backend.onrender.com/api/v2/products/${id}`,
         null, // No request body
         {
           params: params, // These are the query parameters

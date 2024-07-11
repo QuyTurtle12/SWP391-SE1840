@@ -15,7 +15,7 @@ export default function ViewStaffList() {
     const token = localStorage.getItem('token');
 
     axios
-      .get("http://localhost:8080/api/v2/accounts/STAFF", {
+      .get("https://jewelrysalesystem-backend.onrender.com/api/v2/accounts/STAFF", {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -41,7 +41,7 @@ export default function ViewStaffList() {
 
     try {
       await axios.put(
-        `http://localhost:8080/api/v2/accounts/STAFF/status?ID=${staffToUpdate}`, {}, {
+        `https://jewelrysalesystem-backend.onrender.com/api/v2/accounts/STAFF/status?ID=${staffToUpdate}`, {}, {
           headers: {
             'Authorization': `Bearer ${token}`
           }

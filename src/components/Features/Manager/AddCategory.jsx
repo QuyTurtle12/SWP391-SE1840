@@ -19,7 +19,7 @@ const AddCategory = () => {
 		try {
 			console.log('Submitting data:', data);
 			const response = await axios.post(
-				'http://localhost:8080/api/categories',
+				'https://jewelrysalesystem-backend.onrender.com/api/categories',
 				null,
 				{
 					params: data

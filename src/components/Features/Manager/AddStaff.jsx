@@ -21,7 +21,7 @@ const AddStaff = () => {
       const token = localStorage.getItem('token');
 
       try {
-        const response = await axios.get('http://localhost:8080/api/v2/counters', {
+        const response = await axios.get('https://jewelrysalesystem-backend.onrender.com/api/v2/counters', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -76,7 +76,7 @@ const AddStaff = () => {
 	}
   
 	const token = localStorage.getItem('token');
-	const url = `http://localhost:8080/api/account/STAFF?fullName=${encodeURIComponent(fullName)}&gender=${encodeURIComponent(gender)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&contactInfo=${encodeURIComponent(contactInfo)}&counterID=${parseInt(counterID)}`;
+	const url = `https://jewelrysalesystem-backend.onrender.com/api/account/STAFF?fullName=${encodeURIComponent(fullName)}&gender=${encodeURIComponent(gender)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&contactInfo=${encodeURIComponent(contactInfo)}&counterID=${parseInt(counterID)}`;
   
 	try {
 	  await axios.post(url, null, {
