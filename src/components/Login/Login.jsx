@@ -112,16 +112,6 @@ export default function Login() {
             Logging in...
           </Button>
         )}
-
-        <Button
-          variant="contained"
-          href="#contained-buttons"
-          className="btn-register"
-          component={Link}
-          to="/register"
-        >
-          Register
-        </Button>
       </Box>
     </div>
   );
