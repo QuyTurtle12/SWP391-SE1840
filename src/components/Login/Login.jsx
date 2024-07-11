@@ -93,7 +93,7 @@ export default function Login() {
           defaultValue=""
           onChange={(e) => setPassword(e.target.value)}
         />
-        <a href="/forget-form">Forgot password?</a>
+        <a href="/forget-form">forget password?</a>
         {!isRequesting ? (
           <Button
             variant="contained"
