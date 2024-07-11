@@ -11,11 +11,11 @@ import axios from "axios";
 export default function Navbar() {
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
-//testtttttttttttttttttt
+
   const handleLogout = async () => {
     try {
       const response = await axios.post(
-        "https://jewelrysalesystem-backend.onrender.com/api/ausssth/logout",
+        "https://jewelrysalesystem-backend.onrender.com/api/auth/logout",
         {},
         {
           headers: {
