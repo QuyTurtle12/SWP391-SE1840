@@ -2,41 +2,57 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import AddCounter from './AddCounter';
 import ManagerMenu from './ManagerMenu';
+
 const ViewCounter = () => {
   const [counters, setCounters] = useState([]);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false); // State for loading indicator
 
   useEffect(() => {
     fetchCounters();
   }, []);
 
   const fetchCounters = async () => {
+    setLoading(true);
     try {
-      const response = await axios.get('http://localhost:8080/api/v2/counters');
+      const token = localStorage.getItem('token'); // Retrieve token from localStorage
+      const headers = { Authorization: `Bearer ${token}` };
+      const response = await axios.get('http://localhost:8080/api/v2/counters', { headers });
       setCounters(response.data);
     } catch (err) {
       setError('Error fetching counters');
+    } finally {
+      setLoading(false);
     }
   };
 
   const deleteCounter = async (id) => {
+    setLoading(true);
     try {
-      await axios.delete(`http://localhost:8080/api/v2/counters?id=${id}`);
+      const token = localStorage.getItem('token');
+      const headers = { Authorization: `Bearer ${token}` };
+      await axios.delete(`http://localhost:8080/api/v2/counters?id=${id}`, { headers });
       fetchCounters(); // Refresh the counter list
     } catch (err) {
       setError('Error deleting counter');
+    } finally {
+      setLoading(false);
     }
   };
 
   const updateCounterStatus = async (id) => {
+    setLoading(true);
     try {
-      await axios.put(`http://localhost:8080/api/v2/counters/${id}/status`);
+      const token = localStorage.getItem('token');
+      const headers = { Authorization: `Bearer ${token}` };
+      await axios.put(`http://localhost:8080/api/v2/counters/${id}/status`, null, { headers });
       fetchCounters(); // Refresh the counter list
     } catch (err) {
       setError('Error updating counter status');
+    } finally {
+      setLoading(false);
     }
   };
-
   return (
     <div className="flex flex-col min-h-screen h-screen overflow-hidden">
       <ManagerMenu/>

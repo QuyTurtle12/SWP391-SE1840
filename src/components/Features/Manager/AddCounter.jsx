@@ -1,15 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 
 const AddCounter = ({ onAdd }) => {
+  const [loading, setLoading] = useState(false); // State for loading indicator
+  const [error, setError] = useState('');
+
   const addCounter = async () => {
+    setLoading(true);
     try {
-      await axios.post('http://localhost:8080/api/v2/counters');
+      const token = localStorage.getItem('token'); // Retrieve token from localStorage
+      const headers = { Authorization: `Bearer ${token}` };
+      await axios.post('http://localhost:8080/api/v2/counters', null, { headers });
       onAdd(); // Refresh the counter list after adding a new counter
+      // Optionally, clear any previous errors on success
+      setError('');
     } catch (err) {
       console.error('Error adding counter', err);
+      setError('Failed to add counter');
+    } finally {
+      setLoading(false);
     }
   };
+
 
   return (
     <button

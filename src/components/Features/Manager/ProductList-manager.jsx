@@ -1,11 +1,11 @@
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
 import ManagerMenu from "./ManagerMenu";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { Button } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 
 export default function ProductListManager() {
   const [products, setProducts] = useState([]);
@@ -13,14 +13,23 @@ export default function ProductListManager() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8080/api/v2/products")
-      .then((response) => {
-        console.log(response.data);
-        setProducts(response.data);
-      })
-      .catch((error) => console.error("error at fetching data", error));
+    fetchProducts();
   }, []);
+
+  const fetchProducts = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get("http://localhost:8080/api/v2/products", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setProducts(response.data);
+    } catch (error) {
+      console.error("Error fetching products", error);
+      toast.error("Failed to fetch products");
+    }
+  };
 
   const handleProductClick = (id) => {
     navigate(`/productdetail2/${id}`);
@@ -28,7 +37,12 @@ export default function ProductListManager() {
 
   const handleDeleteProduct = async (id) => {
     try {
-      const response = await axios.delete(`http://localhost:8080/api/v2/products/${id}`);
+      const token = localStorage.getItem("token");
+      const response = await axios.delete(`http://localhost:8080/api/v2/products/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (response.status === 200) {
         toast.success("Product deleted successfully!");
         setProducts(products.filter((product) => product.id !== id));

@@ -12,18 +12,24 @@ const ViewPromotion = () => {
   const [selectedPromotion, setSelectedPromotion] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false); // Loading indicator state
 
   useEffect(() => {
     fetchPromotions();
   }, []);
 
   const fetchPromotions = async () => {
+    setLoading(true);
     try {
-      const response = await axios.get('http://localhost:8080/api/v2/promotions');
+      const token = localStorage.getItem('token'); // Retrieve token from localStorage
+      const headers = { Authorization: `Bearer ${token}` };
+      const response = await axios.get('http://localhost:8080/api/v2/promotions', { headers });
       setPromotions(response.data);
     } catch (err) {
       setError('Error fetching promotions');
       toast.error('Error fetching promotions');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -32,8 +38,12 @@ const ViewPromotion = () => {
       toast.error('Discount rate cannot be below 0');
       return;
     }
+    setLoading(true);
     try {
+      const token = localStorage.getItem('token');
+      const headers = { Authorization: `Bearer ${token}` };
       await axios.post('http://localhost:8080/api/v2/promotions', null, {
+        headers,
         params: {
           description,
           discountRate
@@ -44,19 +54,24 @@ const ViewPromotion = () => {
     } catch (err) {
       setError('Error adding promotion');
       toast.error('Error adding promotion');
+    } finally {
+      setLoading(false);
     }
   };
 
-  
-
   const updatePromotionStatus = async (id) => {
+    setLoading(true);
     try {
-      await axios.put(`http://localhost:8080/api/v2/promotions/status?id=${id}`);
+      const token = localStorage.getItem('token');
+      const headers = { Authorization: `Bearer ${token}` };
+      await axios.put(`http://localhost:8080/api/v2/promotions/status?id=${id}`, null, { headers });
       fetchPromotions();
       toast.success('Promotion status updated successfully');
     } catch (err) {
       setError('Error updating promotion status');
       toast.error('Error updating promotion status');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -80,8 +95,12 @@ const ViewPromotion = () => {
       toast.error('Discount rate cannot be below 0');
       return;
     }
+    setLoading(true);
     try {
+      const token = localStorage.getItem('token');
+      const headers = { Authorization: `Bearer ${token}` };
       await axios.put(`http://localhost:8080/api/v2/promotions/${selectedPromotion.id}`, null, {
+        headers,
         params: {
           description,
           discountRate
@@ -93,8 +112,11 @@ const ViewPromotion = () => {
     } catch (err) {
       setError('Error updating promotion');
       toast.error('Error updating promotion');
+    } finally {
+      setLoading(false);
     }
   };
+
 
   return (
     <div className="flex flex-col min-h-screen h-screen overflow-hidden">

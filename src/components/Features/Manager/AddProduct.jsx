@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import ManagerMenu from './ManagerMenu';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ManagerMenu from './ManagerMenu';
 
 const AddProduct = () => {
   const [ID, setID] = useState('');
@@ -20,10 +20,19 @@ const AddProduct = () => {
   const [promotionID, setPromotionID] = useState('');
 
   const navigate = useNavigate();
-  const notify = () => toast("Product added successfully!");
+
+  const notifySuccess = () => toast.success('Product added successfully!');
+  const notifyError = () => toast.error('Failed to add product. Please try again.');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error('User not authenticated. Please login.');
+      navigate('/login'); // Redirect to login page if token is missing
+      return;
+    }
 
     const data = {
       ID: parseInt(ID),
@@ -41,36 +50,36 @@ const AddProduct = () => {
     };
 
     try {
-      console.log('Submitting data:', data);
-      const response = await axios.post('https://jewelrysalesystem-backend.onrender.com/api/v2/products', null, {
-        params: data
+      const response = await axios.post('https://jewelrysalesystem-backend.onrender.com/api/v2/products', data, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
 
-      notify();
-
-      // Optionally reset form fields
-      setID('');
-      setName('');
-      setPrice('');
-      setRefundPrice('');
-      setDescription('');
-      setGoldWeight('');
-      setLaborCost('');
-      setStoneCost('');
-      setStock('');
-      setCategoryID('');
-      setImg('');
-      setPromotionID('');
-      console.log("Add response", response);
-
-      // Navigate to view-product-list after successful submission
-      navigate('/productlist2');
+      if (response.status === 200) {
+        notifySuccess();
+        navigate('/productlist2');
+        // Optionally reset form fields
+        setID('');
+        setName('');
+        setPrice('');
+        setRefundPrice('');
+        setDescription('');
+        setGoldWeight('');
+        setLaborCost('');
+        setStoneCost('');
+        setStock('');
+        setCategoryID('');
+        setImg('');
+        setPromotionID('');
+      } else {
+        notifyError();
+      }
     } catch (error) {
       console.error('Error adding product:', error.response ? error.response.data : error.message);
-      alert(`Failed to add product. Error: ${error.response ? error.response.data : error.message}`);
+      notifyError();
     }
   };
-
   return (
     <div>
       <ManagerMenu />
@@ -294,7 +303,7 @@ const AddProduct = () => {
                 </div>
               </div>
               <div className="mt-6">
-                <button onClick={notify}
+                <button onClick={notifySuccess}
                   type="submit"
                   className="block w-full py-2 text-center text-white bg-teal-500 border border-teal-500 rounded  hover:text-teal-500 transition uppercase font-roboto font-medium"
                 >

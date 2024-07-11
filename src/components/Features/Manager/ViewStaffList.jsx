@@ -12,8 +12,14 @@ export default function ViewStaffList() {
   const [staffToUpdate, setStaffToUpdate] = useState(null);
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
+
     axios
-      .get("http://localhost:8080/api/v2/accounts/STAFF")
+      .get("http://localhost:8080/api/v2/accounts/STAFF", {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
       .then((response) => {
         console.log(response.data);
         setStaffs(response.data);
@@ -31,9 +37,15 @@ export default function ViewStaffList() {
   };
 
   const confirmStatusChange = async () => {
+    const token = localStorage.getItem('token');
+
     try {
       await axios.put(
-        `http://localhost:8080/api/v2/accounts/STAFF/status?ID=${staffToUpdate}`
+        `http://localhost:8080/api/v2/accounts/STAFF/status?ID=${staffToUpdate}`, {}, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
       );
 
       const updatedStaffs = staffs.map((staff) => {

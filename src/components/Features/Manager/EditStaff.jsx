@@ -17,9 +17,15 @@ function EditStaff() {
 
   useEffect(() => {
     const fetchStaff = async () => {
+      const token = localStorage.getItem('token');
+
       try {
         const response = await axios.get(
-          `http://localhost:8080/api/v2/accounts/user?id=${id}`
+          `http://localhost:8080/api/v2/accounts/user?id=${id}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          }
         );
         setStaff(response.data);
       } catch (error) {
@@ -28,9 +34,15 @@ function EditStaff() {
     };
 
     const fetchCounters = async () => {
+      const token = localStorage.getItem('token');
+
       try {
         const response = await axios.get(
-          "http://localhost:8080/api/counter/list"
+          "http://localhost:8080/api/counter/list", {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          }
         );
         setCounters(response.data);
       } catch (error) {
@@ -60,11 +72,15 @@ function EditStaff() {
       return;
     }
 
+    const token = localStorage.getItem('token');
+
     try {
-      const response = await axios.put(
-        `http://localhost:8080/api/v2/accounts/STAFF?ID=${parseInt(
-          id
-        )}&fullName=${staff.fullName}&gender=${staff.gender}&contactInfo=${staff.contactInfo}&counterID=${staff.counterID}`
+      await axios.put(
+        `http://localhost:8080/api/v2/accounts/STAFF?ID=${parseInt(id)}&fullName=${staff.fullName}&gender=${staff.gender}&contactInfo=${staff.contactInfo}&counterID=${staff.counterID}`, {}, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
       );
       toast.success("Staff updated successfully!");
       navigate("/view-staff-list");

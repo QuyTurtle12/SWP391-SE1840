@@ -40,6 +40,7 @@ import ProductListManager from "./components/Features/Manager/ProductList-manage
 import AddCategory from "./components/Features/Manager/AddCategory";
 import ForgetForm from "./components/Login/ForgetForm";
 import ResetForm from "./components/Login/ResetForm";
+import ViewCounter from "./components/Features/Manager/ViewCounter";
 function App() {
   return (
     <div className="overflow-hidden">
@@ -83,6 +84,7 @@ function App() {
         <Route path="/reset-password" element={<ResetForm/>} />
         <Route path="/forget-form" element={<ForgetForm />} />
         <Route path="/view-promotion" element={<ViewPromotion />} />
+        <Route path="/view-counter" element={<ViewCounter />} />
       </Routes>
       <Routes></Routes>
       <Footer />

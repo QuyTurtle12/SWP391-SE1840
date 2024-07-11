@@ -30,8 +30,14 @@ export default function ProductDetailManager() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
+        const token = localStorage.getItem('token');
         const response = await axios.get(
-          `http://localhost:8080/api/v2/products/${id}`
+          `http://localhost:8080/api/v2/products/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
         );
         setProduct(response.data);
       } catch (error) {
@@ -41,8 +47,14 @@ export default function ProductDetailManager() {
 
     const fetchCategories = async () => {
       try {
+        const token = localStorage.getItem('token');
         const response = await axios.get(
-          "http://localhost:8080/api/categories"
+          "http://localhost:8080/api/categories",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
         );
         setCategories(response.data);
       } catch (error) {
@@ -52,8 +64,14 @@ export default function ProductDetailManager() {
 
     const fetchPromotions = async () => {
       try {
+        const token = localStorage.getItem('token');
         const response = await axios.get(
-          "http://localhost:8080/api/v2/promotions"
+          "http://localhost:8080/api/v2/promotions",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
         );
         setPromotions(response.data);
       } catch (error) {
@@ -78,6 +96,13 @@ export default function ProductDetailManager() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error("User not authenticated. Please login.");
+      navigate('/login'); // Redirect to login page if token is missing
+      return;
+    }
+
     const numericFields = {
       price: product.price,
       refundPrice: product.refundPrice,
@@ -107,6 +132,7 @@ export default function ProductDetailManager() {
           {
             headers: {
               "Content-Type": "multipart/form-data",
+              "Authorization": `Bearer ${token}`
             },
           }
         );
@@ -128,11 +154,14 @@ export default function ProductDetailManager() {
         img: imageUrl,
       };
       
-      await axios.put(
+      const updateResponse = await axios.put(
         `http://localhost:8080/api/v2/products/${id}`,
         null, // No request body
         {
-          params: params // These are the query parameters
+          params: params, // These are the query parameters
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
         }
       );
 
@@ -143,7 +172,6 @@ export default function ProductDetailManager() {
       toast.error("Failed to update product. " + (error.response ? error.response.data : ""));
     }
   };
-
   return (
     <div className="h-full">
       <ToastContainer />

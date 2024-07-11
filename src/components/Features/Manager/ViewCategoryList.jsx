@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import ManagerMenu from "./ManagerMenu";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
 function ViewCategory() {
   const [categories, setCategories] = useState([]);
   const [error, setError] = useState(null);
@@ -14,8 +15,14 @@ function ViewCategory() {
   }, []);
 
   const fetchCategories = () => {
+    const token = localStorage.getItem('token');
+    
     axios
-      .get("http://localhost:8080/api/categories")
+      .get("http://localhost:8080/api/categories", {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
       .then((response) => {
         setCategories(response.data);
       })
@@ -37,8 +44,14 @@ function ViewCategory() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const token = localStorage.getItem('token');
+    
     axios
-      .put(`http://localhost:8080/api/categories?ID=${selectedCategory.id}&categoryName=${selectedCategory.name}`,)
+      .put(`http://localhost:8080/api/categories?ID=${selectedCategory.id}&categoryName=${selectedCategory.name}`, {}, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
       .then(() => {
         setShowModal(false);
         fetchCategories();
@@ -49,9 +62,16 @@ function ViewCategory() {
         toast.error("Error updating category");
       });
   };
+
   const handleDeleteClick = (id) => {
+    const token = localStorage.getItem('token');
+    
     axios
-      .delete(`http://localhost:8080/api/categories?ID=${id}`)
+      .delete(`http://localhost:8080/api/categories?ID=${id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
       .then(() => {
         fetchCategories();
         toast.success("Category deleted successfully");

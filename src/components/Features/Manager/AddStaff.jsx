@@ -5,101 +5,101 @@ import ManagerMenu from './ManagerMenu';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-
 const AddStaff = () => {
-	const [fullName, setFullName] = useState('');
-	const [gender, setGender] = useState('');
-	const [email, setEmail] = useState('');
-	const [password, setPassword] = useState('');
-	const [contactInfo, setContactInfo] = useState('');
-	const [counterID, setCounterID] = useState('');
-	const [counters, setCounters] = useState([]);
+  const [fullName, setFullName] = useState('');
+  const [gender, setGender] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [contactInfo, setContactInfo] = useState('');
+  const [counterID, setCounterID] = useState('');
+  const [counters, setCounters] = useState([]);
 
-	const navigate = useNavigate();
+  const navigate = useNavigate();
 
-	useEffect(() => {
-		const fetchCounters = async () => {
-			try {
-				const response = await axios.get('http://localhost:8080/api/v2/counters');
-				setCounters(response.data);
-			} catch (error) {
-				console.error('Error fetching counters:', error);
-			}
-		};
+  useEffect(() => {
+    const fetchCounters = async () => {
+      const token = localStorage.getItem('token');
 
-		fetchCounters();
-	}, []);
+      try {
+        const response = await axios.get('http://localhost:8080/api/v2/counters', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        setCounters(response.data);
+      } catch (error) {
+        console.error('Error fetching counters:', error);
+      }
+    };
 
-	const validateInput = () => {
-		const nameRegex = /^[a-zA-Z\s]+$/;
-		const emailRegex = /^[a-zA-Z0-9._%+-]+@(gmail\.com|yahoo\.com)$/;
-		const contactInfoRegex = /^[0-9\s-]+$/;
+    fetchCounters();
+  }, []);
 
-		if (!nameRegex.test(fullName)) {
-			toast.error('Full Name must contain only letters and spaces');
-			return false;
+  const validateInput = () => {
+    const nameRegex = /^[a-zA-Z\s]+$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@(gmail\.com|yahoo\.com)$/;
+    const contactInfoRegex = /^[0-9\s-]+$/;
+
+    if (!nameRegex.test(fullName)) {
+      toast.error('Full Name must contain only letters and spaces');
+      return false;
+    }
+
+    if (!emailRegex.test(email)) {
+      toast.error('Email must end with @gmail.com or @yahoo.com');
+      return false;
+    }
+
+    if (password.trim() === '') {
+      toast.error('Password cannot be empty');
+      return false;
+    }
+
+    if (!contactInfoRegex.test(contactInfo)) {
+      toast.error('Contact Info must contain only numbers, spaces, or dashes');
+      return false;
+    }
+
+    if (counterID.trim() === '') {
+      toast.error('Counter ID cannot be empty');
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
+	e.preventDefault();
+  
+	if (!validateInput()) {
+	  return;
+	}
+  
+	const token = localStorage.getItem('token');
+	const url = `http://localhost:8080/api/account/STAFF?fullName=${encodeURIComponent(fullName)}&gender=${encodeURIComponent(gender)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&contactInfo=${encodeURIComponent(contactInfo)}&counterID=${parseInt(counterID)}`;
+  
+	try {
+	  await axios.post(url, null, {
+		headers: {
+		  'Authorization': `Bearer ${token}`
 		}
-
-		if (!emailRegex.test(email)) {
-			toast.error('Email must end with @gmail.com or @yahoo.com');
-			return false;
-		}
-
-		if (password.trim() === '') {
-			toast.error('Password cannot be empty');
-			return false;
-		}
-
-		if (!contactInfoRegex.test(contactInfo)) {
-			toast.error('Contact Info must contain only numbers, spaces, or dashes');
-			return false;
-		}
-
-		if (counterID.trim() === '') {
-			toast.error('Counter ID cannot be empty');
-			return false;
-		}
-
-		return true;
-	};
-
-	const handleSubmit = async (e) => {
-		e.preventDefault();
-
-		if (!validateInput()) {
-			return;
-		}
-
-		const data = {
-			fullName,
-			gender,
-			email,
-			password,
-			contactInfo,
-			counterID: parseInt(counterID)
-		};
-
-		try {
-			const response = await axios.post('http://localhost:8080/api/v2/account/STAFF', null, {
-				params: data
-			});
-
-			toast.success('Staff added successfully!');
-
-			setFullName('');
-			setGender('');
-			setEmail('');
-			setPassword('');
-			setContactInfo('');
-			setCounterID('');
-
-			navigate('/view-staff-list');
-		} catch (error) {
-			console.error('Error adding staff:', error.response ? error.response.data : error.message);
-			toast.error(`Failed to add staff. Error: ${error.response ? error.response.data : error.message}`);
-		}
-	};
-
+	  });
+  
+	  toast.success('Staff added successfully!');
+  
+	  setFullName('');
+	  setGender('');
+	  setEmail('');
+	  setPassword('');
+	  setContactInfo('');
+	  setCounterID('');
+  
+	  navigate('/view-staff-list');
+	} catch (error) {
+	  console.error('Error adding staff:', error.response ? error.response.data : error.message);
+	  toast.error(`Failed to add staff. Error: ${error.response ? error.response.data : error.message}`);
+	}
+  };
 	return (
 		<div className="bg-dark text-light min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
 			<ManagerMenu />
@@ -198,7 +198,7 @@ const AddStaff = () => {
 							>
 								<option value="" disabled>Select Counter</option>
 								{counters.map((counter) => (
-									<option key={counter.id} value={counter.id}>{counter.name}</option>
+									<option key={counter.id} value={counter.id}>{counter.id}</option>
 								))}
 							</select>
 						</div>
