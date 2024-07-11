@@ -16,7 +16,6 @@ import Admin from "./components/Features/Admin/Admin";
 import Staff from "./components/Features/Staff/Staff";
 import CustomerList from "./components/Features/Staff/CustomerList";
 import ProductList from "./components/Features/Staff/ProductList";
-import HomePage from "./components/Homepage/HomePage";
 import ViewCart from "./components/Features/Staff/ViewCart";
 import AddManager from "./components/Features/Admin/AddManager";
 import Manager from "./components/Features/Manager/Manager";
@@ -47,8 +46,7 @@ function App() {
       <ToastContainer />
       <Navbar />
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/homepage" element={<HomePage />} />
+        <Route path="/" element={<Login />} />
         <Route path="/customer-list" element={<CustomerList />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />

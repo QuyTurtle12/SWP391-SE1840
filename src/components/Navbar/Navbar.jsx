@@ -26,7 +26,7 @@ export default function Navbar() {
       console.log("Logout success");
       // Clear the token and navigate to the homepage
       localStorage.removeItem("token");
-      navigate("/homepage");
+      navigate("/login");
     } catch (error) {
       console.error("Error at logging out", error);
     }

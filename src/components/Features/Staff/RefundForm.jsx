@@ -44,12 +44,12 @@ function RefundForm() {
   }, [id]);
 
   const handlePurityChange = (index, value) => {
-    if (value >= 0 && value <= 100) {
+    if (value >= 80 && value <= 100) {
       const updatedPurities = [...productPurities];
       updatedPurities[index].purity = value;
       setProductPurities(updatedPurities);
     } else {
-      toast.error("Purity must be between 0 and 100.");
+      toast.error("Purity must be between 90 and 100.");
     }
   };
 
@@ -167,7 +167,7 @@ function RefundForm() {
                                   e.target.value
                                 )
                               }
-                              min="0"
+                              min="90"
                               max="100"
                             />
                           </div>
