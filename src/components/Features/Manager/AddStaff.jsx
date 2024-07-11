@@ -76,7 +76,7 @@ const AddStaff = () => {
 	}
   
 	const token = localStorage.getItem('token');
-	const url = `https://jewelrysalesystem-backend.onrender.com/api/account/STAFF?fullName=${encodeURIComponent(fullName)}&gender=${encodeURIComponent(gender)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&contactInfo=${encodeURIComponent(contactInfo)}&counterID=${parseInt(counterID)}`;
+	const url = `https://jewelrysalesystem-backend.onrender.com/api/v2/accounts/STAFF?fullName=${encodeURIComponent(fullName)}&gender=${encodeURIComponent(gender)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&contactInfo=${encodeURIComponent(contactInfo)}&counterID=${parseInt(counterID)}`;
   
 	try {
 	  await axios.post(url, null, {
@@ -142,7 +142,7 @@ const AddStaff = () => {
 								<option value="" disabled>Select Gender</option>
 								<option value="Male">Male</option>
 								<option value="Female">Female</option>
-								<option value="Third gender">Third gender</option>
+								<option value="Other">Other</option>
 							</select>
 						</div>
 						<div>

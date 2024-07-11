@@ -19,7 +19,7 @@ export default function ProductListManager() {
   const fetchProducts = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get("http://localhost:8080/api/v2/products", {
+      const response = await axios.get("https://jewelrysalesystem-backend.onrender.com/api/v2/products", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
