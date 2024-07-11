@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
@@ -6,7 +6,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import ManagerMenu from './ManagerMenu';
 
 const AddProduct = () => {
-  const [ID, setID] = useState('');
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [refundPrice, setRefundPrice] = useState('');
@@ -15,27 +14,85 @@ const AddProduct = () => {
   const [laborCost, setLaborCost] = useState('');
   const [stoneCost, setStoneCost] = useState('');
   const [stock, setStock] = useState('');
-  const [categoryID, setCategoryID] = useState('');
+  const [categoryName, setCategoryName] = useState('');
   const [img, setImg] = useState('');
   const [promotionID, setPromotionID] = useState('');
+  const [categories, setCategories] = useState([]);
+  const [promotions, setPromotions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    fetchCategories();
+    fetchPromotions();
+  }, []);
+
+  const fetchCategories = async () => {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await axios.get('https://jewelrysalesystem-backend.onrender.com/api/categories', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      setCategories(response.data);
+    } catch (error) {
+      console.error("Error fetching categories", error);
+      setError('Error fetching categories');
+    }
+  };
+
+  const fetchPromotions = async () => {
+    const token = localStorage.getItem('token');
+    setLoading(true);
+    try {
+      const response = await axios.get('https://jewelrysalesystem-backend.onrender.com/api/v2/promotions', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      setPromotions(response.data);
+    } catch (err) {
+      console.error("Error fetching promotions", err);
+      setError('Error fetching promotions');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const notifySuccess = () => toast.success('Product added successfully!');
-  const notifyError = () => toast.error('Failed to add product. Please try again.');
+  const notifyError = (message) => toast.error(message);
+
+  const validateInputs = () => {
+    const specialCharPattern = /[!@#$%^&*(),.?":{}|<>]/;
+    if (parseFloat(price) < 0 || parseFloat(refundPrice) < 0 || parseFloat(goldWeight) < 0 || parseFloat(laborCost) < 0 || parseFloat(stoneCost) < 0 || parseInt(stock) < 0) {
+      notifyError('Numeric values cannot be below zero.');
+      return false;
+    }
+    if (specialCharPattern.test(name) || specialCharPattern.test(description) ) {
+      notifyError('Special characters are not allowed.');
+      return false;
+    }
+    return true;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const token = localStorage.getItem('token');
-    if (!token) {
-      toast.error('User not authenticated. Please login.');
-      navigate('/login'); // Redirect to login page if token is missing
+    if (!validateInputs()) {
       return;
     }
 
-    const data = {
-      ID: parseInt(ID),
+    const token = localStorage.getItem('token');
+    if (!token) {
+      notifyError('User not authenticated. Please login.');
+      navigate('/login');
+      return;
+    }
+
+    const params = new URLSearchParams({
       name,
       price: parseFloat(price),
       refundPrice: parseFloat(refundPrice),
@@ -44,23 +101,22 @@ const AddProduct = () => {
       laborCost: parseFloat(laborCost),
       stoneCost: parseFloat(stoneCost),
       stock: parseInt(stock),
-      categoryID: parseInt(categoryID),
+      categoryName,
       img,
       promotionID: parseInt(promotionID)
-    };
+    });
 
     try {
-      const response = await axios.post('https://jewelrysalesystem-backend.onrender.com/api/v2/products', data, {
+      const response = await axios.post(`https://jewelrysalesystem-backend.onrender.com/api/v2/products?${params.toString()}`, null, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
 
-      if (response.status === 200) {
+      if (response.status === 201) {
         notifySuccess();
         navigate('/productlist2');
         // Optionally reset form fields
-        setID('');
         setName('');
         setPrice('');
         setRefundPrice('');
@@ -69,17 +125,18 @@ const AddProduct = () => {
         setLaborCost('');
         setStoneCost('');
         setStock('');
-        setCategoryID('');
+        setCategoryName('');
         setImg('');
         setPromotionID('');
       } else {
-        notifyError();
+        notifyError('Failed to add product. Please try again.');
       }
     } catch (error) {
       console.error('Error adding product:', error.response ? error.response.data : error.message);
-      notifyError();
+      notifyError('Failed to add product. Please try again.');
     }
   };
+
   return (
     <div>
       <ManagerMenu />
@@ -98,31 +155,12 @@ const AddProduct = () => {
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <form onSubmit={handleSubmit}>
-              <div>
-                <label className="block text-sm font-medium leading-5 text-gray-700">
-                  ID
-                </label>
-                <div className="mt-1 relative rounded-md shadow-sm">
-                  <input
-                    id="ID"
-                    name="ID"
-                    type="number"
-                    placeholder="ID"
-                    required
-                    value={ID}
-                    onChange={(e) => setID(e.target.value)}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-                  />
-                </div>
-              </div>
               <div className='mt-6'>
                 <label className="block text-sm font-medium leading-5 text-gray-700">
                   Name
                 </label>
                 <div className="mt-1 relative rounded-md shadow-sm">
                   <input
-                    id="name"
-                    name="name"
                     type="text"
                     placeholder="Name"
                     required
@@ -138,8 +176,6 @@ const AddProduct = () => {
                 </label>
                 <div className="mt-1 relative rounded-md shadow-sm">
                   <input
-                    id="price"
-                    name="price"
                     type="number"
                     placeholder="Price"
                     required
@@ -155,8 +191,6 @@ const AddProduct = () => {
                 </label>
                 <div className="mt-1 relative rounded-md shadow-sm">
                   <input
-                    id="refundPrice"
-                    name="refundPrice"
                     type="number"
                     placeholder="Refund Price"
                     required
@@ -172,8 +206,6 @@ const AddProduct = () => {
                 </label>
                 <div className="mt-1 relative rounded-md shadow-sm">
                   <input
-                    id="description"
-                    name="description"
                     type="text"
                     placeholder="Description"
                     required
@@ -189,8 +221,6 @@ const AddProduct = () => {
                 </label>
                 <div className="mt-1 relative rounded-md shadow-sm">
                   <input
-                    id="goldWeight"
-                    name="goldWeight"
                     type="number"
                     placeholder="Gold Weight"
                     required
@@ -201,13 +231,11 @@ const AddProduct = () => {
                 </div>
               </div>
               <div className='mt-6'>
-                <label className="block text-sm font-medium leading-5 text-gray-700">
+                <label className="block text-sm font-medium                 leading-5 text-gray-700">
                   Labor Cost
                 </label>
                 <div className="mt-1 relative rounded-md shadow-sm">
                   <input
-                    id="laborCost"
-                    name="laborCost"
                     type="number"
                     placeholder="Labor Cost"
                     required
@@ -223,8 +251,6 @@ const AddProduct = () => {
                 </label>
                 <div className="mt-1 relative rounded-md shadow-sm">
                   <input
-                    id="stoneCost"
-                    name="stoneCost"
                     type="number"
                     placeholder="Stone Cost"
                     required
@@ -240,8 +266,6 @@ const AddProduct = () => {
                 </label>
                 <div className="mt-1 relative rounded-md shadow-sm">
                   <input
-                    id="stock"
-                    name="stock"
                     type="number"
                     placeholder="Stock"
                     required
@@ -253,19 +277,22 @@ const AddProduct = () => {
               </div>
               <div className='mt-6'>
                 <label className="block text-sm font-medium leading-5 text-gray-700">
-                  Category ID
+                  Category
                 </label>
                 <div className="mt-1 relative rounded-md shadow-sm">
-                  <input
-                    id="categoryID"
-                    name="categoryID"
-                    type="number"
-                    placeholder="Category ID"
+                  <select
                     required
-                    value={categoryID}
-                    onChange={(e) => setCategoryID(e.target.value)}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-                  />
+                    value={categoryName}
+                    onChange={(e) => setCategoryName(e.target.value)}
+                    className="block appearance-none w-full bg-white border border-gray-300 text-gray-700 py-2 px-4 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                  >
+                    <option value="">Select a category</option>
+                    {categories.map((category) => (
+                      <option key={category.id} value={category.name}>
+                        {category.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
               <div className='mt-6'>
@@ -274,8 +301,6 @@ const AddProduct = () => {
                 </label>
                 <div className="mt-1 relative rounded-md shadow-sm">
                   <input
-                    id="img"
-                    name="img"
                     type="text"
                     placeholder="Image URL"
                     required
@@ -287,38 +312,40 @@ const AddProduct = () => {
               </div>
               <div className='mt-6'>
                 <label className="block text-sm font-medium leading-5 text-gray-700">
-                  Promotion ID
+                  Promotion
                 </label>
                 <div className="mt-1 relative rounded-md shadow-sm">
-                  <input
-                    id="promotionID"
-                    name="promotionID"
-                    type="number"
-                    placeholder="Promotion ID"
+                  <select
                     required
                     value={promotionID}
                     onChange={(e) => setPromotionID(e.target.value)}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-                  />
+                    className="block appearance-none w-full bg-white border border-gray-300 text-gray-700 py-2 px-4 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                  >
+                    <option value="">Select a promotion</option>
+                    {promotions.map((promotion) => (
+                      <option key={promotion.id} value={promotion.id}>
+                        {promotion.description}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
               <div className="mt-6">
-                <button onClick={notifySuccess}
+                <button
                   type="submit"
-                  className="block w-full py-2 text-center text-white bg-teal-500 border border-teal-500 rounded  hover:text-teal-500 transition uppercase font-roboto font-medium"
+                  className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline-blue focus:border-indigo-700 active:bg-indigo-700 transition duration-150 ease-in-out"
                 >
-                  Create Product
-                  <ToastContainer />
-                </button >
+                  Add Product
+                </button>
               </div>
-
-              
             </form>
           </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
-}
+};
 
 export default AddProduct;
+

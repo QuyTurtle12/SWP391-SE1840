@@ -6,7 +6,7 @@ import ManagerMenu from './ManagerMenu';
 const ViewCounter = () => {
   const [counters, setCounters] = useState([]);
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false); // State for loading indicator
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetchCounters();
@@ -18,11 +18,27 @@ const ViewCounter = () => {
       const token = localStorage.getItem('token'); // Retrieve token from localStorage
       const headers = { Authorization: `Bearer ${token}` };
       const response = await axios.get('https://jewelrysalesystem-backend.onrender.com/api/v2/counters', { headers });
-      setCounters(response.data);
+      const countersWithSales = await Promise.all(
+        response.data.map(async (counter) => {
+          const sale = await fetchCounterSale(counter.id, headers);
+          return { ...counter, sale };
+        })
+      );
+      setCounters(countersWithSales);
     } catch (err) {
       setError('Error fetching counters');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchCounterSale = async (id, headers) => {
+    try {
+      const response = await axios.get(`https://jewelrysalesystem-backend.onrender.com/api/v2/counters/${id}/calculate-sale`, { headers });
+      return response.data;
+    } catch (err) {
+      setError('Error fetching counter sale data');
+      return null;
     }
   };
 
@@ -53,48 +69,48 @@ const ViewCounter = () => {
       setLoading(false);
     }
   };
+
   return (
     <div className="flex flex-col min-h-screen h-screen overflow-hidden">
-      <ManagerMenu/>
-    <div className="container mx-auto p-4">
-      
-      <h1 className="text-2xl font-bold mb-4">Counter List</h1>
-      {error && <p className="text-red-500">{error}</p>}
-      <AddCounter onAdd={fetchCounters} />
-      <table className="min-w-full bg-white border border-gray-200">
-        <thead>
-          <tr>
-            <th className="py-2 px-4 border-b">ID</th>
-            <th className="py-2 px-4 border-b">Sale</th>
-            <th className="py-2 px-4 border-b">Status</th>
-            <th className="py-2 px-4 border-b">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {counters.map(counter => (
-            <tr key={counter.id} className="hover:bg-gray-100">
-              <td className="py-2 px-4 border-b">{counter.id}</td>
-              <td className="py-2 px-4 border-b">{counter.sale}</td>
-              <td className="py-2 px-4 border-b">{counter.status ? 'Active' : 'Inactive'}</td>
-              <td className="py-2 px-4 border-b space-x-2">
-                <button
-                  onClick={() => deleteCounter(counter.id)}
-                  className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
-                >
-                  Delete
-                </button>
-                <button
-                  onClick={() => updateCounterStatus(counter.id)}
-                  className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
-                >
-                  Update Status
-                </button>
-              </td>
+      <ManagerMenu />
+      <div className="container mx-auto p-4">
+        <h1 className="text-2xl font-bold mb-4">Counter List</h1>
+        {error && <p className="text-red-500">{error}</p>}
+        <AddCounter onAdd={fetchCounters} />
+        <table className="min-w-full bg-white border border-gray-200">
+          <thead>
+            <tr>
+              <th className="py-2 px-4 border-b">ID</th>
+              <th className="py-2 px-4 border-b">Sale</th>
+              <th className="py-2 px-4 border-b">Status</th>
+              <th className="py-2 px-4 border-b">Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {counters.map(counter => (
+              <tr key={counter.id} className="hover:bg-gray-100">
+                <td className="py-2 px-4 border-b">{counter.id}</td>
+                <td className="py-2 px-4 border-b">{counter.sale !== null ? `$${counter.sale.toFixed(2)}` : 'Error fetching sale'}</td>
+                <td className="py-2 px-4 border-b">{counter.status ? 'Active' : 'Inactive'}</td>
+                <td className="py-2 px-4 border-b space-x-2">
+                  <button
+                    onClick={() => deleteCounter(counter.id)}
+                    className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+                  >
+                    Delete
+                  </button>
+                  <button
+                    onClick={() => updateCounterStatus(counter.id)}
+                    className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
+                  >
+                    Update Status
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
