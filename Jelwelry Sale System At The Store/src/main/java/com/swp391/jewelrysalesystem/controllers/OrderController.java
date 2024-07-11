@@ -19,6 +19,7 @@ import com.swp391.jewelrysalesystem.models.Order;
 import com.swp391.jewelrysalesystem.models.OrderDTO;
 import com.swp391.jewelrysalesystem.models.Product;
 import com.swp391.jewelrysalesystem.models.User;
+import com.swp391.jewelrysalesystem.services.ICustomerPromotion;
 import com.swp391.jewelrysalesystem.services.ICustomerService;
 import com.swp391.jewelrysalesystem.services.IOrderService;
 import com.swp391.jewelrysalesystem.services.IProductService;
@@ -35,16 +36,18 @@ public class OrderController {
     private IProductService productService;
     private ICustomerService customerService;
     private IUserService userService;
+    private ICustomerPromotion customerPromotionService;
 
     private final int ACCEPTABLE_TOTAL_PRICE = 100;
 
     @Autowired
     public OrderController(IOrderService orderService, IProductService productService, ICustomerService customerService,
-            IUserService userService) {
+            IUserService userService, ICustomerPromotion customerPromotionService) {
         this.orderService = orderService;
         this.productService = productService;
         this.customerService = customerService;
         this.userService = userService;
+        this.customerPromotionService = customerPromotionService;
     }
 
     @PostMapping("/v2/orders")
@@ -55,6 +58,7 @@ public class OrderController {
             @RequestParam String customerPhone,
             @RequestParam String customerGender,
             @RequestParam String customerName,
+            @RequestParam String discountName,
             @RequestParam double discountApplied) {
 
         String error = orderService.isGeneralValidated(staffID, counterID, customerGender, customerName,
@@ -85,6 +89,8 @@ public class OrderController {
         int orderID = orderService.generateID();
 
         totalPrice = totalPrice - (totalPrice * discountApplied); //Discount range from 0 to 1
+        
+        int discountID = customerPromotionService.getCustomerPromotion(discountName).getID();
 
         Order newOrder = new Order();
         newOrder.setID(orderID);
@@ -93,6 +99,7 @@ public class OrderController {
         newOrder.setCounterID(counterID);
         newOrder.setCustomerID(customerID);
         newOrder.setTotalPrice(totalPrice);
+        newOrder.setDiscountID(discountID);
         newOrder.setDiscountApplied(discountApplied);
         try {
             orderService.saveOrder(newOrder);
@@ -135,12 +142,14 @@ public class OrderController {
 
             List<Map<String, Object>> responseList = new ArrayList<>();
             for (Order order : orderList) {
+                String discountName = customerPromotionService.getCustomerPromotion(order.getDiscountID()).getDiscountName();
                 Map<String, Object> orderMap = new HashMap<>();
                 orderMap.put("id", order.getID());
                 orderMap.put("date", order.getDate());
                 orderMap.put("staffID", order.getStaffID());
                 orderMap.put("counterID", order.getCounterID());
                 orderMap.put("totalPrice", order.getTotalPrice());
+                orderMap.put("discountName", discountName);
                 orderMap.put("discountApplied", order.getDiscountApplied());
 
                 Customer customer = customerService.getCustomer(order.getCustomerID());
@@ -223,12 +232,14 @@ public class OrderController {
 
             List<Map<String, Object>> responseList = new ArrayList<>();
             for (Order order : orderList) {
+                String discountName = customerPromotionService.getCustomerPromotion(order.getDiscountID()).getDiscountName();
                 Map<String, Object> orderMap = new HashMap<>();
                 orderMap.put("id", order.getID());
                 orderMap.put("date", order.getDate());
                 orderMap.put("staffID", order.getStaffID());
                 orderMap.put("counterID", order.getCounterID());
                 orderMap.put("totalPrice", order.getTotalPrice());
+                orderMap.put("discountName", discountName);
                 orderMap.put("discountApplied", order.getDiscountApplied());
 
                 Customer customer = customerService.getCustomer(order.getCustomerID());

@@ -29,7 +29,8 @@ public class SecurityConfig {
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers("/api/auth/login", "/api/auth/forgot-password",
                                                                 "/api/auth/reset-password",
-                                                                "/swagger-ui/**", "/api/auth/logout")
+                                                                "/swagger-ui/**", "/api/auth/logout", "/upload/**",
+                                                                "/**/*.jpg", "/**/*.jpeg", "/**/*.png")
                                                 .permitAll() // Allow access
                                                 .requestMatchers("/api/auth/admin/**", "/api/v2/accounts/MANAGER/**",
                                                                 "/api/v2/accounts/dashboard")
@@ -46,12 +47,16 @@ public class SecurityConfig {
                                                                 "/api/v2/products/search",
                                                                 "/api/v2/products/search/sort", "/api/v2/orders/**",
                                                                 "/refunds/**",
-                                                                "/upload/image/**", "/api/v2/customers/**")
+                                                                "/api/v2/customers/**",
+                                                                "/api/v2/customers/promotion/**",
+                                                                "/api/customer-promotions/**")
                                                 .hasAnyAuthority("ROLE_MANAGER", "ROLE_STAFF")
                                                 .requestMatchers("/api/auth/staff/**", "/cart/**",
                                                                 "/api/v2/accounts/staff")
                                                 .hasAuthority("ROLE_STAFF")
+
                                                 .anyRequest().authenticated()) // Secure other endpoints
+
                                 .sessionManagement(session -> session
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 

@@ -1,36 +1,80 @@
 package com.swp391.jewelrysalesystem.services;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.swp391.jewelrysalesystem.models.CustomerPromotion;
 
 @Service
-public class CustomerPromotionService implements ICustomerPromotion{
+public class CustomerPromotionService implements ICustomerPromotion {
+
+    private IGenericService<CustomerPromotion> genericService;
+
+    @Autowired
+    public CustomerPromotionService(IGenericService<CustomerPromotion> genericService) {
+        this.genericService = genericService;
+    }
 
     @Override
     public boolean saveCustomerPromotion(CustomerPromotion customerPromotion) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'saveCustomerPromotion'");
+        return genericService.saveObject(customerPromotion, "customer-promotion", customerPromotion.getID());
     }
 
     @Override
     public List<CustomerPromotion> getCustomerPromotionList() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getCustomerPromotionList'");
+        try {
+            return genericService.getList("customer-promotion", CustomerPromotion.class);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
     public CustomerPromotion getCustomerPromotion(int ID) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getCustomerPromotion'");
+        try {
+            return genericService.getByField(ID, "id", "customer-promotion", CustomerPromotion.class);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
     public boolean changeStatus(int ID) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'changeStatus'");
+        return genericService.changeStatus(ID, "customer-promotion", CustomerPromotion.class);
+    }
+
+    @Override
+    public int generateID() {
+        return genericService.generateID("customer-promotion", CustomerPromotion.class, CustomerPromotion::getID);
+    }
+
+    @Override
+    public String isGeneralValidated(String discountName, double discountRate) {
+        if (discountName.isBlank()) {
+            return "Invalid discount name";
+        }
+
+        if (discountRate <= 0 || discountRate > 1) {
+            return "Invalid discount rate";
+        }
+
+        return null;
+    }
+
+    @Override
+    public CustomerPromotion getCustomerPromotion(String name) {
+        try {
+            return genericService.getByField(name, "discountName", "customer-promotion", CustomerPromotion.class);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }

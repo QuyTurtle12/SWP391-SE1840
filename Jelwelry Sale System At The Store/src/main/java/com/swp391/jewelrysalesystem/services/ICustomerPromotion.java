@@ -11,5 +11,11 @@ public interface ICustomerPromotion {
 
     CustomerPromotion getCustomerPromotion(int ID);
 
+    CustomerPromotion getCustomerPromotion(String name);
+
     boolean changeStatus(int ID);
+
+    int generateID();
+
+    String isGeneralValidated(String discountName, double discountRate);
 }

@@ -10,7 +10,9 @@ import lombok.Setter;
 @Getter @Setter
 @AllArgsConstructor @NoArgsConstructor
 public class CustomerPromotion implements StatusUpdatable {
+    int ID;
     String discountName;
+    String discountDescription;
     double discountRate; //Discount rate is in range bewteen 0 to 1
     Boolean status;
     @Override
