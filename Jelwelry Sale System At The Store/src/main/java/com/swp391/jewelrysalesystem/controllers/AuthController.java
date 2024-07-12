@@ -49,7 +49,8 @@ public class AuthController {
 
             final String jwt = jwtUtil.generateToken(user.getEmail(),
                     String.valueOf(userService.getUserByEmail(user.getEmail()).getID()), roles);
-            LOGGER.info("JWT Token generated for user: " + authenticationRequest.getEmail());
+            LOGGER.info("JWT Token generated for user: " + authenticationRequest.getEmail() + " with roles: " + roles);
+
             return ResponseEntity.ok(new AuthenticationResponse(jwt, 200));
         } catch (Exception e) {
             LOGGER.severe("Exception during authentication: " + e.getMessage());

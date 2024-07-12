@@ -68,7 +68,7 @@ public class OrderController {
 
         if (customer == null) {
             Customer newCustomer = new Customer();
-            newCustomer.setID(0);   
+            newCustomer.setID(0);
             newCustomer.setName(customerName);
             newCustomer.setGender(customerGender);
             newCustomer.setContactInfo(customerPhone);
@@ -77,14 +77,14 @@ public class OrderController {
                 return ResponseEntity.internalServerError().body("Error saving new customer");
             }
 
-            customer = customerService.getCustomerByPhone(customerPhone); //get new customer info
+            customer = customerService.getCustomerByPhone(customerPhone); // get new customer info
         }
 
         int customerID = customer.getID();
 
         int orderID = orderService.generateID();
 
-        totalPrice = totalPrice - (totalPrice * discountApplied); //Discount range from 0 to 1
+        totalPrice = totalPrice - (totalPrice * discountApplied); // Discount range from 0 to 1
 
         Order newOrder = new Order();
         newOrder.setID(orderID);
@@ -98,7 +98,7 @@ public class OrderController {
             orderService.saveOrder(newOrder);
             if (totalPrice >= ACCEPTABLE_TOTAL_PRICE) {
                 double currentPoints = customer.getPoint();
-                double additionalPoints = totalPrice/100;
+                double additionalPoints = totalPrice / 100;
                 customer.setPoint(currentPoints + additionalPoints);
                 customerService.saveCustomer(customer);
             }
@@ -213,7 +213,7 @@ public class OrderController {
             @RequestParam String input,
             @RequestParam String filter) {
         try {
-            List<Order> orderList =  new ArrayList<>();
+            List<Order> orderList = new ArrayList<>();
             orderList = orderService.searchOrderList(input, filter, orderService.getOrderList());
 
             if (orderList == null || orderList.isEmpty()) {
@@ -253,4 +253,62 @@ public class OrderController {
             return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
+    @GetMapping("/v2/orders/order/products/top")
+    public ResponseEntity<List<Map<String, Object>>> getTopSellingProducts() {
+        try {
+            List<OrderDTO> orderDetails = orderService.getAllOrderDetails();
+
+            Map<Integer, Integer> productSales = new HashMap<>();
+            for (OrderDTO orderDetail : orderDetails) {
+                int productId = orderDetail.getProductID();
+                int amount = orderDetail.getAmount();
+                productSales.put(productId, productSales.getOrDefault(productId, 0) + amount);
+            }
+
+            List<Map.Entry<Integer, Integer>> sortedSales = new ArrayList<>(productSales.entrySet());
+            sortedSales.sort((a, b) -> b.getValue().compareTo(a.getValue()));
+
+            List<Map<String, Object>> topProducts = new ArrayList<>();
+            for (int i = 0; i < Math.min(10, sortedSales.size()); i++) {
+                int productId = sortedSales.get(i).getKey();
+                int totalAmount = sortedSales.get(i).getValue();
+                Product product = productService.getProductByID(productId);
+
+                Map<String, Object> productMap = new HashMap<>();
+                productMap.put("productName", product.getName());
+                productMap.put("totalAmount", totalAmount);
+                topProducts.add(productMap);
+            }
+
+            return ResponseEntity.ok(topProducts);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @GetMapping("/v2/orders/categories/sales")
+    public ResponseEntity<Map<String, Double>> getSalesDistributionByCategory() {
+        try {
+            List<OrderDTO> orderDetails = orderService.getAllOrderDetails();
+            Map<Integer, String> productCategories = productService.getAllProductCategories();
+
+            Map<String, Double> salesByCategory = new HashMap<>();
+
+            for (OrderDTO orderDetail : orderDetails) {
+                int productId = orderDetail.getProductID();
+                String category = productCategories.getOrDefault(productId, "Unknown");
+
+                double amount = orderDetail.getAmount();
+                salesByCategory.put(category, salesByCategory.getOrDefault(category, 0.0) + amount);
+            }
+
+            return ResponseEntity.ok(salesByCategory);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
 }

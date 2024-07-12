@@ -2,7 +2,10 @@ package com.swp391.jewelrysalesystem.controllers;
 
 //
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +16,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.swp391.jewelrysalesystem.models.Customer;
+import com.swp391.jewelrysalesystem.models.Order;
 import com.swp391.jewelrysalesystem.services.ICustomerService;
-
+import com.swp391.jewelrysalesystem.services.IOrderService;
 
 @RestController
 @RequestMapping("/api")
 public class CustomerController {
+    @Autowired
     private ICustomerService customerService;
+
+    @Autowired
+    private IOrderService orderService;
 
     @Autowired
     public CustomerController(ICustomerService customerService) {
@@ -72,6 +80,51 @@ public class CustomerController {
             }
 
             return ResponseEntity.ok(CustomerList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @GetMapping("/v2/customers/top")
+    public ResponseEntity<List<Map<String, Object>>> getTopCustomersByPurchases() {
+        try {
+            List<Customer> customers = customerService.getCustomerList();
+            Map<Integer, Double> customerPurchases = new HashMap<>();
+
+            List<Order> orders = orderService.getOrderList();
+            for (Order order : orders) {
+                int customerId = order.getCustomerID();
+                double totalPrice = order.getTotalPrice();
+                customerPurchases.put(customerId, customerPurchases.getOrDefault(customerId, 0.0) + totalPrice);
+            }
+
+            List<Map.Entry<Integer, Double>> sortedCustomers = customerPurchases.entrySet().stream()
+                    .sorted(Map.Entry.<Integer, Double>comparingByValue().reversed())
+                    .collect(Collectors.toList());
+
+            List<Map.Entry<Integer, Double>> topCustomers = sortedCustomers.stream()
+                    .limit(10)
+                    .collect(Collectors.toList());
+
+            List<Map<String, Object>> topCustomersList = new ArrayList<>();
+            for (Map.Entry<Integer, Double> entry : topCustomers) {
+                int customerId = entry.getKey();
+                double totalPurchases = entry.getValue();
+                Customer customer = customers.stream()
+                        .filter(c -> c.getID() == customerId)
+                        .findFirst()
+                        .orElse(null);
+
+                if (customer != null) {
+                    Map<String, Object> customerMap = new HashMap<>();
+                    customerMap.put("name", customer.getName());
+                    customerMap.put("totalPurchases", totalPurchases);
+                    topCustomersList.add(customerMap);
+                }
+            }
+
+            return ResponseEntity.ok(topCustomersList);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);

@@ -49,6 +49,37 @@ public class OrderService implements IOrderService {
     }
 
     @Override
+    public List<OrderDTO> getAllOrderDetails() {
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        List<OrderDTO> allOrderDetails = new ArrayList<>();
+
+        try {
+            // Fetch all orders
+            List<Order> orders = getOrderList();
+            if (orders == null) {
+                return null;
+            }
+
+            // Iterate through each order and fetch its OrderDTOs
+            for (Order order : orders) {
+                CollectionReference collectionReference = dbFirestore.collection("order")
+                        .document(String.valueOf(order.getID()))
+                        .collection("orderDTO");
+
+                ApiFuture<QuerySnapshot> future = collectionReference.get();
+                QuerySnapshot querySnapshot = future.get();
+                List<OrderDTO> orderDetails = querySnapshot.toObjects(OrderDTO.class);
+                allOrderDetails.addAll(orderDetails);
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return allOrderDetails;
+    }
+
+    @Override
     public Order getOrder(int ID) {
         try {
             return genericService.getByField(ID, "id", "order", Order.class);

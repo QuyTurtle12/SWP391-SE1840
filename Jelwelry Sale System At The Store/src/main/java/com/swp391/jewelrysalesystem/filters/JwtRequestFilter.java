@@ -77,6 +77,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     default:
                         throw new IllegalArgumentException("Invalid role ID: " + user.getRoleID());
                 }
+                LOGGER.info("Assigned authorities: "
+                        + authorities.stream().map(Object::toString).collect(Collectors.joining(", ")));
 
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                         user, null, authorities);

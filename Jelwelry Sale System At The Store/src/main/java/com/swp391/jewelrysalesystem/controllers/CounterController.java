@@ -5,7 +5,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.swp391.jewelrysalesystem.models.Counter;
 import com.swp391.jewelrysalesystem.services.ICounterService;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +27,7 @@ public class CounterController {
     private ICounterService counterService;
 
     @Autowired
-    public CounterController(ICounterService counterService)  {
+    public CounterController(ICounterService counterService) {
         this.counterService = counterService;
     }
 
@@ -34,7 +37,7 @@ public class CounterController {
 
         Counter newCounter = new Counter();
         newCounter.setID(id);
-        newCounter.setSale(0); //  VND
+        newCounter.setSale(0); // VND
         newCounter.setStatus(true);
 
         return counterService.saveCounter(newCounter)
@@ -45,7 +48,7 @@ public class CounterController {
     @DeleteMapping("/v2/counters")
     public ResponseEntity<String> deleteCounterV2(@RequestParam int id) {
         if (!counterService.isNotNullCounter(id)) {
-            return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body("Counter ID " + id +  " is not existing");
+            return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body("Counter ID " + id + " is not existing");
         }
 
         return counterService.removeCounter(id) ? ResponseEntity.ok().body("Deleting Successfully")
@@ -56,7 +59,7 @@ public class CounterController {
     @PutMapping("/v2/counters/{id}/status")
     public ResponseEntity<String> changeCounterStatusV2(@PathVariable int id) {
         if (!counterService.isNotNullCounter(id)) {
-            return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body("Counter ID " + id +  " is not existing");
+            return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body("Counter ID " + id + " is not existing");
         }
 
         return counterService.changeStatus(id) ? ResponseEntity.ok().body("Changing status Successfully")
@@ -94,12 +97,12 @@ public class CounterController {
         }
     }
 
-    //Old endpoints version below here
+    // Old endpoints version below here
     @PostMapping("/counter/add")
     public Counter addCounter(@RequestParam int id) {
         Counter newCounter = new Counter();
         newCounter.setID(id);
-        newCounter.setSale(0); //VND
+        newCounter.setSale(0); // VND
         newCounter.setStatus(true);
 
         counterService.saveCounter(newCounter);
@@ -161,4 +164,26 @@ public class CounterController {
             return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
+    @GetMapping("/v2/counters/sales")
+    public ResponseEntity<List<Map<String, Object>>> getTotalSalesByCounter() {
+        try {
+            List<Counter> counters = counterService.getCountersList();
+            List<Map<String, Object>> responseList = new ArrayList<>();
+
+            for (Counter counter : counters) {
+                Map<String, Object> counterMap = new HashMap<>();
+                double totalSales = counterService.calculateCounterSale(counter.getID());
+                counterMap.put("counterID", counter.getID());
+                counterMap.put("totalSales", totalSales);
+                responseList.add(counterMap);
+            }
+
+            return ResponseEntity.ok(responseList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
 }
