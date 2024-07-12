@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/api")
@@ -25,9 +26,18 @@ public class CustomerPromotionController {
         this.customerPromotionService = customerPromotionService;
     }
 
+    @PostMapping("/customer-promotions/customer-coupons")
+    public ResponseEntity<List<CustomerPromotion>> getCustomerAvailableCoupons(@RequestParam double totalPrice) {
+        List<CustomerPromotion> couponList = customerPromotionService.getCustomerAvailableCoupons(totalPrice);
+
+        return ResponseEntity.ok().body(couponList);
+    }
+
     @PostMapping("/customer-promotions")
     public ResponseEntity<String> addCustomerPromotion(@RequestParam String discountName,
             @RequestParam String discountDescription,
+            @RequestParam String discountType, //Normal, Accepted Price
+            @RequestParam String discountCondition,
             @RequestParam double discountRate) {
 
         String error = customerPromotionService.isGeneralValidated(discountName, discountRate);
@@ -42,6 +52,8 @@ public class CustomerPromotionController {
         promotion.setID(promotionID);
         promotion.setDiscountName(discountName);
         promotion.setDiscountDescription(discountDescription);
+        promotion.setDiscountType(discountType);
+        promotion.setDiscountType(discountCondition);
         promotion.setDiscountRate(discountRate);
         promotion.setStatus(true);
 
@@ -54,6 +66,8 @@ public class CustomerPromotionController {
 
     @PutMapping("/customer-promotions/{ID}")
     public ResponseEntity<String> updateCustomerPromotion(@PathVariable int ID, @RequestParam String discountName,
+            @RequestParam String discountType,
+            @RequestParam String discountCondition,
             @RequestParam String discountDescription,
             @RequestParam double discountRate) {
 
@@ -71,6 +85,8 @@ public class CustomerPromotionController {
 
         promotion.setDiscountName(discountName);
         promotion.setDiscountDescription(discountDescription);
+        promotion.setDiscountType(discountType);
+        promotion.setDiscountType(discountCondition);
         promotion.setDiscountRate(discountRate);
         promotion.setStatus(true);
 

@@ -9,6 +9,8 @@ public interface ICustomerPromotion {
 
     List<CustomerPromotion> getCustomerPromotionList();
 
+    List<CustomerPromotion> getCustomerAvailableCoupons(double totalPrice);
+
     CustomerPromotion getCustomerPromotion(int ID);
 
     CustomerPromotion getCustomerPromotion(String name);

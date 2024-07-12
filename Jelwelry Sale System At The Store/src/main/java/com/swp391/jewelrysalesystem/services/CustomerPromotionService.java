@@ -1,5 +1,6 @@
 package com.swp391.jewelrysalesystem.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -75,6 +76,30 @@ public class CustomerPromotionService implements ICustomerPromotion {
             e.printStackTrace();
             return null;
         }
+    }
+
+    @Override
+    public List<CustomerPromotion> getCustomerAvailableCoupons(double totalPrice) {
+        List<CustomerPromotion> promotionList = getCustomerPromotionList();
+
+        List<CustomerPromotion> coupons = new ArrayList<>();
+
+        for (CustomerPromotion promotion : promotionList) {
+            if (promotion.getDiscountType() == "Normal") {
+                coupons.add(promotion);
+                continue;
+            }
+
+            if (promotion.getDiscountType() == "Accepted Price") {
+                if (totalPrice >= Double.parseDouble(promotion.getDiscountCondition())) {
+                    coupons.add(promotion);
+                    continue;
+                }
+            }
+        }
+
+        return coupons;
+        
     }
 
 }

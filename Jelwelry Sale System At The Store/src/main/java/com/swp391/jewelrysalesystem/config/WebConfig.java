@@ -15,11 +15,10 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins(
                         "http://localhost:3000",
-                        "https://jewelry-sale-system.vercel.app",
-                        "https://firebasestorage.googleapis.com/**",
-                        "/upload/**")
+                        "https://jewelry-sale-system.vercel.app")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);
     }
+
 }

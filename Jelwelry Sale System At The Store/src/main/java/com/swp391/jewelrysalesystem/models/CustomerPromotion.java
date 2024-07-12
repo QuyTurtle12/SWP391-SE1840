@@ -12,6 +12,8 @@ import lombok.Setter;
 public class CustomerPromotion implements StatusUpdatable {
     int ID;
     String discountName;
+    String discountType;
+    String discountCondition;
     String discountDescription;
     double discountRate; //Discount rate is in range bewteen 0 to 1
     Boolean status;

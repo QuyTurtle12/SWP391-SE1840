@@ -29,8 +29,8 @@ public class SecurityConfig {
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers("/api/auth/login", "/api/auth/forgot-password",
                                                                 "/api/auth/reset-password",
-                                                                "/swagger-ui/**", "/api/auth/logout", "/upload/**",
-                                                                "/**/*.jpg", "/**/*.jpeg", "/**/*.png")
+                                                                "/api/auth/logout", "/upload/**",
+                                                                "/**.jpg", "/**.jpeg", "/**.png")
                                                 .permitAll() // Allow access
                                                 .requestMatchers("/api/auth/admin/**", "/api/v2/accounts/MANAGER/**",
                                                                 "/api/v2/accounts/dashboard")
