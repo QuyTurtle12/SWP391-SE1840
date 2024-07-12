@@ -10,6 +10,10 @@ import com.swp391.jewelrysalesystem.services.IOrderService;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -122,59 +126,7 @@ public class CounterController {
         }
     }
 
-    // Old endpoints version below here
-    @PostMapping("/counter/add")
-    public Counter addCounter(@RequestParam int id) {
-        Counter newCounter = new Counter();
-        newCounter.setID(id);
-        newCounter.setSale(0); // VND
-        newCounter.setStatus(true);
-
-        counterService.saveCounter(newCounter);
-        return null;
-    }
-
-    @PostMapping("/counter/delete")
-    public void deleteCounter(@RequestParam int id) {
-        counterService.removeCounter(id);
-    }
-
-    @PutMapping("/counter/{id}/change-status")
-    public Counter changeCounterStatus(@PathVariable int id) {
-        counterService.changeStatus(id);
-        return null;
-    }
-
-    @GetMapping("/counter/list")
-    public ResponseEntity<List<Counter>> getCounterList() {
-        try {
-            List<Counter> counterList = counterService.getCountersList();
-            if (counterList != null && !counterList.isEmpty()) {
-                return ResponseEntity.ok(counterList);
-            } else {
-                return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
-        }
-    }
-
-    @GetMapping("/counter/get")
-    public ResponseEntity<Counter> getCounter(@RequestParam int id) {
-        try {
-            Counter counter = counterService.getCounter(id);
-            if (counter != null) {
-                return ResponseEntity.ok(counter);
-            } else {
-                return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
-        }
-    }
-
+    
     @GetMapping("/v2/counters/{id}/calculate-sale")
     public ResponseEntity<Double> calculateCounterSaleV2(@PathVariable int id) {
         if (!counterService.isNotNullCounter(id)) {
@@ -189,4 +141,26 @@ public class CounterController {
             return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
+    @GetMapping("/v2/counters/sales")
+    public ResponseEntity<List<Map<String, Object>>> getTotalSalesByCounter() {
+        try {
+            List<Counter> counters = counterService.getCountersList();
+            List<Map<String, Object>> responseList = new ArrayList<>();
+
+            for (Counter counter : counters) {
+                Map<String, Object> counterMap = new HashMap<>();
+                double totalSales = counterService.calculateCounterSale(counter.getID());
+                counterMap.put("counterID", counter.getID());
+                counterMap.put("totalSales", totalSales);
+                responseList.add(counterMap);
+            }
+
+            return ResponseEntity.ok(responseList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
 }

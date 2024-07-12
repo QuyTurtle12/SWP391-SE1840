@@ -34,4 +34,6 @@ public interface IOrderService {
             double discountApplied);
 
     int generateID();
+
+    List<OrderDTO> getAllOrderDetails();
 }

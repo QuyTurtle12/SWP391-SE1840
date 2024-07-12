@@ -1,6 +1,7 @@
 package com.swp391.jewelrysalesystem.services;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import com.swp391.jewelrysalesystem.models.Product;
@@ -22,10 +23,12 @@ public interface IProductService {
 
     boolean isNotNullProduct(int ID);
 
-    String isGeneralValidated(String name, double price, double refundPrice, 
-    double goldWeight, double laborCost, double stoneCost, int stock, String img, int promotionID);
+    String isGeneralValidated(String name, double price, double refundPrice,
+            double goldWeight, double laborCost, double stoneCost, int stock, String img, int promotionID);
 
     int generateID();
 
-    boolean disableProductPromotionID (int promotionID);
+    boolean disableProductPromotionID(int promotionID);
+
+    Map<Integer, String> getAllProductCategories() throws InterruptedException, ExecutionException;
 }

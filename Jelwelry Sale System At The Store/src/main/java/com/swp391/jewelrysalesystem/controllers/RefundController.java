@@ -72,15 +72,26 @@ public class RefundController {
 
         refundService.saveRefundedOrder(refund);
         List<RefundDTO> refundedProducts = new ArrayList<>();
+        double totalRefundPrice = 0.0;
+
         for (CartItem cartItem : cart) {
+            double refundPrice = refundService.calculateRefundPrice(cartItem);
+            totalRefundPrice += refundPrice * cartItem.getQuantity();
+
             RefundDTO product = new RefundDTO();
             product.setRefundID(refundID);
             product.setProductID(cartItem.getProduct().getID());
             product.setProductName(productService.getProductByID(product.getProductID()).getName());
             product.setAmount(cartItem.getQuantity());
+            product.setRefundPrice(refundPrice);
             refundedProducts.add(product);
             refundService.saveProduct(product);
+
         }
+
+        refund.setTotalPrice(totalRefundPrice);
+        refundService.saveRefundedOrder(refund);
+
         return ResponseEntity.ok().body(String.valueOf(refundID));
     }
 
@@ -127,16 +138,28 @@ public class RefundController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/refunds/refund")
-    public ResponseEntity<Map<String, Object>> getRefund(@RequestParam int ID) throws InterruptedException, ExecutionException {
-        Refund refund = refundService.getRefundedOrder(ID);
+    @GetMapping("/refunds-detail-list")
+    public ResponseEntity<List<Map<String, Object>>> getRefundDetailsList()
+            throws InterruptedException, ExecutionException {
+        List<Refund> refunds = refundService.getRefundedOrderList();
 
-        if (refund == null) {
+        if (refunds.isEmpty() || refunds == null) {
             return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
         }
 
-            String customerName = customerService.getCustomer(refund.getID()).getName();
+        List<Map<String, Object>> response = new ArrayList<>();
+        for (Refund refund : refunds) {
+            String customerName = customerService.getCustomer(refund.getCustomerID()).getName();
             String staffName = userService.getUserByField(refund.getStaffID(), "id", "user").getFullName();
+            List<RefundDTO> refundedProducts = refundService.getRefundedProductList(refund.getID());
+
+            List<Map<String, Object>> products = new ArrayList<>();
+            for (RefundDTO product : refundedProducts) {
+                Map<String, Object> productMap = new HashMap<>();
+                productMap.put("productName", product.getProductName());
+                productMap.put("amount", product.getAmount());
+                products.add(productMap);
+            }
 
             Map<String, Object> map = new HashMap<>();
             map.put("ID", refund.getID());
@@ -145,7 +168,33 @@ public class RefundController {
             map.put("customerName", customerName);
             map.put("staffID", refund.getStaffID());
             map.put("staffName", staffName);
+            map.put("refundedProducts", products);
 
+            response.add(map);
+        }
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/refunds/refund")
+    public ResponseEntity<Map<String, Object>> getRefund(@RequestParam int ID)
+            throws InterruptedException, ExecutionException {
+        Refund refund = refundService.getRefundedOrder(ID);
+
+        if (refund == null) {
+            return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
+        }
+
+        String customerName = customerService.getCustomer(refund.getID()).getName();
+        String staffName = userService.getUserByField(refund.getStaffID(), "id", "user").getFullName();
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("ID", refund.getID());
+        map.put("date", refund.getDate());
+        map.put("totalPrice", refund.getTotalPrice());
+        map.put("customerName", customerName);
+        map.put("staffID", refund.getStaffID());
+        map.put("staffName", staffName);
 
         return ResponseEntity.ok(map);
     }

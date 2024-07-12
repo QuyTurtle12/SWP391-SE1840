@@ -2,6 +2,7 @@ package com.swp391.jewelrysalesystem.services;
 
 import java.util.List;
 
+import com.swp391.jewelrysalesystem.models.CartItem;
 import com.swp391.jewelrysalesystem.models.Customer;
 import com.swp391.jewelrysalesystem.models.ProductPurity;
 import com.swp391.jewelrysalesystem.models.Refund;
@@ -29,4 +30,6 @@ public interface IRefundService {
     String isGeneralValidated(double totalPrice, Customer customer, int staffID);
 
     int generateID();
+
+    double calculateRefundPrice(CartItem cartItem);
 }

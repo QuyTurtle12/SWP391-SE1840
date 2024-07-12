@@ -5,13 +5,21 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.CollectionReference;
+import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.QueryDocumentSnapshot;
+import com.google.cloud.firestore.QuerySnapshot;
+import com.google.firebase.cloud.FirestoreClient;
 import com.swp391.jewelrysalesystem.models.Category;
 import com.swp391.jewelrysalesystem.models.Product;
 
@@ -226,4 +234,22 @@ public class ProductService implements IProductService {
             return false;
         }
     }
+
+    public Map<Integer, String> getAllProductCategories() throws InterruptedException, ExecutionException {
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        CollectionReference collectionReference = dbFirestore.collection("category");
+
+        ApiFuture<QuerySnapshot> future = collectionReference.get();
+        QuerySnapshot querySnapshot = future.get();
+
+        Map<Integer, String> productCategories = new HashMap<>();
+        for (QueryDocumentSnapshot document : querySnapshot) {
+            int productId = document.getLong("id").intValue();
+            String categoryName = document.getString("name");
+            productCategories.put(productId, categoryName);
+        }
+
+        return productCategories;
+    }
+
 }

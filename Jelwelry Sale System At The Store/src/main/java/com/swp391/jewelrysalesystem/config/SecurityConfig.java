@@ -1,6 +1,9 @@
 package com.swp391.jewelrysalesystem.config;
 
 import com.swp391.jewelrysalesystem.filters.JwtRequestFilter;
+
+import java.util.logging.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,8 +23,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 public class SecurityConfig {
 
-        @Autowired
-        private JwtRequestFilter jwtRequestFilter;
+            @Autowired
+            private JwtRequestFilter jwtRequestFilter;
+
+        private static final Logger LOGGER = Logger.getLogger(JwtRequestFilter.class.getName());
 
         @Bean
         public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -60,18 +65,18 @@ public class SecurityConfig {
                                 .sessionManagement(session -> session
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-                // Add JWT token filter
-                http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-                return http.build();
-        }
+        // Add JWT token filter
+        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+        return http.build();
+    }
 
-        @Bean
-        public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
-                return authConfig.getAuthenticationManager();
-        }
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
+    }
 
-        @Bean
-        public PasswordEncoder passwordEncoder() {
-                return new BCryptPasswordEncoder();
-        }
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }

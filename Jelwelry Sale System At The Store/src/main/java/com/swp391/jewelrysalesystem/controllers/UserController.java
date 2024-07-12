@@ -237,10 +237,12 @@ public class UserController {
         }
     }
 
-    @GetMapping("v2/accounts/user")
-    public ResponseEntity<User> getUserByUserIDV2(@RequestParam int id) {
+    @GetMapping("/this-info")
+    public ResponseEntity<User> getThisUser(HttpServletRequest request) {
         try {
-            User user = userService.getUserByField(id, "id", "user");
+            String token = request.getHeader("Authorization").substring(7);
+            int userID = Integer.parseInt(jwtUtil.extractUserID(token));
+            User user = userService.getUserByField(userID, "id", "user");
             if (user == null) {
                 return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).build();
             }
@@ -251,12 +253,10 @@ public class UserController {
         }
     }
 
-    @GetMapping("this-info")
-    public ResponseEntity<User> getThisUser(HttpServletRequest request) {
+    @GetMapping("/v2/accounts/user")
+    public ResponseEntity<User> getUserByUserIDV2(@RequestParam int id) {
         try {
-            String token = request.getHeader("Authorization").substring(7);
-            int userID = Integer.parseInt(jwtUtil.extractUserID(token));
-            User user = userService.getUserByField(userID, "id", "user");
+            User user = userService.getUserByField(id, "id", "user");
             if (user == null) {
                 return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).build();
             }
