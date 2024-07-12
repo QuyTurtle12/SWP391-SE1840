@@ -40,6 +40,7 @@ import AddCategory from "./components/Features/Manager/AddCategory";
 import ForgetForm from "./components/Login/ForgetForm";
 import ResetForm from "./components/Login/ResetForm";
 import ViewCounter from "./components/Features/Manager/ViewCounter";
+import GoldPrice from "./components/Features/Staff/GoldPrice";
 function App() {
   return (
     <div className="overflow-hidden">
@@ -83,6 +84,7 @@ function App() {
         <Route path="/forget-form" element={<ForgetForm />} />
         <Route path="/view-promotion" element={<ViewPromotion />} />
         <Route path="/view-counter" element={<ViewCounter />} />
+        <Route path="/gold-price" element={<GoldPrice />} />
       </Routes>
       <Routes></Routes>
       <Footer />

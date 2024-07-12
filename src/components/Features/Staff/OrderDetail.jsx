@@ -45,7 +45,7 @@ function OrderDetail() {
         console.log(customerResponse.data);
 
         const staffResponse = await axios.get(
-          `http://localhost:8080/api/v2/accounts/staff?id=${orderDetailResponse.data.staffID}`,
+          `https://jewelrysalesystem-backend.onrender.com/api/v2/accounts/staff?id=${orderDetailResponse.data.staffID}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

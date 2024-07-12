@@ -3,41 +3,48 @@ import React, { useEffect, useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { ToastContainer, toast } from "react-toastify";
-import { useLocation } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 
-const token = localStorage.getItem('token'); // Fetch the token from local storage
+const token = localStorage.getItem("token"); // Fetch the token from local storage
 
 // Create an Axios instance with default headers
 const axiosInstance = axios.create({
   headers: {
-    'Authorization': `Bearer ${token}`
-  }
+    Authorization: `Bearer ${token}`,
+  },
 });
 
 function ViewCart() {
   const [cart, setCart] = useState([]);
   const [subtotal, setSubtotal] = useState(0);
   const [showModal, setShowModal] = useState(false);
-  const [staff,setStaff] = useState();
-  const [staffID, setStaffID] = useState(""); 
-  const [counterID, setCounterID] = useState(""); 
-  const [customerPhone, setCustomerPhone] = useState(""); 
-  const [discountApplied, setDiscountApplied] = useState(0); 
-  const [customerGender,setCustomerGender ] = useState("");
-  const [customerName,setCustomerName ] = useState("");
-  
+  const [showModalVoucher, setShowModalVoucher] = useState(false);
+  const [staff, setStaff] = useState();
+  const [discountRate, setDiscountRate] = useState(0);
+  const [counterID, setCounterID] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
+  const [discountApplied, setDiscountApplied] = useState(0);
+  const [vouchers, setVouchers] = useState([]);
+  const [selectedVoucher, setSelectedVoucher] = useState("");
+  const [customerGender, setCustomerGender] = useState("");
+  const [customerName, setCustomerName] = useState("");
+  const [discountName, setDiscountName] = useState("Nonee");
+  const [point, setPoint] = useState(0);
   const location = useLocation();
+  const [paymentMethod, setPaymentMethod] = useState("");
   const queryParams = new URLSearchParams(location.search);
-  const staffId = queryParams.get('staffId');
+  const staffId = queryParams.get("staffId");
 
   useEffect(() => {
     fetchCartData();
     fetchStaff();
   }, []);
 
-
   const fetchCartData = () => {
-    axiosInstance.get(`https://jewelrysalesystem-backend.onrender.com/cart?staffId=${staffId}`)
+    axiosInstance
+      .get(
+        `https://jewelrysalesystem-backend.onrender.com/cart?staffId=${staffId}`
+      )
       .then((response) => {
         setCart(response.data);
         calculateSubtotal(response.data);
@@ -46,16 +53,37 @@ function ViewCart() {
         console.error("Error fetching cart data", error);
       });
   };
+
+  const fetchDiscounts = () => {
+    axiosInstance
+      .get(
+        `http://localhost:8080/api/customer-promotions/customer-coupons?totalPrice=${subtotal}`,
+        {}
+      )
+      .then((response) => {
+        setVouchers(response.data);
+
+        console.log(response.data.discountRate);
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching discount data", error);
+      });
+  };
+
   const fetchStaff = async () => {
     if (token) {
       try {
-        const response = await axios.get("https://jewelrysalesystem-backend.onrender.com/api/this-info", {
-          headers: {
-            'Authorization': `Bearer ${token}`
+        const response = await axios.get(
+          "https://jewelrysalesystem-backend.onrender.com/api/this-info",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
-        });
+        );
         console.log(response.data);
-        setCounterID(response.data.counterID)
+        setCounterID(response.data.counterID);
         setStaff(response.data);
         fetchCartData(response.data.id); // Fetch cart data with the staff ID after setting the staff state
       } catch (error) {
@@ -78,31 +106,91 @@ function ViewCart() {
     setShowModal(true);
   };
 
+  const handleVoucher = () => {
+    fetchDiscounts();
+    setShowModalVoucher(true);
+  };
+
   const handleClose = () => {
     setShowModal(false);
   };
 
+  const handleCloseVoucher = () => {
+    setShowModalVoucher(false);
+  };
+  const handleVoucherApply = () => {
+    if (!selectedVoucher) {
+      toast.error("Please select a voucher");
+      return;
+    }
+
+    // Find the selected voucher
+    const selectedVoucherObj = vouchers.find(
+      (voucher) => voucher.id === parseInt(selectedVoucher)
+    );
+
+    if (!selectedVoucherObj) {
+      toast.error("Voucher not found");
+      return;
+    }
+
+    // Calculate discount based on voucher rate
+    const discountRate = selectedVoucherObj.discountRate;
+    const discountName = selectedVoucherObj.discountName;
+    setDiscountRate(discountRate);
+    setDiscountName(discountName);
+    const discountAmount = subtotal * discountRate;
+    // Update discountApplied state
+    setDiscountApplied(discountAmount);
+
+    // Show success message or further action
+    toast.success(
+      `Voucher applied successfully with discount of $${discountAmount.toLocaleString(
+        "en-US"
+      )}`
+    );
+
+    // Close the voucher modal
+    handleCloseVoucher();
+  };
+
+  const handleCreatePayment = (amount) => {
+    axiosInstance
+      .post(`http://localhost:8080/api/create_payment?amount=${amount}`)
+      .then((response) => {
+        const { data } = response;
+        const paymentUrl = data.data;
+        window.location.href = paymentUrl;
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error("Error creating payment URL", error);
+      });
+  };
+
   const handleCreateOrder = () => {
-    if (
-      !subtotal ||
-      !customerPhone ||
-      discountApplied === ""
-    ) {
+    if (!subtotal || !customerPhone) {
       toast.error("Fill all the fields");
       return;
     }
-    
-    axiosInstance.post(
-        `https://jewelrysalesystem-backend.onrender.com/api/v2/orders?totalPrice=${subtotal}&staffID=${staffId}&counterID=${counterID}&customerPhone=${customerPhone}&customerName=${customerName}&customerGender=${customerGender}&discountApplied=${discountApplied}`,
+
+    axiosInstance
+      .post(
+        `https://jewelrysalesystem-backend.onrender.com/api/v2/orders?totalPrice=${subtotal}&staffID=${staffId}&counterID=${counterID}&customerPhone=${customerPhone}&customerName=${customerName}&customerGender=${customerGender}&discountRate=${discountRate}&pointApplied=${point}&discountName=${discountName}`,
         cart
       )
+
+      
       .then(() => {
         toast.success("Order created successfully!");
+        if (paymentMethod === "online") {
+          handleCreatePayment(subtotal - discountApplied);
+        }
         handleClearCart();
-        setShowModal(false);
+        setShowModal(false)
       })
       .catch((error) => {
-        const errorMessage = error.response
+        const errorMessage = error.response.data
           ? error.response.data
           : error.message;
         console.error(errorMessage);
@@ -111,7 +199,10 @@ function ViewCart() {
   };
 
   const handleClearCart = () => {
-    axiosInstance.put(`https://jewelrysalesystem-backend.onrender.com/cart/clear?staffId=${staffId}`)
+    axiosInstance
+      .put(
+        `https://jewelrysalesystem-backend.onrender.com/cart/clear?staffId=${staffId}`
+      )
       .then((response) => {
         setCart([]);
         setSubtotal(0);
@@ -121,7 +212,13 @@ function ViewCart() {
         console.error("Error clearing cart", error);
       });
   };
-
+  const handleRemoveVoucher = () => {
+    setDiscountRate(0);
+    // setDiscountName("None");
+    setDiscountApplied(0);
+    setSelectedVoucher("");
+    toast.success("Voucher removed successfully");
+  };
   const handleChangeQuantity = (productId, newQuantity) => {
     if (newQuantity < 1) {
       toast.error("Quantity cannot be less than 1");
@@ -138,7 +235,8 @@ function ViewCart() {
   };
 
   const handleUpdateQuantity = (productID, newQuantity) => {
-    axiosInstance.put(
+    axiosInstance
+      .put(
         `https://jewelrysalesystem-backend.onrender.com/cart?staffId=${staffId}&productID=${productID}&quantity=${newQuantity}`,
         {}
       )
@@ -150,12 +248,14 @@ function ViewCart() {
         toast.error(`${error.response ? error.response.data : error.message}`);
         console.error("Error updating quantity", error);
         fetchCartData();
-
       });
   };
 
   const handleRemoveItem = (productID) => {
-    axiosInstance.delete(`https://jewelrysalesystem-backend.onrender.com/cart?staffId=${staffId}&productID=${productID}`)
+    axiosInstance
+      .delete(
+        `https://jewelrysalesystem-backend.onrender.com/cart?staffId=${staffId}&productID=${productID}`
+      )
       .then(() => {
         toast.success("Product removed successfully");
         fetchCartData();
@@ -245,15 +345,15 @@ function ViewCart() {
                               onClick={() => handleRemoveItem(item.product.id)}
                             >
                               Remove
-                            </button>{" "}
+                            </button>
                             <button
-                              className="bg-black text-white py-1 px-3 rounded"
-                              onClick={() => {
+                              className="bg-blue-500 text-white py-1 px-3 ml-2 rounded"
+                              onClick={() =>
                                 handleUpdateQuantity(
-                                  item.product.id,
+                                  parseInt(item.product.id),
                                   item.quantity
-                                );
-                              }}
+                                )
+                              }
                             >
                               Update
                             </button>
@@ -266,100 +366,143 @@ function ViewCart() {
               </div>
               <div className="md:w-1/4">
                 <div className="bg-white rounded-lg shadow-md p-6">
-                  <h2 className="text-lg font-semibold mb-4">Summary</h2>
-                  <div className="flex justify-between mb-2">
-                    <span>Subtotal</span>
-                    <span>${subtotal.toLocaleString("en-US")}</span>
+                  <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
+                  <div className="mb-4">
+                    <div className="flex justify-between">
+                      <span className="font-semibold">Subtotal</span>
+                      <span>${subtotal.toLocaleString("en-US")}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-semibold">Discount</span>
+                      <span>- ${discountApplied.toLocaleString("en-US")}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-semibold">Total</span>
+                      <span>
+                        ${(subtotal - discountApplied).toLocaleString("en-US")}
+                      </span>
+                    </div>
                   </div>
-                  <hr className="my-2" />
-                  <div className="flex justify-between mb-2">
-                    <span className="font-semibold">Total</span>
-                    <span className="font-semibold">
-                      ${subtotal.toLocaleString("en-US")}
-                    </span>
-                  </div>
+
                   <button
-                    className="bg-black text-white py-2 px-4 rounded-lg mt-4 w-full"
+                    className="mb-4 bg-red-500 text-white py-2 px-4 rounded w-full"
+                    onClick={handleVoucher}
+                  >
+                    Add Voucher
+                  </button>
+                  {discountApplied > 0 && (
+                    <button
+                      className="mb-4 bg-red-300 text-white py-2 px-4 rounded w-full"
+                      onClick={handleRemoveVoucher}
+                    >
+                      Remove Voucher
+                    </button>
+                  )}
+                  <button
+                    className=" bg-black text-white py-2 px-4 rounded w-full"
                     onClick={handleCheckout}
                   >
                     Checkout
                   </button>
-                  <button
-                    className="bg-gray-400 text-white py-2 px-4 rounded-lg mt-4 w-full"
-                    onClick={handleClearCart}
-                  >
-                    Clear Cart
-                  </button>
+                  
                 </div>
               </div>
             </div>
           )}
         </div>
-
-        <Modal show={showModal} onHide={handleClose}>
-          <Modal.Header closeButton>
-            <Modal.Title>Create Order</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form>
-              <Form.Group controlId="formCustomerName">
-                <Form.Label>Customer Name</Form.Label>
-                <Form.Control
-                  required
-                  placeholder="Enter customer Name"
-                  value={customerName}
-                  onChange={(e) => setCustomerName(e.target.value)}
-                />
-              </Form.Group>
-
-              <Form.Group controlId="formCustomerGender">
-                <Form.Label>Customer Gender</Form.Label>
-                <Form.Control
+      </div>
+      <Modal show={showModal} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Checkout</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group controlId="formPhoneNumber">
+              <Form.Label>Phone Number</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter customer phone number"
+                value={customerPhone}
+                onChange={(e) => setCustomerPhone(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group controlId="formCustomerName">
+              <Form.Label>Customer Name</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter customer name"
+                value={customerName}
+                onChange={(e) => setCustomerName(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group controlId="formCustomerGender">
+              <Form.Label>Customer Gender</Form.Label>
+              <Form.Control
                 as="select"
-                  required
-                  placeholder="Enter customer gender"
-                  value={customerGender}
-                  onChange={(e) => setCustomerGender(e.target.value)}
-                >
-                <option value="" disabled>Select Gender</option>
+                value={customerGender}
+                onChange={(e) => setCustomerGender(e.target.value)}
+              >
+                <option value="">Select Gender</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
-                <option value="Other">Other</option>
-                </Form.Control>
-              </Form.Group>
-
-              <Form.Group controlId="formCustomerPhone">
-                <Form.Label>Customer Phone</Form.Label>
-                <Form.Control
-                  type="number"
-                  required
-                  placeholder="Enter customer Phone"
-                  value={customerPhone}
-                  onChange={(e) => setCustomerPhone(e.target.value)}
-                />
-              </Form.Group>
-              <Form.Group controlId="formDiscountApplied">
-                <Form.Label>Discount Applied</Form.Label>
-                <Form.Control
-                  type="number"
-                  required
-                  placeholder="Enter discount"
-                  value={discountApplied}
-                  onChange={(e) => setDiscountApplied(e.target.value)}
-                />
-              </Form.Group>
-            </Form>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
-              Close
-            </Button>
-            <Button variant="primary" onClick={handleCreateOrder}>
-              Create Order
-            </Button>
-          </Modal.Footer>
-        </Modal>
-      </div>
+              </Form.Control>
+              <Form.Group controlId="paymentMethod">
+              <Form.Label>Payment Method</Form.Label>
+              <Form.Control
+                as="select"
+                value={paymentMethod}
+                onChange={(e) => setPaymentMethod(e.target.value)}
+              >
+                <option value="">Select Payment Method</option>
+                <option value="online">Online</option>
+                <option value="offline">Offline</option>
+              </Form.Control>
+            </Form.Group>
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleCreateOrder}>
+            Create Order
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={showModalVoucher} onHide={handleCloseVoucher}>
+        <Modal.Header closeButton>
+          <Modal.Title>Select Voucher</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group controlId="formVoucher">
+              <Form.Label>Voucher</Form.Label>
+              <Form.Control
+                as="select"
+                value={selectedVoucher}
+                onChange={(e) => setSelectedVoucher(e.target.value)}
+              >
+                <option>Select Voucher</option>
+                {vouchers.map((voucher) => (
+                  <option key={voucher.id} value={voucher.id}>
+                    {voucher.discountName}:{" "}
+                    {Math.floor(voucher.discountRate * 100)}%
+                  </option>
+                ))}
+              </Form.Control>
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseVoucher}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleVoucherApply}>
+            Apply Voucher
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 }

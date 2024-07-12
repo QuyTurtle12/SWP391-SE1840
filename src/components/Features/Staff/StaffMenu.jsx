@@ -34,6 +34,13 @@ function StaffMenu() {
             </Button>
           </li>
           <li className=" px-8  text-nowrap ">
+            <Button component={Link} to="/gold-price">
+              <h3 className=" px-4 rounded-sm text-black font-bold">
+                View Gold Price
+              </h3>
+            </Button>
+          </li>
+          <li className=" px-8  text-nowrap ">
             <Button component={Link} to="/order-refund">
               <h3 className=" px-4 rounded-sm text-black font-bold">
                 View Order Refund List

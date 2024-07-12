@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function ProductDetailStaff() {
   const token = localStorage.getItem(`token`);
@@ -10,15 +11,15 @@ function ProductDetailStaff() {
   const [product, setProduct] = useState({
     img: "",
     name: "",
-    price: "",
-    refundPrice: "",
+    price: 0,
+    refundPrice: 0,
     description: "",
-    goldWeight: "",
-    laborCost: "",
-    stoneCost: "",
-    stock: "",
+    goldWeight: 0,
+    laborCost: 0,
+    stoneCost: 0,
+    stock: 0,
     promotionID: "",
-    category: "",
+    categoryName: "",
     status: "",
   });
   const [cart, setCart] = useState([]);
@@ -54,7 +55,7 @@ function ProductDetailStaff() {
           );
           console.log(response.data);
           setStaff(response.data);
-          fetchCart(response.data.id); 
+          fetchCart(response.data.id);
         } catch (error) {
           console.error("Error fetching staff:", error);
         }
@@ -90,17 +91,24 @@ function ProductDetailStaff() {
   }, [id]);
 
   const addToCart = (product) => {
+    if (product.stock <= 0) {
+      toast.error("Product is out of stock.");
+      return;
+    }
+  
     const isAlreadyInCart = cart.some((item) => item.product.id === product.id);
     if (isAlreadyInCart) {
       toast.error("Product is already in the cart.");
       return;
     }
-
+  
+    const priceToAdd = product.discountPrice ? product.discountPrice : product.price;
+  
     if (token) {
       axios
         .post(
           `https://jewelrysalesystem-backend.onrender.com/cart?staffId=${staff.id}`,
-          product,
+          { ...product, price: priceToAdd },
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -108,11 +116,13 @@ function ProductDetailStaff() {
           }
         )
         .then((response) => {
-          toast.success("Item added to cart successfully!", response.data);
-          setCart([...cart, { product, quantity: 1, price: product.price }]);
+          toast.success("Item added to cart:", response.data);
+          setCart([...cart, { product, quantity: 1, price: priceToAdd }]);
         })
         .catch((error) => {
-          toast.error(`${error.response ? error.response.data : error.message}`);
+          toast.error(
+            `${error.response ? error.response.data : error.message}`
+          );
           console.error("Error adding item to cart:", error);
         });
     } else {
@@ -122,7 +132,7 @@ function ProductDetailStaff() {
 
   return (
     <div className="h-screen">
-      <ToastContainer/>
+      <ToastContainer />
       <div className="bg-gray-100 py-8 h-full">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row -mx-4">
@@ -152,9 +162,20 @@ function ProductDetailStaff() {
                   <span className="text-2xl font-bold text-gray-700">
                     Price:
                   </span>
-                  <span className="text-gray-800 text-xl ml-6">
-                    {product.price.toLocaleString("en-US")}$
-                  </span>
+                  {product.discountPrice ? (
+                    <>
+                      <span className="text-gray-400  text-lg line-through pl-2">
+                        {(product.price ?? 0).toLocaleString("en-US")} $
+                      </span>
+                      <span className="text-gray-900  text-lg pl-2">
+                        {(product.discountPrice ?? 0).toLocaleString("en-US")} $
+                      </span>
+                    </>
+                  ) : (
+                    <span className="text-gray-900 text-lg">
+                      {(product.price ?? 0).toLocaleString("en-US")} $
+                    </span>
+                  )}
                 </div>
                 <div className="mr-4">
                   <span className="text-2xl font-bold text-gray-700">
@@ -169,7 +190,7 @@ function ProductDetailStaff() {
                     Gold Weight:
                   </span>
                   <span className="text-gray-800 text-xl ml-6">
-                    {product.goldWeight} gram 
+                    {product.goldWeight} gram
                   </span>
                 </div>
                 <div className="mr-4">
@@ -199,12 +220,9 @@ function ProductDetailStaff() {
                 <div className="mr-4">
                   <span className="text-2xl font-bold text-gray-700">
                     Category:
-                    <span className="text-gray-800 text-xl ml-6">
-                    {product.categoryName}
-                  </span>
                   </span>
                   <span className="text-gray-800 text-xl ml-6">
-                    {product.category}
+                    {product.categoryName}
                   </span>
                 </div>
                 <div>
@@ -212,7 +230,7 @@ function ProductDetailStaff() {
                     Stock:
                   </span>
                   <span className="text-gray-800 text-xl ml-6">
-                    {product.stock} pcs
+                    {product.stock} pieces
                   </span>
                 </div>
               </div>
@@ -224,7 +242,6 @@ function ProductDetailStaff() {
                   Add to Cart
                 </button>
               </div>
-          
             </div>
           </div>
           <div className="mt-20">

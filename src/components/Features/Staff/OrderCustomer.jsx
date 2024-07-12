@@ -11,7 +11,7 @@ function OrderCustomer() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8080/api/v2/customers/customer?id=${id}`,{
+      .get(`https://jewelrysalesystem-backend.onrender.com/api/v2/customers/customer?id=${id}`,{
         headers: {
           'Authorization': `Bearer ${token}`
         }

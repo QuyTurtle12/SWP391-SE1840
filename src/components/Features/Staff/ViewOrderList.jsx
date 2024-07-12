@@ -19,7 +19,7 @@ function ViewOrderList() {
 
   const fetchOrders = () => {
     axios
-      .get("http://localhost:8080/api/v2/orders", {
+      .get("https://jewelrysalesystem-backend.onrender.com/api/v2/orders", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -35,7 +35,7 @@ function ViewOrderList() {
   const searchOrder = (customerPhone) => {
     axios
       .get(
-        `http://localhost:8080/api/v2/orders/search?input=${customerPhone}&filter=ByPhoneNumber`
+        `https://jewelrysalesystem-backend.onrender.com/api/v2/orders/search?input=${customerPhone}&filter=ByPhoneNumber`
       ,{
         headers: {
           Authorization: `Bearer ${token}`,
@@ -102,7 +102,7 @@ function ViewOrderList() {
                       {new Date(order.date.seconds * 1000).toLocaleString()}
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap">
-                      {order.discountApplied}
+                      {Math.floor(order.discountApplied*100)} %
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap">
                       {order.staffID}
