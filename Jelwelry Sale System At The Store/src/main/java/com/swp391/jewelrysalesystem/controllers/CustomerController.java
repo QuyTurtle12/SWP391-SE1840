@@ -86,6 +86,17 @@ public class CustomerController {
         }
     }
 
+    @GetMapping("/v2/customers/customer/point")
+    public ResponseEntity<String> getCustomerPoint(@RequestParam String customerPhone) {
+        Customer customer = customerService.getCustomerByPhone(customerPhone);
+        if (customer == null) {
+            return ResponseEntity.badRequest().body("The phone number " + customerPhone + " is not existing");
+        }
+ 
+        return ResponseEntity.ok().body(String.valueOf(customer.getPoint()));
+    }
+    
+
     @GetMapping("/v2/customers/top")
     public ResponseEntity<List<Map<String, Object>>> getTopCustomersByPurchases() {
         try {

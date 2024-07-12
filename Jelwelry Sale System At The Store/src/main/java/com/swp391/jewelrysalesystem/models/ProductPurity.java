@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter @Getter
 @AllArgsConstructor @NoArgsConstructor
 public class ProductPurity {
-    int productID;
-    int purity;
-    int amount;
+    private int productID;
+    private int purity;
+    private int amount;
 }

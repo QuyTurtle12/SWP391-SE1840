@@ -1,5 +1,6 @@
 package com.swp391.jewelrysalesystem.controllers;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,12 +14,10 @@ import org.springframework.web.bind.annotation.*;
 import com.swp391.jewelrysalesystem.models.Category;
 import com.swp391.jewelrysalesystem.models.Product;
 import com.swp391.jewelrysalesystem.models.Promotion;
+import com.swp391.jewelrysalesystem.services.GoldPriceService;
 import com.swp391.jewelrysalesystem.services.ICategoryService;
 import com.swp391.jewelrysalesystem.services.IProductService;
 import com.swp391.jewelrysalesystem.services.IPromotionService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
 
 @RestController
 @RequestMapping("/api")
@@ -27,20 +26,23 @@ public class ProductController {
     private IProductService productService;
     private ICategoryService categoryService;
     private IPromotionService promotionService;
+    private GoldPriceService goldPriceService;
+
+    private final double DESIRED_PROFIT_MARGIN = 0.2; //20%
+    private final double REFUND_RATE = 0.7;
 
     @Autowired
     public ProductController(IProductService productService, ICategoryService categoryService,
-            IPromotionService promotionService) {
+            IPromotionService promotionService, GoldPriceService goldPriceService) {
         this.productService = productService;
         this.categoryService = categoryService;
         this.promotionService = promotionService;
+        this.goldPriceService = goldPriceService;
     }
 
     @PostMapping("/v2/products")
     public ResponseEntity<String> addProductV2(
             @RequestParam String name,
-            @RequestParam double price,
-            @RequestParam double refundPrice,
             @RequestParam String description,
             @RequestParam double goldWeight,
             @RequestParam double laborCost,
@@ -59,7 +61,21 @@ public class ProductController {
 
             int categoryID = category.getID();
 
-            String error = productService.isGeneralValidated(name, price, refundPrice, goldWeight, laborCost, stoneCost,
+            double goldPrice = goldPriceService.getCurrent18kGoldPrice();
+            double costPrice = goldWeight * goldPrice + laborCost + stoneCost;
+
+            double priceRate = (costPrice + (costPrice * DESIRED_PROFIT_MARGIN))/costPrice;
+            DecimalFormat decimalFormat = new DecimalFormat("#.##");
+
+            double sellingPrice = costPrice * priceRate;
+
+            sellingPrice = Double.parseDouble(decimalFormat.format(sellingPrice));
+
+            double refundPrice = sellingPrice * REFUND_RATE;
+
+            refundPrice = Double.parseDouble(decimalFormat.format(refundPrice));
+
+            String error = productService.isGeneralValidated(name, sellingPrice, refundPrice, goldWeight, laborCost, stoneCost,
                     stock, img, promotionID);
             if (error != null) {
                 return ResponseEntity.badRequest().body(error);
@@ -68,13 +84,16 @@ public class ProductController {
             int ID = productService.generateID();
 
             Promotion promotion = promotionService.getPromotion(promotionID);
-            double discountPrice = price;
+            double discountPrice = sellingPrice;
+
             if (promotion != null) {
                 double discountRate = promotion.getDiscountRate();
-                discountPrice = price - (price * discountRate);
+                discountPrice = sellingPrice - (sellingPrice * discountRate);
+
+                discountPrice = Double.parseDouble(decimalFormat.format(discountPrice));
             }
 
-            Product newProduct = new Product(ID, img, name, price, refundPrice, discountPrice, description, goldWeight, laborCost,
+            Product newProduct = new Product(ID, img, name, sellingPrice, refundPrice, discountPrice, description, goldWeight, laborCost,
                     stoneCost, stock, promotionID, categoryID, true);
             if (productService.saveProduct(newProduct)) {
                 return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -372,10 +391,11 @@ public class ProductController {
         }
 
         if (productService.disableProductPromotionID(promotionID)) {
-            return ResponseEntity.ok().body("Disabled promotion of products which have promotion ID " + promotionID + " successfully");
+            return ResponseEntity.ok()
+                    .body("Disabled promotion of products which have promotion ID " + promotionID + " successfully");
         } else {
             return ResponseEntity.internalServerError().body("Error disabling promotion ID " + promotionID);
         }
     }
-    
+
 }

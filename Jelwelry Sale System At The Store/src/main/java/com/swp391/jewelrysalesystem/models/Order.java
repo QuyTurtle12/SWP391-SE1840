@@ -15,5 +15,7 @@ public class Order {
     private int counterID;
     private int customerID;
     private double totalPrice;
+    private int discountID;
     private double discountApplied;
+    private int pointApplied;
 }

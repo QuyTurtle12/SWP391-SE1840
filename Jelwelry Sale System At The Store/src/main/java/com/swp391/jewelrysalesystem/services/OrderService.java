@@ -1,5 +1,6 @@
 package com.swp391.jewelrysalesystem.services;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -214,4 +215,22 @@ public class OrderService implements IOrderService {
         return genericService.generateID("order", Order.class, Order::getID);
     }
 
+    @Override
+    public List<Order> getOrderListInSpecificTime(LocalDate startDate, LocalDate endDate) {
+        List<Order> orders = getOrderList();
+
+        List<Order> ordersInSpecificTime = new ArrayList<>();
+
+        for (Order order : orders) {
+            // Convert Timestamp to LocalDate
+            LocalDate orderDate = order.getDate().toSqlTimestamp().toLocalDateTime().toLocalDate();
+
+            // Check if orderDate is within the specified range
+            if (!orderDate.isBefore(startDate) && !orderDate.isAfter(endDate)) {
+                ordersInSpecificTime.add(order);
+            }
+        }
+
+        return ordersInSpecificTime;
+    }
 }
