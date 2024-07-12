@@ -13,6 +13,7 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteResult;
 import com.google.firebase.cloud.FirestoreClient;
+import com.swp391.jewelrysalesystem.models.CartItem;
 import com.swp391.jewelrysalesystem.models.Customer;
 import com.swp391.jewelrysalesystem.models.ProductPurity;
 import com.swp391.jewelrysalesystem.models.Refund;
@@ -21,13 +22,15 @@ import com.swp391.jewelrysalesystem.models.User;
 
 @Service
 public class RefundService implements IRefundService {
+    private static final double REFUND_RATE = 0.70;
 
     private IGenericService<Refund> genericService;
     private ICustomerService customerService;
     private UserService userService;
 
     @Autowired
-    public RefundService(IGenericService<Refund> genericService, ICustomerService customerService, UserService userService){
+    public RefundService(IGenericService<Refund> genericService, ICustomerService customerService,
+            UserService userService) {
         this.genericService = genericService;
         this.customerService = customerService;
         this.userService = userService;
@@ -42,8 +45,9 @@ public class RefundService implements IRefundService {
     public boolean saveProduct(RefundDTO product) {
         try {
             Firestore dbFirestore = FirestoreClient.getFirestore();
-            DocumentReference documentReference = dbFirestore.collection("refund").document(String.valueOf(product.getRefundID()))
-            .collection("refundedProduct").document(String.valueOf(product.getProductID()));
+            DocumentReference documentReference = dbFirestore.collection("refund")
+                    .document(String.valueOf(product.getRefundID()))
+                    .collection("refundedProduct").document(String.valueOf(product.getProductID()));
 
             ApiFuture<WriteResult> future = documentReference.set(product);
             future.get();
@@ -59,8 +63,8 @@ public class RefundService implements IRefundService {
         try {
             Firestore dbFirestore = FirestoreClient.getFirestore();
             DocumentReference documentReference = dbFirestore.collection("refund").document(String.valueOf(refundID))
-            .collection("refundedProduct").document(String.valueOf(product.getProductID()))
-            .collection("productPurity").document(String.valueOf(product.getPurity()));
+                    .collection("refundedProduct").document(String.valueOf(product.getProductID()))
+                    .collection("productPurity").document(String.valueOf(product.getPurity()));
 
             ApiFuture<WriteResult> future = documentReference.set(product);
             future.get();
@@ -83,8 +87,9 @@ public class RefundService implements IRefundService {
 
     @Override
     public List<RefundDTO> getRefundedProductList(int refundID) {
-        Firestore dbFirestore =FirestoreClient.getFirestore();
-        CollectionReference collectionReference = dbFirestore.collection("refund").document(String.valueOf(refundID)).collection("refundedProduct");
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        CollectionReference collectionReference = dbFirestore.collection("refund").document(String.valueOf(refundID))
+                .collection("refundedProduct");
 
         try {
             ApiFuture<QuerySnapshot> future = collectionReference.get();
@@ -99,9 +104,9 @@ public class RefundService implements IRefundService {
 
     @Override
     public List<ProductPurity> getProductPurityList(int refundID, int productID) {
-        Firestore dbFirestore =FirestoreClient.getFirestore();
+        Firestore dbFirestore = FirestoreClient.getFirestore();
         CollectionReference collectionReference = dbFirestore.collection("refund").document(String.valueOf(refundID))
-        .collection("refundedProduct").document(String.valueOf(productID)).collection("productPurity");
+                .collection("refundedProduct").document(String.valueOf(productID)).collection("productPurity");
 
         try {
             ApiFuture<QuerySnapshot> future = collectionReference.get();
@@ -136,7 +141,7 @@ public class RefundService implements IRefundService {
             e.printStackTrace();
             return false;
         }
-        
+
     }
 
     @Override
@@ -177,4 +182,21 @@ public class RefundService implements IRefundService {
     public int generateID() {
         return genericService.generateID("refund", Refund.class, Refund::getID);
     }
+
+    @Override
+    public double calculateRefundPrice(CartItem cartItem) {
+        int categoryId = cartItem.getProduct().getCategoryID();
+        double refundPrice = 0.0;
+
+        if (categoryId == 1) {
+            double goldWeight = cartItem.getProduct().getGoldWeight();
+            double goldPrice = 77.48; // Change with actual gold price API.
+            refundPrice = goldWeight * goldPrice;
+        } else if (categoryId == 2) {
+            double price = cartItem.getProduct().getPrice();
+            refundPrice = REFUND_RATE * price;
+        }
+        return refundPrice;
+    }
+
 }

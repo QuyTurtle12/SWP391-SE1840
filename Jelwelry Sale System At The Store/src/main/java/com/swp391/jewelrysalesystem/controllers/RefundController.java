@@ -72,16 +72,27 @@ public class RefundController {
 
         refundService.saveRefundedOrder(refund);
         List<RefundDTO> refundedProducts = new ArrayList<>();
+        double totalRefundPrice = 0.0;
+
         for (CartItem cartItem : cart) {
+            double refundPrice = refundService.calculateRefundPrice(cartItem);
+            totalRefundPrice += refundPrice * cartItem.getQuantity();
+
             RefundDTO product = new RefundDTO();
             product.setRefundID(refundID);
             product.setProductID(cartItem.getProduct().getID());
             product.setProductName(productService.getProductByID(product.getProductID()).getName());
             product.setAmount(cartItem.getQuantity());
+            product.setRefundPrice(refundPrice);
             refundedProducts.add(product);
             refundService.saveProduct(product);
+
         }
-        return null;
+
+        refund.setTotalPrice(totalRefundPrice);
+        refundService.saveRefundedOrder(refund);
+
+        return ResponseEntity.ok("Refund order created successfully with ID: " + refundID);
     }
 
     @PostMapping("/refunds/itemPurity")
