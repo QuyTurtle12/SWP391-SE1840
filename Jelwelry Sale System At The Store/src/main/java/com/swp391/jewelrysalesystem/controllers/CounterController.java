@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.swp391.jewelrysalesystem.models.Counter;
 import com.swp391.jewelrysalesystem.services.ICounterService;
+import com.swp391.jewelrysalesystem.services.IOrderService;
 
 import java.util.List;
 
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RequestMapping("/api")
 public class CounterController {
     private ICounterService counterService;
+    private IOrderService orderService;
 
     @Autowired
     public CounterController(ICounterService counterService)  {

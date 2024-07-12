@@ -5,13 +5,20 @@ import java.util.regex.Pattern;
 
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import com.swp391.jewelrysalesystem.models.Order;
 import com.swp391.jewelrysalesystem.models.User;
 import com.swp391.jewelrysalesystem.services.ICustomerService;
+import com.swp391.jewelrysalesystem.services.IOrderService;
 import com.swp391.jewelrysalesystem.services.IUserService;
 import com.swp391.jewelrysalesystem.services.JwtUtil;
 
@@ -30,13 +37,16 @@ public class UserController {
 
     private IUserService userService;
     private ICustomerService customerService;
+    private IOrderService orderService;
     private JwtUtil jwtUtil;
 
     @Autowired
-    public UserController(IUserService userService, ICustomerService customerService, JwtUtil jwtUtil) {
+    public UserController(IUserService userService, ICustomerService customerService, JwtUtil jwtUtil,
+            IOrderService orderService) {
         this.userService = userService;
         this.customerService = customerService;
         this.jwtUtil = jwtUtil;
+        this.orderService = orderService;
     }
 
     @PostMapping("v2/accounts/{role}")
@@ -150,18 +160,60 @@ public class UserController {
         return new RedirectView(dashboardUrl);
     }
 
-    @GetMapping("v2/accounts/{role}")
-    public ResponseEntity<List<User>> getUserListByRoleV2(@PathVariable String role) {
+    @GetMapping("v2/accounts/STAFF")
+    public ResponseEntity<List<Map<String, Object>>> getStaffList(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         try {
-            if (role.equals("MANAGER") || role.equals("STAFF")) {
-                List<User> users = userService.getUserListByField(role, "roleID", "user");
-                if (users == null && users.isEmpty()) {
-                    return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).build();
-                }
-                return ResponseEntity.ok(users);
-            } else {
-                return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).build();
+            List<User> users = userService.getUserListByField("STAFF", "roleID", "user");
+
+            if (users == null && users.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).build();
             }
+
+            List<Map<String, Object>> userList = new ArrayList<>();
+            List<Order> orders = orderService.getOrderListInSpecificTime(startDate, endDate);
+
+            //Calculate Sale for each staff in a specific time
+            for (Order order : orders) {
+                for (User user : users) {
+                    if (order.getStaffID() == user.getID()) {
+                        double currentSale = user.getSale();
+                        user.setSale(currentSale + order.getTotalPrice());
+                    }
+                }
+            }
+
+            for (User user : users) {
+                Map<String, Object> staff = user.toMapWithSale();
+                userList.add(staff);
+            }
+
+            return ResponseEntity.ok(userList);
+
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("v2/accounts/MANAGER")
+    public ResponseEntity<List<Map<String, Object>>> getManagerList() {
+        try {
+            List<User> users = userService.getUserListByField("MANAGER", "roleID", "user");
+
+            if (users == null && users.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).build();
+            }
+
+            List<Map<String, Object>> userList = new ArrayList<>();
+
+            for (User user : users) {
+                Map<String, Object> manager = user.toMap();
+                userList.add(manager);
+            }
+
+            return ResponseEntity.ok(userList);
 
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
