@@ -26,6 +26,7 @@ public class CustomerPromotionController {
         this.customerPromotionService = customerPromotionService;
     }
 
+    //Applied for checkout
     @PostMapping("/customer-promotions/customer-coupons")
     public ResponseEntity<List<CustomerPromotion>> getCustomerAvailableCoupons(@RequestParam double totalPrice) {
         List<CustomerPromotion> couponList = customerPromotionService.getCustomerAvailableCoupons(totalPrice);
@@ -53,7 +54,7 @@ public class CustomerPromotionController {
         promotion.setDiscountName(discountName);
         promotion.setDiscountDescription(discountDescription);
         promotion.setDiscountType(discountType);
-        promotion.setDiscountType(discountCondition);
+        promotion.setDiscountCondition(discountCondition);
         promotion.setDiscountRate(discountRate);
         promotion.setStatus(true);
 
