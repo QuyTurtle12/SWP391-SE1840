@@ -59,7 +59,9 @@ public class OrderController {
             @RequestParam String customerGender,
             @RequestParam String customerName,
             @RequestParam String discountName,
-            @RequestParam double discountApplied) {
+            @RequestParam double discountApplied,
+            @RequestParam int pointApplied
+            ) {
 
         String error = orderService.isGeneralValidated(staffID, counterID, customerGender, customerName,
                 discountApplied);
@@ -89,8 +91,12 @@ public class OrderController {
         int orderID = orderService.generateID();
 
         totalPrice = totalPrice - (totalPrice * discountApplied); //Discount range from 0 to 1
+
+        // totalPrice = totalPrice - pointApplied; //1 point == 1
         
         int discountID = customerPromotionService.getCustomerPromotion(discountName).getID();
+
+        
 
         Order newOrder = new Order();
         newOrder.setID(orderID);
@@ -101,11 +107,12 @@ public class OrderController {
         newOrder.setTotalPrice(totalPrice);
         newOrder.setDiscountID(discountID);
         newOrder.setDiscountApplied(discountApplied);
+        newOrder.setPointApplied(pointApplied);
         try {
             orderService.saveOrder(newOrder);
             if (totalPrice >= ACCEPTABLE_TOTAL_PRICE) {
-                double currentPoints = customer.getPoint();
-                double additionalPoints = totalPrice/100;
+                int currentPoints = customer.getPoint();
+                int additionalPoints = (int) (totalPrice/100);
                 customer.setPoint(currentPoints + additionalPoints);
                 customerService.saveCustomer(customer);
             }
@@ -119,11 +126,16 @@ public class OrderController {
                 orderDTOs.add(orderDTO);
                 orderService.saveOrderDTO(orderDTO);
             }
+            //Update new stock
             for (OrderDTO orderDTO : orderDTOs) {
                 Product product = productService.getProductByID(orderDTO.getProductID());
                 product.setStock(product.getStock() - orderDTO.getAmount());
                 productService.saveProduct(product);
             }
+
+            int currentPoints = customer.getPoint();
+            customer.setPoint(currentPoints - pointApplied); // update new point
+            customerService.saveCustomer(customer);
             return ResponseEntity.status(HttpStatus.SC_CREATED).body("Create order Successfully");
         } catch (Exception e) {
             e.printStackTrace();

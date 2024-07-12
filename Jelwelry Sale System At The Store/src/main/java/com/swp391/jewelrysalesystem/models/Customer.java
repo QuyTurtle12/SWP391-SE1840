@@ -11,5 +11,5 @@ public class Customer {
     private String name;
     private String contactInfo;
     private String gender;
-    private double point;
+    private int point;
 }
