@@ -1,5 +1,6 @@
 package com.swp391.jewelrysalesystem.services;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -26,14 +27,16 @@ public class RefundService implements IRefundService {
 
     private IGenericService<Refund> genericService;
     private ICustomerService customerService;
-    private UserService userService;
+    private IUserService userService;
+    private GoldPriceService goldPriceService;
 
     @Autowired
     public RefundService(IGenericService<Refund> genericService, ICustomerService customerService,
-            UserService userService) {
+            IUserService userService, GoldPriceService goldPriceService) {
         this.genericService = genericService;
         this.customerService = customerService;
         this.userService = userService;
+        this.goldPriceService = goldPriceService;
     }
 
     @Override
@@ -190,8 +193,10 @@ public class RefundService implements IRefundService {
 
         if (categoryId == 1) {
             double goldWeight = cartItem.getProduct().getGoldWeight();
-            double goldPrice = 77.48; // Change with actual gold price API.
+            double goldPrice = goldPriceService.getCurrent18kGoldPrice(); // Change with actual gold price API.
+            DecimalFormat decimalFormat = new DecimalFormat("#.##");
             refundPrice = goldWeight * goldPrice;
+            refundPrice = Double.parseDouble(decimalFormat.format(refundPrice));
         } else if (categoryId == 2) {
             double price = cartItem.getProduct().getPrice();
             refundPrice = REFUND_RATE * price;
