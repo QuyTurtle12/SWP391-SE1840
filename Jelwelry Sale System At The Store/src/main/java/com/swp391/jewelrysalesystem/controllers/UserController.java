@@ -180,6 +180,7 @@ public class UserController {
                     if (order.getStaffID() == user.getID()) {
                         double currentSale = user.getSale();
                         user.setSale(currentSale + order.getTotalPrice());
+                        break;
                     }
                 }
             }

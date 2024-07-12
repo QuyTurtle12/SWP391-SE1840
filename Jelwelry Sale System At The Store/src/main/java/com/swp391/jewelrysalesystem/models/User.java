@@ -39,7 +39,7 @@ public class User implements StatusUpdatable {
 
     public Map<String, Object> toMap() {
         Map<String, Object> result = new HashMap<>();
-        result.put("ID", ID);
+        result.put("id", ID);
         result.put("fullName", fullName);
         result.put("email", email);
         result.put("contactInfo", contactInfo);
@@ -50,8 +50,7 @@ public class User implements StatusUpdatable {
     }
 
     public Map<String, Object> toMapWithSale() {
-        Map<String, Object> result = toMap(); // Start with the original map
-
+        Map<String, Object> result = toMap();
         // Add sale to the map only if the user is a staff member
         if (roleID == 1) {
             result.put("sale", sale);
