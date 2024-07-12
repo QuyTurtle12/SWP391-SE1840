@@ -85,13 +85,13 @@ public class CustomerPromotionService implements ICustomerPromotion {
         List<CustomerPromotion> coupons = new ArrayList<>();
 
         for (CustomerPromotion promotion : promotionList) {
-            if (promotion.getDiscountType().equals("Normal")) {
+            if (promotion.getDiscountType().equals("Normal") && promotion.getStatus() == true) {
                 coupons.add(promotion);
                 continue;
             }
 
             if (promotion.getDiscountType().equals("Accepted Price")) {
-                if (totalPrice >= Double.parseDouble(promotion.getDiscountCondition())) {
+                if (totalPrice >= Double.parseDouble(promotion.getDiscountCondition()) && promotion.getStatus() == true) {
                     coupons.add(promotion);
                     continue;
                 }

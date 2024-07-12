@@ -27,7 +27,7 @@ public class CustomerPromotionController {
     }
 
     //Applied for checkout
-    @PostMapping("/customer-promotions/customer-coupons")
+    @GetMapping("/customer-promotions/customer-coupons")
     public ResponseEntity<List<CustomerPromotion>> getCustomerAvailableCoupons(@RequestParam double totalPrice) {
         List<CustomerPromotion> couponList = customerPromotionService.getCustomerAvailableCoupons(totalPrice);
 
