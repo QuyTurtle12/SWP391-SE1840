@@ -59,12 +59,12 @@ public class OrderController {
             @RequestParam String customerGender,
             @RequestParam String customerName,
             @RequestParam String discountName,
-            @RequestParam double discountApplied,
+            @RequestParam double discountRate,
             @RequestParam int pointApplied
             ) {
 
         String error = orderService.isGeneralValidated(staffID, counterID, customerGender, customerName,
-                discountApplied);
+                discountRate);
 
         if (error != null) {
             return ResponseEntity.badRequest().body(error);
@@ -90,7 +90,7 @@ public class OrderController {
 
         int orderID = orderService.generateID();
 
-        totalPrice = totalPrice - (totalPrice * discountApplied); //Discount range from 0 to 1
+        totalPrice = totalPrice - (totalPrice * discountRate); //Discount range from 0 to 1
 
         // totalPrice = totalPrice - pointApplied; //1 point == 1
         
@@ -106,7 +106,7 @@ public class OrderController {
         newOrder.setCustomerID(customerID);
         newOrder.setTotalPrice(totalPrice);
         newOrder.setDiscountID(discountID);
-        newOrder.setDiscountApplied(discountApplied);
+        newOrder.setDiscountApplied(discountRate);
         newOrder.setPointApplied(pointApplied);
         try {
             orderService.saveOrder(newOrder);
