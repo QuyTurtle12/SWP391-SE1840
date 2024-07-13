@@ -73,7 +73,7 @@ public class RefundController {
 
         refundService.saveRefundedOrder(refund);
         List<RefundDTO> refundedProducts = new ArrayList<>();
-        double totalRefundPrice = 0.0;
+        // double totalRefundPrice = 0.0;
 
         for (CartItem cartItem : cart) {
             // double refundPrice = refundService.calculateRefundPrice(cartItem);
