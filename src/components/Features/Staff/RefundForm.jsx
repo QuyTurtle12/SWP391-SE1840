@@ -44,7 +44,7 @@ function RefundForm() {
   }, [id]);
 
   const handlePurityChange = (index, value) => {
-    if (value >= 80 && value <= 100) {
+    if (value >= 90 && value <= 100) {
       const updatedPurities = [...productPurities];
       updatedPurities[index].purity = value;
       setProductPurities(updatedPurities);
@@ -158,15 +158,18 @@ function RefundForm() {
                                     purity.index === `${order.productID}-${i}`
                                 )?.purity || ""
                               }
-                              onChange={(e) =>
-                                handlePurityChange(
-                                  productPurities.findIndex(
-                                    (purity) =>
-                                      purity.index === `${order.productID}-${i}`
-                                  ),
-                                  e.target.value
-                                )
-                              }
+                              onChange={(e) => {
+                                const value = parseFloat(e.target.value);
+                                if (!isNaN(value) && value >= 90 && value <= 100) {
+                                  handlePurityChange(
+                                    productPurities.findIndex(
+                                      (purity) =>
+                                        purity.index === `${order.productID}-${i}`
+                                    ),
+                                    value
+                                  );
+                                }
+                              }}
                               min="90"
                               max="100"
                             />

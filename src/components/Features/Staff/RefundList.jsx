@@ -17,7 +17,7 @@ function RefundList() {
   useEffect(() => {
     if (token) {
       axios
-        .get("https://jewelrysalesystem-backend.onrender.com/api/v2/products", {
+        .get("http://localhost:8080/api/v2/products/refund-products", {
           headers: {
             'Authorization': `Bearer ${token}`
           }

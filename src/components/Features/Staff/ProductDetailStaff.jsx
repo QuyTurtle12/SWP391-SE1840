@@ -28,7 +28,7 @@ function ProductDetailStaff() {
     const fetchProduct = async () => {
       try {
         const response = await axios.get(
-          `https://jewelrysalesystem-backend.onrender.com/api/v2/products/${id}`,
+          `http://localhost:8080/api/v2/products/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -215,6 +215,22 @@ function ProductDetailStaff() {
                   </span>
                   <span className="text-gray-800 text-xl ml-6">
                     {product.promotionID}
+                  </span>
+                </div>
+                <div className="mr-4">
+                  <span className="text-2xl font-bold text-gray-700">
+                    Stone Name:
+                  </span>
+                  <span className="text-gray-800 text-xl ml-6">
+                    {product.stoneName}
+                  </span>
+                </div>
+                <div className="mr-4">
+                  <span className="text-2xl font-bold text-gray-700">
+                    Stone Type:
+                  </span>
+                  <span className="text-gray-800 text-xl ml-6">
+                    {product.stoneType}
                   </span>
                 </div>
                 <div className="mr-4">
