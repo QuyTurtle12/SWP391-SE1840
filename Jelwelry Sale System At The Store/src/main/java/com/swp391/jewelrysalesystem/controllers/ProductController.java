@@ -74,7 +74,7 @@ public class ProductController {
             sellingPrice = Double.parseDouble(decimalFormat.format(sellingPrice));
 
             double refundPrice = 0;
-            if (stoneType.equals("Jewelry")) {
+            if (stoneType.equals("Jewel")) {
                 refundPrice = sellingPrice * REFUND_RATE;
             }
             
