@@ -1,0 +1,37 @@
+.top-selling-products-container {
+    margin: 20px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.top-selling-products-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.top-selling-products-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.top-selling-products-table th,
+.top-selling-products-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.top-selling-products-table th {
+    background-color: #f2f2f2;
+}
+
+.top-selling-products-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.top-selling-products-table tr:nth-child(even) {
+    background-color: #fbfbfb;
+}

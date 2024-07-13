@@ -41,6 +41,8 @@ import ForgetForm from "./components/Login/ForgetForm";
 import ResetForm from "./components/Login/ResetForm";
 import ViewCounter from "./components/Features/Manager/ViewCounter";
 import GoldPrice from "./components/Features/Staff/GoldPrice";
+import Dashboard from "./components/Dashboard/Dashboard";
+
 function App() {
   return (
     <div className="overflow-hidden">
@@ -80,11 +82,13 @@ function App() {
         <Route path="/refund-purity/:id/:productID" element={<RefundPurity />} />
         <Route path="/order-refund" element={<ViewOrderRefund />} />
         <Route path="/add-category" element={<AddCategory />} />
-        <Route path="/reset-password" element={<ResetForm/>} />
+        <Route path="/reset-password" element={<ResetForm />} />
         <Route path="/forget-form" element={<ForgetForm />} />
         <Route path="/view-promotion" element={<ViewPromotion />} />
         <Route path="/view-counter" element={<ViewCounter />} />
         <Route path="/gold-price" element={<GoldPrice />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+
       </Routes>
       <Routes></Routes>
       <Footer />
