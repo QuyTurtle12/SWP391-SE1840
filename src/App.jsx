@@ -43,6 +43,10 @@ import ViewCounter from "./components/Features/Manager/ViewCounter";
 import GoldPrice from "./components/Features/Staff/GoldPrice";
 import Dashboard from "./components/Dashboard/Dashboard";
 
+
+import Voucher from "./components/Features/Manager/Voucher";
+
+import FileUpload from "./components/Features/Manager/FileUpload";
 function App() {
   return (
     <div className="overflow-hidden">
@@ -89,6 +93,11 @@ function App() {
         <Route path="/gold-price" element={<GoldPrice />} />
         <Route path="/dashboard" element={<Dashboard />} />
 
+
+        <Route path="/view-voucher" element={<Voucher />} />
+
+
+        <Route path="file-upload" element={<FileUpload />} />
       </Routes>
       <Routes></Routes>
       <Footer />

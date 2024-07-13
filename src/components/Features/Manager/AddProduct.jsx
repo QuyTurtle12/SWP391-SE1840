@@ -1,324 +1,365 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ManagerMenu from './ManagerMenu';
+import FileUpload from "./FileUpload";
 
 const AddProduct = () => {
-  const [ID, setID] = useState('');
   const [name, setName] = useState('');
-  const [price, setPrice] = useState('');
-  const [refundPrice, setRefundPrice] = useState('');
   const [description, setDescription] = useState('');
   const [goldWeight, setGoldWeight] = useState('');
   const [laborCost, setLaborCost] = useState('');
   const [stoneCost, setStoneCost] = useState('');
   const [stock, setStock] = useState('');
-  const [categoryID, setCategoryID] = useState('');
+  const [categoryName, setCategoryName] = useState('');
   const [img, setImg] = useState('');
   const [promotionID, setPromotionID] = useState('');
+  const [stoneName, setStoneName] = useState('');
+  const [stoneType, setStoneType] = useState('');
+  const [categories, setCategories] = useState([]);
+  const [promotions, setPromotions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    fetchCategories();
+    fetchPromotions();
+  }, []);
+
+  const fetchCategories = async () => {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await axios.get('http://localhost:8080/api/categories', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      setCategories(response.data);
+    } catch (error) {
+      console.error("Error fetching categories", error);
+      setError('Error fetching categories');
+    }
+  };
+
+  const fetchPromotions = async () => {
+    const token = localStorage.getItem('token');
+    setLoading(true);
+    try {
+      const response = await axios.get('http://localhost:8080/api/v2/promotions', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      setPromotions(response.data);
+    } catch (err) {
+      console.error("Error fetching promotions", err);
+      setError('Error fetching promotions');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const notifySuccess = () => toast.success('Product added successfully!');
-  const notifyError = () => toast.error('Failed to add product. Please try again.');
+  const notifyError = (message) => toast.error(message);
+
+  const validateInputs = () => {
+    const specialCharPattern = /[!@#$%^&*().":{}|<>]/;
+    if (parseFloat(goldWeight) < 0 || parseFloat(laborCost) < 0 || parseFloat(stoneCost) < 0 || parseInt(stock) < 0) {
+      notifyError('Numeric values cannot be below zero.');
+      return false;
+    }
+    if (specialCharPattern.test(name) || specialCharPattern.test(description) || specialCharPattern.test(stoneName)) {
+      notifyError('Special characters are not allowed.');
+      return false;
+    }
+    return true;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const token = localStorage.getItem('token');
-    if (!token) {
-      toast.error('User not authenticated. Please login.');
-      navigate('/login'); // Redirect to login page if token is missing
+    if (!validateInputs()) {
       return;
     }
 
-    const data = {
-      ID: parseInt(ID),
+    const token = localStorage.getItem('token');
+    if (!token) {
+      notifyError('User not authenticated. Please login.');
+      navigate('/login');
+      return;
+    }
+
+    const params = new URLSearchParams({
       name,
-      price: parseFloat(price),
-      refundPrice: parseFloat(refundPrice),
       description,
       goldWeight: parseFloat(goldWeight),
       laborCost: parseFloat(laborCost),
       stoneCost: parseFloat(stoneCost),
+      stoneName,
+      stoneType,
       stock: parseInt(stock),
-      categoryID: parseInt(categoryID),
+      categoryName,
       img,
       promotionID: parseInt(promotionID)
-    };
+    });
 
     try {
-      const response = await axios.post('https://jewelrysalesystem-backend.onrender.com/api/v2/products', data, {
+      const response = await axios.post(`http://localhost:8080/api/v2/products?${params.toString()}`, null, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
 
-      if (response.status === 200) {
+      if (response.status === 201) {
         notifySuccess();
         navigate('/productlist2');
         // Optionally reset form fields
-        setID('');
         setName('');
-        setPrice('');
-        setRefundPrice('');
         setDescription('');
         setGoldWeight('');
         setLaborCost('');
         setStoneCost('');
+        setStoneName('');
+        setStoneType('');
         setStock('');
-        setCategoryID('');
+        setCategoryName('');
         setImg('');
         setPromotionID('');
       } else {
-        notifyError();
+        notifyError('Failed to add product. Please try again.');
       }
     } catch (error) {
       console.error('Error adding product:', error.response ? error.response.data : error.message);
-      notifyError();
+      notifyError('Failed to add product. Please try again.');
     }
   };
+
   return (
     <div>
       <ManagerMenu />
-      <div className="min-h-screen bg-tiffany flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <img
-            className="mx-auto h-10 w-auto"
+            className="mx-auto h-12 w-auto"
             src="https://www.svgrepo.com/show/301692/login.svg"
             alt="Workflow"
           />
-          <h2 className="mt-6 text-center text-3xl leading-9 font-extrabold text-gray-900">
-            Create new product
+          <h2 className="mt-6 text-center text-4xl font-extrabold text-gray-900">
+            Add New Product
           </h2>
         </div>
 
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+          <div className="bg-white py-8 px-6 shadow sm:rounded-lg sm:px-10">
             <form onSubmit={handleSubmit}>
-              <div>
-                <label className="block text-sm font-medium leading-5 text-gray-700">
-                  ID
-                </label>
-                <div className="mt-1 relative rounded-md shadow-sm">
-                  <input
-                    id="ID"
-                    name="ID"
-                    type="number"
-                    placeholder="ID"
-                    required
-                    value={ID}
-                    onChange={(e) => setID(e.target.value)}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-                  />
-                </div>
-              </div>
               <div className='mt-6'>
-                <label className="block text-sm font-medium leading-5 text-gray-700">
+                <label className="block text-sm font-medium text-gray-700">
                   Name
                 </label>
-                <div className="mt-1 relative rounded-md shadow-sm">
+                <div className="mt-1">
                   <input
-                    id="name"
-                    name="name"
                     type="text"
-                    placeholder="Name"
+                    placeholder="Enter product name"
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                    className="block w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
               </div>
+              
               <div className='mt-6'>
-                <label className="block text-sm font-medium leading-5 text-gray-700">
-                  Price
-                </label>
-                <div className="mt-1 relative rounded-md shadow-sm">
-                  <input
-                    id="price"
-                    name="price"
-                    type="number"
-                    placeholder="Price"
-                    required
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-                  />
-                </div>
-              </div>
-              <div className='mt-6'>
-                <label className="block text-sm font-medium leading-5 text-gray-700">
-                  Refund Price
-                </label>
-                <div className="mt-1 relative rounded-md shadow-sm">
-                  <input
-                    id="refundPrice"
-                    name="refundPrice"
-                    type="number"
-                    placeholder="Refund Price"
-                    required
-                    value={refundPrice}
-                    onChange={(e) => setRefundPrice(e.target.value)}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-                  />
-                </div>
-              </div>
-              <div className='mt-6'>
-                <label className="block text-sm font-medium leading-5 text-gray-700">
+                <label className="block text-sm font-medium text-gray-700">
                   Description
                 </label>
-                <div className="mt-1 relative rounded-md shadow-sm">
+                <div className="mt-1">
                   <input
-                    id="description"
-                    name="description"
                     type="text"
-                    placeholder="Description"
+                    placeholder="Enter product description"
                     required
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                    className="block w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
               </div>
+              
               <div className='mt-6'>
-                <label className="block text-sm font-medium leading-5 text-gray-700">
+                <label className="block text-sm font-medium text-gray-700">
                   Gold Weight
                 </label>
-                <div className="mt-1 relative rounded-md shadow-sm">
+                <div className="mt-1">
                   <input
-                    id="goldWeight"
-                    name="goldWeight"
                     type="number"
-                    placeholder="Gold Weight"
+                    placeholder="Enter gold weight"
                     required
                     value={goldWeight}
                     onChange={(e) => setGoldWeight(e.target.value)}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                    className="block w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
               </div>
+              
               <div className='mt-6'>
-                <label className="block text-sm font-medium leading-5 text-gray-700">
+                <label className="block text-sm font-medium text-gray-700">
                   Labor Cost
                 </label>
-                <div className="mt-1 relative rounded-md shadow-sm">
+                <div className="mt-1">
                   <input
-                    id="laborCost"
-                    name="laborCost"
                     type="number"
-                    placeholder="Labor Cost"
+                    placeholder="Enter labor cost"
                     required
                     value={laborCost}
                     onChange={(e) => setLaborCost(e.target.value)}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                    className="block w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
               </div>
+              
               <div className='mt-6'>
-                <label className="block text-sm font-medium leading-5 text-gray-700">
+                <label className="block text-sm font-medium text-gray-700">
                   Stone Cost
                 </label>
-                <div className="mt-1 relative rounded-md shadow-sm">
+                <div className="mt-1">
                   <input
-                    id="stoneCost"
-                    name="stoneCost"
                     type="number"
-                    placeholder="Stone Cost"
+                    placeholder="Enter stone cost"
                     required
                     value={stoneCost}
                     onChange={(e) => setStoneCost(e.target.value)}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                    className="block w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
               </div>
+              
               <div className='mt-6'>
-                <label className="block text-sm font-medium leading-5 text-gray-700">
+                <label className="block text-sm font-medium text-gray-700">
+                  Stone Name
+                </label>
+                <div className="mt-1">
+                  <input
+                    type="text"
+                    placeholder="Enter stone name"
+                    required
+                    value={stoneName}
+                    onChange={(e) => setStoneName(e.target.value)}
+                    className="block w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+              </div>
+
+              <div className='mt-6'>
+                <label className="block text-sm font-medium text-gray-700">
+                  Stone Type
+                </label>
+                <div className="mt-1">
+                  <select
+                    required
+                    value={stoneType}
+                    onChange={(e) => setStoneType(e.target.value)}
+                    className="block w-full bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  >
+                    <option value="">Select a stone type</option>
+                    <option value="Normal Stone">Normal Stone</option>
+                    <option value="Jewel">Jewel</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div className='mt-6'>
+                <label className="block text-sm font-medium text-gray-700">
                   Stock
                 </label>
-                <div className="mt-1 relative rounded-md shadow-sm">
+                <div className="mt-1">
                   <input
-                    id="stock"
-                    name="stock"
                     type="number"
-                    placeholder="Stock"
+                    placeholder="Enter stock"
                     required
                     value={stock}
                     onChange={(e) => setStock(e.target.value)}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                    className="block w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
               </div>
+              
               <div className='mt-6'>
-                <label className="block text-sm font-medium leading-5 text-gray-700">
-                  Category ID
+                <label className="block text-sm font-medium text-gray-700">
+                  Category
                 </label>
-                <div className="mt-1 relative rounded-md shadow-sm">
-                  <input
-                    id="categoryID"
-                    name="categoryID"
-                    type="number"
-                    placeholder="Category ID"
+                <div className="mt-1">
+                  <select
                     required
-                    value={categoryID}
-                    onChange={(e) => setCategoryID(e.target.value)}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-                  />
+                    value={categoryName}
+                    onChange={(e) => setCategoryName(e.target.value)}
+                    className="block w-full bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  >
+                    <option value="">Select a category</option>
+                    {categories.map((category) => (
+                      <option key={category.id} value={category.name}>
+                        {category.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
+              
               <div className='mt-6'>
-                <label className="block text-sm font-medium leading-5 text-gray-700">
+                <label className="block text-sm font-medium text-gray-700">
                   Image URL
                 </label>
-                <div className="mt-1 relative rounded-md shadow-sm">
+                <div className="mt-1">
                   <input
-                    id="img"
-                    name="img"
                     type="text"
-                    placeholder="Image URL"
+                    placeholder="Enter image URL"
                     required
                     value={img}
                     onChange={(e) => setImg(e.target.value)}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                    className="block w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
               </div>
+              
               <div className='mt-6'>
-                <label className="block text-sm font-medium leading-5 text-gray-700">
-                  Promotion ID
+                <label className="block text-sm font-medium text-gray-700">
+                  Promotion
                 </label>
-                <div className="mt-1 relative rounded-md shadow-sm">
-                  <input
-                    id="promotionID"
-                    name="promotionID"
-                    type="number"
-                    placeholder="Promotion ID"
+                <div className="mt-1">
+                  <select
                     required
                     value={promotionID}
                     onChange={(e) => setPromotionID(e.target.value)}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-                  />
+                    className="block w-full bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  >
+                    <option value="">Select a promotion</option>
+                    {promotions.map((promotion) => (
+                      <option key={promotion.id} value={promotion.id}>
+                        {promotion.description}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
-              <div className="mt-6">
-                <button onClick={notifySuccess}
-                  type="submit"
-                  className="block w-full py-2 text-center text-white bg-teal-500 border border-teal-500 rounded  hover:text-teal-500 transition uppercase font-roboto font-medium"
-                >
-                  Create Product
-                  <ToastContainer />
-                </button >
-              </div>
-
               
+              <div className="mt-6">
+                <FileUpload/>
+                <button
+                  type="submit"
+                  className="w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150 ease-in-out"
+                >
+                  Add Product
+                </button>
+              </div>
             </form>
           </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
-}
+};
 
 export default AddProduct;

@@ -34,8 +34,10 @@ const ViewPromotion = () => {
   };
 
   const addPromotion = async () => {
-    if (discountRate < 0) {
-      toast.error('Discount rate cannot be below 0');
+  if (discountRate <= 0 || discountRate >= 1) {
+      toast.error('Discount rate cannot be below 0 and above 1');
+    
+    
       return;
     }
     setLoading(true);
@@ -91,8 +93,8 @@ const ViewPromotion = () => {
 
   const updatePromotion = async (e) => {
     e.preventDefault();
-    if (discountRate < 0) {
-      toast.error('Discount rate cannot be below 0');
+    if (discountRate <= 0|| discountRate >= 1) {
+      toast.error('Discount rate cannot be below 0 and above 1');
       return;
     }
     setLoading(true);
