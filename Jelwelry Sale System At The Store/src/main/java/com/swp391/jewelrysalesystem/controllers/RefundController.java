@@ -76,21 +76,21 @@ public class RefundController {
         double totalRefundPrice = 0.0;
 
         for (CartItem cartItem : cart) {
-            double refundPrice = refundService.calculateRefundPrice(cartItem);
-            totalRefundPrice += refundPrice * cartItem.getQuantity();
+            // double refundPrice = refundService.calculateRefundPrice(cartItem);
+            // totalRefundPrice += refundPrice * cartItem.getQuantity();
 
             RefundDTO product = new RefundDTO();
             product.setRefundID(refundID);
             product.setProductID(cartItem.getProduct().getID());
             product.setProductName(productService.getProductByID(product.getProductID()).getName());
             product.setAmount(cartItem.getQuantity());
-            product.setRefundPrice(refundPrice);
+            product.setRefundPrice(cartItem.getPrice());
             refundedProducts.add(product);
             refundService.saveProduct(product);
 
         }
 
-        refund.setTotalPrice(totalRefundPrice);
+        // refund.setTotalPrice(totalRefundPrice);
         refundService.saveRefundedOrder(refund);
 
         return ResponseEntity.ok().body(String.valueOf(refundID));

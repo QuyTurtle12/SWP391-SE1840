@@ -152,20 +152,12 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public String isGeneralValidated(String name, double price, double refundPrice, double goldWeight,
+    public String isGeneralValidated(String name, double goldWeight,
             double laborCost, double stoneCost, int stock, String img, int promotionID) {
 
         String error = null;
         if (name.isBlank() || name.equals(null)) {
             return "Name cannot not be empty";
-        }
-
-        if (price < 0) {
-            return "Price cannot be negative";
-        }
-
-        if (refundPrice < 0) {
-            return "Refund price cannot be negative";
         }
 
         if (goldWeight < 0) {

@@ -19,6 +19,8 @@ public class Product implements StatusUpdatable {
     private double goldWeight;
     private double laborCost;
     private double stoneCost;
+    private String stoneName;
+    private String stoneType;
     private int stock;
     private int promotionID;
     private int categoryID;
