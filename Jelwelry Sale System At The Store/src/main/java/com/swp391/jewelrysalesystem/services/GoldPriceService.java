@@ -48,7 +48,7 @@ public class GoldPriceService {
         );
 
         GoldPriceResponse goldPriceResponse = response.getBody();
-        return goldPriceResponse != null ? goldPriceResponse.getPricePerGram18K() : 0.0;
+        return goldPriceResponse != null ? goldPriceResponse.getPrice_gram_18k() : 0.0;
     }
 }
 
@@ -65,11 +65,11 @@ class GoldPriceResponse {
         this.price = price;
     }
 
-    public double getPricePerGram18K() {
+    public double getPrice_gram_18k() {
         return price_gram_18k;
     }
 
-    public void setPricePerGram18K(double price_gram_18k) {
+    public void setPrice_gram_18k(double price_gram_18k) {
         this.price_gram_18k = price_gram_18k;
     }
 }
