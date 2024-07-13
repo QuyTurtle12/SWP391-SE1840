@@ -66,11 +66,11 @@ class GoldPriceResponse {
     }
 
     public double getPricePerGram18K() {
-        return price;
+        return price_gram_18k;
     }
 
-    public void setPricePerGram18K(double price) {
-        this.price = price;
+    public void setPricePerGram18K(double price_gram_18k) {
+        this.price_gram_18k = price_gram_18k;
     }
 }
 

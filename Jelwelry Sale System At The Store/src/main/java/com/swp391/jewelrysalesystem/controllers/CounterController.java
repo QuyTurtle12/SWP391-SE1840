@@ -111,6 +111,27 @@ public class CounterController {
         }
     }
 
+    @GetMapping("/v2/counters/no-sale")
+    public ResponseEntity<List<Map<String, Object>>> getCounterListWithNoSaleV2() {
+        try {
+            List<Counter> counterList = counterService.getCountersList();
+            if (counterList == null && counterList.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
+            }
+
+            List<Map<String, Object>> response = new ArrayList<>();
+
+            for (Counter counter : counterList) {
+                Map<String, Object> map = counter.toMap();
+                response.add(map);
+            }
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
     @GetMapping("/v2/counters/counter")
     public ResponseEntity<Counter> getCounterV2(@RequestParam int id) {
         try {

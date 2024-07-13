@@ -44,6 +44,7 @@ public class User implements StatusUpdatable {
         result.put("email", email);
         result.put("contactInfo", contactInfo);
         result.put("roleID", roleID);
+        result.put("gender", gender);
         result.put("status", status);
         result.put("counterID", counterID);
         return result;
