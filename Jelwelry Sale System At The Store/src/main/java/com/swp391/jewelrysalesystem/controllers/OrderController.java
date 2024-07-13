@@ -60,8 +60,7 @@ public class OrderController {
             @RequestParam String customerName,
             @RequestParam String discountName,
             @RequestParam double discountRate,
-            @RequestParam int pointApplied
-            ) {
+            @RequestParam int pointApplied) {
 
         String error = orderService.isGeneralValidated(staffID, counterID, customerGender, customerName,
                 discountRate);
@@ -90,13 +89,11 @@ public class OrderController {
 
         int orderID = orderService.generateID();
 
-        totalPrice = totalPrice - (totalPrice * discountRate); //Discount range from 0 to 1
+        totalPrice = totalPrice - (totalPrice * discountRate); // Discount range from 0 to 1
 
         // totalPrice = totalPrice - pointApplied; //1 point == 1
-        
-        int discountID = customerPromotionService.getCustomerPromotion(discountName).getID();
 
-        
+        int discountID = customerPromotionService.getCustomerPromotion(discountName).getID();
 
         Order newOrder = new Order();
         newOrder.setID(orderID);
@@ -112,7 +109,7 @@ public class OrderController {
             orderService.saveOrder(newOrder);
             if (totalPrice >= ACCEPTABLE_TOTAL_PRICE) {
                 int currentPoints = customer.getPoint();
-                int additionalPoints = (int) (totalPrice/100);
+                int additionalPoints = (int) (totalPrice / 100);
                 customer.setPoint(currentPoints + additionalPoints);
                 customerService.saveCustomer(customer);
             }
@@ -126,7 +123,7 @@ public class OrderController {
                 orderDTOs.add(orderDTO);
                 orderService.saveOrderDTO(orderDTO);
             }
-            //Update new stock
+            // Update new stock
             for (OrderDTO orderDTO : orderDTOs) {
                 Product product = productService.getProductByID(orderDTO.getProductID());
                 product.setStock(product.getStock() - orderDTO.getAmount());
@@ -154,7 +151,8 @@ public class OrderController {
 
             List<Map<String, Object>> responseList = new ArrayList<>();
             for (Order order : orderList) {
-                String discountName = customerPromotionService.getCustomerPromotion(order.getDiscountID()).getDiscountName();
+                String discountName = customerPromotionService.getCustomerPromotion(order.getDiscountID())
+                        .getDiscountName();
                 Map<String, Object> orderMap = new HashMap<>();
                 orderMap.put("id", order.getID());
                 orderMap.put("date", order.getDate());
@@ -244,7 +242,8 @@ public class OrderController {
 
             List<Map<String, Object>> responseList = new ArrayList<>();
             for (Order order : orderList) {
-                String discountName = customerPromotionService.getCustomerPromotion(order.getDiscountID()).getDiscountName();
+                String discountName = customerPromotionService.getCustomerPromotion(order.getDiscountID())
+                        .getDiscountName();
                 Map<String, Object> orderMap = new HashMap<>();
                 orderMap.put("id", order.getID());
                 orderMap.put("date", order.getDate());
@@ -298,10 +297,15 @@ public class OrderController {
                 int totalAmount = sortedSales.get(i).getValue();
                 Product product = productService.getProductByID(productId);
 
-                Map<String, Object> productMap = new HashMap<>();
-                productMap.put("productName", product.getName());
-                productMap.put("totalAmount", totalAmount);
-                topProducts.add(productMap);
+                if (product != null) {
+                    Map<String, Object> productMap = new HashMap<>();
+                    productMap.put("productName", product.getName());
+                    productMap.put("totalAmount", totalAmount);
+                    topProducts.add(productMap);
+                } else {
+                    // Log the missing product
+                    System.err.println("Product not found for ID: " + productId);
+                }
             }
 
             return ResponseEntity.ok(topProducts);
