@@ -55,58 +55,57 @@ export default function ProductListManager() {
   };
 
   return (
-    <div className=" ">
+    <div className="min-h-screen bg-gray-100">
       <ManagerMenu />
       <ToastContainer />
 
-      <div className="bg-white py-36">
+      <div className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl justify-between text-center font-bold text-black mb-8">
-            Our Latest Products
-            <div className="justify-end flex pr-8">
-              <div className="relative">
-                <Button component={Link} to="/viewcart">
-                  <ShoppingCartIcon className="text-black" sx={{ fontSize: 40 }} />
-                </Button>
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-800">Our Latest Products</h2>
+            <div className="relative">
+              <Button component={Link} to="/viewcart" className="relative">
+                <ShoppingCartIcon className="text-black" sx={{ fontSize: 40 }} />
                 {cart.length > 0 && (
-                  <div className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center">
-                    <h6 className="text-sm">{cart.length}</h6>
+                  <div className="absolute top-0 right-0 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-semibold">
+                    {cart.length}
                   </div>
                 )}
-              </div>
+              </Button>
             </div>
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {products.map((product) => (
-              <div key={product.id} className="bg-white rounded-lg shadow-lg p-8">
-                <div className="relative overflow-hidden">
-                  <img className="object-fit w-full h-96" src={product.img} alt={product.name} />
-                  <div className="absolute inset-0 bg-black opacity-40"></div>
+              <div key={product.id} className="bg-white rounded-lg shadow-lg overflow-hidden">
+                <div className="relative">
+                  <img className="w-full h-64 object-cover" src={product.img} alt={product.name} />
+                  <div className="absolute inset-0 bg-black opacity-30"></div>
                   <div className="absolute inset-0 flex items-center justify-center">
                     <button
                       onClick={() => handleProductClick(product.id)}
-                      className="bg-white text-gray-900 py-2 px-6 rounded-full font-bold hover:bg-gray-300"
+                      className="bg-white text-gray-900 py-2 px-4 rounded-full font-semibold hover:bg-gray-200"
                     >
                       Update Product
                     </button>
                   </div>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mt-4">{product.name}</h3>
-                
-                {/* Display stock status */}
-                {product.stock <= 0 ? (
-                  <span className="text-gray-400 font-bold mt-2">Out of Stock</span>
-                ) : (
-                  <span className="text-black font-bold mt-2">In Stock: {product.stock}</span>
-                )}
-
-                {/* Delete button */}
-                <button
-                  onClick={() => handleDeleteProduct(product.id)}
-                  className="mt-2 bg-cyan-600 text-white py-2 px-2 rounded-full font-bold "
-                >
-                  Delete Product
-                </button>
+                <div className="p-6">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">{product.name}</h3>
+                  {product.stock <= 0 ? (
+                    <span className="text-red-600 font-medium">Out of Stock</span>
+                  ) : (
+                    <span className="text-green-600 font-medium">In Stock: {product.stock}</span>
+                  )}
+                  <div className="mt-4 flex justify-between items-center">
+                    <button
+                      onClick={() => handleDeleteProduct(product.id)}
+                      className="bg-red-600 text-white py-2 px-4 rounded-full font-semibold hover:bg-red-700"
+                    >
+                      Delete Product
+                    </button>
+                  </div>
+                </div>
               </div>
             ))}
           </div>

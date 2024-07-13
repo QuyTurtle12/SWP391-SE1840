@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import Button from "@mui/material/Button";
-
+import Policy from "./Policy";
 export default function ManagerMenu() {
   return (
     <div className="bg-white shadow-md py-6 px-4 md:px-8 rounded-lg">
@@ -87,8 +87,29 @@ export default function ManagerMenu() {
               <h3>View Promotion</h3>
             </Button>
           </li>
+          <li className="px-4 py-2">
+            <Button
+              component={Link}
+              to="/view-voucher"
+              className="text-black font-bold"
+            >
+              <h3>View Voucher</h3>
+            </Button>
+          </li>
+          <li className="px-4 py-2">
+            <Button
+              component={Link}
+              to="/file-upload"
+              className="text-black font-bold"
+            >
+              <h3>up file</h3>
+            </Button>
+          </li>
         </ul>
+        
       </div>
+      
     </div>
+    
   );
 }

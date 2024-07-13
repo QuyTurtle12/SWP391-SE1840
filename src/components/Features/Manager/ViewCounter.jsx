@@ -2,43 +2,56 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import AddCounter from './AddCounter';
 import ManagerMenu from './ManagerMenu';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+
+// Helper function to format date to 'yyyy-MM-dd'
+const formatDate = (date) => {
+  return date.toISOString().split('T')[0];
+};
+
+// Helper function to get the first day of the current month
+const getStartOfMonth = () => {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), 1);
+};
+
+// Helper function to get the last day of the current month
+const getEndOfMonth = () => {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth() + 1, 0);
+};
 
 const ViewCounter = () => {
   const [counters, setCounters] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
+  const [startDate, setStartDate] = useState(getStartOfMonth());
+  const [endDate, setEndDate] = useState(getEndOfMonth());
+  const [salesData, setSalesData] = useState([]);
+  
   useEffect(() => {
-    fetchCounters();
-  }, []);
+    fetchCounters(startDate, endDate);
+  }, [startDate, endDate]);
 
-  const fetchCounters = async () => {
+  const fetchCounters = async (startDate, endDate) => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token'); // Retrieve token from localStorage
       const headers = { Authorization: `Bearer ${token}` };
-      const response = await axios.get('https://jewelrysalesystem-backend.onrender.com/api/v2/counters', { headers });
-      const countersWithSales = await Promise.all(
-        response.data.map(async (counter) => {
-          const sale = await fetchCounterSale(counter.id, headers);
-          return { ...counter, sale };
-        })
-      );
-      setCounters(countersWithSales);
+      const response = await axios.get('https://jewelrysalesystem-backend.onrender.com/api/v2/counters', {
+        headers,
+        params: {
+          startDate: formatDate(startDate),
+          endDate: formatDate(endDate),
+        }
+      });
+      setCounters(response.data);
+      setSalesData(response.data); // Sales data is included in the same response
     } catch (err) {
       setError('Error fetching counters');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const fetchCounterSale = async (id, headers) => {
-    try {
-      const response = await axios.get(`https://jewelrysalesystem-backend.onrender.com/api/v2/counters/${id}/calculate-sale`, { headers });
-      return response.data;
-    } catch (err) {
-      setError('Error fetching counter sale data');
-      return null;
     }
   };
 
@@ -48,7 +61,7 @@ const ViewCounter = () => {
       const token = localStorage.getItem('token');
       const headers = { Authorization: `Bearer ${token}` };
       await axios.delete(`https://jewelrysalesystem-backend.onrender.com/api/v2/counters?id=${id}`, { headers });
-      fetchCounters(); // Refresh the counter list
+      fetchCounters(startDate, endDate); // Refresh the counter list
     } catch (err) {
       setError('Error deleting counter');
     } finally {
@@ -62,7 +75,7 @@ const ViewCounter = () => {
       const token = localStorage.getItem('token');
       const headers = { Authorization: `Bearer ${token}` };
       await axios.put(`https://jewelrysalesystem-backend.onrender.com/api/v2/counters/${id}/status`, null, { headers });
-      fetchCounters(); // Refresh the counter list
+      fetchCounters(startDate, endDate); // Refresh the counter list
     } catch (err) {
       setError('Error updating counter status');
     } finally {
@@ -76,8 +89,28 @@ const ViewCounter = () => {
       <div className="container mx-auto p-4">
         <h1 className="text-2xl font-bold mb-4">Counter List</h1>
         {error && <p className="text-red-500">{error}</p>}
-        <AddCounter onAdd={fetchCounters} />
-        <table className="min-w-full bg-white border border-gray-200">
+        <AddCounter onAdd={() => fetchCounters(startDate, endDate)} />
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="start-date">
+            Start Date:
+          </label>
+          <DatePicker
+            selected={startDate}
+            onChange={(date) => setStartDate(date)}
+            dateFormat="yyyy-MM-dd"
+            className="border border-gray-300 rounded p-2"
+          />
+          <label className="block text-gray-700 text-sm font-bold mb-2 mt-4" htmlFor="end-date">
+            End Date:
+          </label>
+          <DatePicker
+            selected={endDate}
+            onChange={(date) => setEndDate(date)}
+            dateFormat="yyyy-MM-dd"
+            className="border border-gray-300 rounded p-2"
+          />
+        </div>
+        <table className="min-w-full bg-white border border-gray-200 mb-4">
           <thead>
             <tr>
               <th className="py-2 px-4 border-b">ID</th>
@@ -110,6 +143,22 @@ const ViewCounter = () => {
             ))}
           </tbody>
         </table>
+        <div className="bg-gray-100 p-4 rounded-lg mt-4">
+          <h2 className="text-xl font-bold mb-2">Sales Data for {startDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long' })}</h2>
+          {loading ? (
+            <p>Loading...</p>
+          ) : salesData.length > 0 ? (
+            <ul>
+              {salesData.map((data) => (
+                <li key={data.id} className="border-b py-2">
+                  Counter ID: {data.id}, Total Sales: ${data.sale.toFixed(2)}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No sales data available for this period.</p>
+          )}
+        </div>
       </div>
     </div>
   );
