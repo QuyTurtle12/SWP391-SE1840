@@ -1,7 +1,5 @@
 package com.swp391.jewelrysalesystem.config;
 
-import com.swp391.jewelrysalesystem.filters.JwtRequestFilter;
-
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +16,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.swp391.jewelrysalesystem.filters.JwtRequestFilter;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
 
-            @Autowired
-            private JwtRequestFilter jwtRequestFilter;
+        @Autowired
+        private JwtRequestFilter jwtRequestFilter;
 
         private static final Logger LOGGER = Logger.getLogger(JwtRequestFilter.class.getName());
 
@@ -38,7 +38,8 @@ public class SecurityConfig {
                                                                 "/**.jpg", "/**.jpeg", "/**.png")
                                                 .permitAll() // Allow access
                                                 .requestMatchers("/api/auth/admin/**", "/api/v2/accounts/MANAGER/**",
-                                                                "/api/v2/accounts/dashboard")
+                                                                "/api/v2/accounts/dashboard",
+                                                                "/api/v2/orders/categories/**")
                                                 .hasAuthority("ROLE_ADMIN")
                                                 .requestMatchers("/api/v2/accounts/user", "/api/v2/counters/**")
                                                 .hasAnyAuthority("ROLE_ADMIN", "ROLE_MANAGER")
@@ -47,7 +48,10 @@ public class SecurityConfig {
                                                                 "/api/v2/accounts/STAFF/**",
                                                                 "/api/v2/promotions/**")
                                                 .hasAuthority("ROLE_MANAGER")
-                                                .requestMatchers("/api/v2/products/{ID}", "/api/v2/products",
+                                                .requestMatchers("/api/v2/orders", "/api/v2/customers/top",
+                                                                "/api/v2/products", "/api/v2/orders/order/products/top")
+                                                .hasAnyAuthority("ROLE_MANAGER", "ROLE_STAFF", "ROLE_ADMIN")
+                                                .requestMatchers("/api/v2/products/{ID}",
                                                                 "/api/v2/products/sort",
                                                                 "/api/v2/products/search",
                                                                 "/api/v2/products/search/sort", "/api/v2/orders/**",
@@ -65,18 +69,18 @@ public class SecurityConfig {
                                 .sessionManagement(session -> session
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        // Add JWT token filter
-        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-        return http.build();
-    }
+                // Add JWT token filter
+                http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+                return http.build();
+        }
 
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
-        return authConfig.getAuthenticationManager();
-    }
+        @Bean
+        public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+                return authConfig.getAuthenticationManager();
+        }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder();
+        }
 }
