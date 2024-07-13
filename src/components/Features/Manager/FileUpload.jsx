@@ -1,13 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const FileUpload = () => {
   const [file, setFile] = useState(null);
   const [uploadedUrl, setUploadedUrl] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [url, setUrl] = useState(null); // Corrected variable name
   const [error, setError] = useState(null);
-  const generatedUrl = 'https://example.com/uploaded-image.jpg';
+
+  useEffect(() => {
+    const generatedUrl = 'https://example.com/uploaded-image.jpg';
     setUrl(generatedUrl);
+  }, []); // This runs only once when the component mounts
+
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
@@ -21,14 +26,11 @@ const FileUpload = () => {
       const formData = new FormData();
       formData.append('file', file);
 
-
       const response = await axios.post('http://localhost:8080/upload/image', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-
         }
       });
-
 
       setUploadedUrl(response.data);
     } catch (error) {
