@@ -15,9 +15,15 @@ const SalesChart = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        const token = localStorage.getItem('token'); // Lấy token từ localStorage
+
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/api/v2/counters/sales');
+                const response = await axios.get('http://localhost:8080/api/v2/counters/sales', {
+                    headers: {
+                        Authorization: `Bearer ${token}`, // Thêm token vào header
+                    },
+                });
                 const data = response.data;
 
                 const counterIDs = data.map(item => item.counterID);

@@ -11,13 +11,21 @@ const ProductCategoriesSalesDistribution = () => {
         datasets: [],
     });
     const [loading, setLoading] = useState(true);
+    const [token, setToken] = useState('');
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchChartData = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/api/v2/orders/categories/sales');
-                const data = response.data;
+                const tokenFromStorage = localStorage.getItem('token');
+                setToken(tokenFromStorage);
 
+                const response = await axios.get('http://localhost:8080/api/v2/orders/categories/sales', {
+                    headers: {
+                        Authorization: `Bearer ${tokenFromStorage}`,
+                    },
+                });
+
+                const data = response.data;
                 const categories = Object.keys(data);
                 const sales = Object.values(data);
 
@@ -41,6 +49,7 @@ const ProductCategoriesSalesDistribution = () => {
                         },
                     ],
                 });
+
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching sales data by category', error);
@@ -48,7 +57,7 @@ const ProductCategoriesSalesDistribution = () => {
             }
         };
 
-        fetchData();
+        fetchChartData();
     }, []);
 
     if (loading) {

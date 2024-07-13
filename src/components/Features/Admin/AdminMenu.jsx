@@ -30,7 +30,10 @@ function AdminMenu() {
             </Button>
           </li>
           <li className=" px-8 text-nowrap ">
-            <Button className=" px-8 rounded-sm text-black font-medium">
+            <Button
+              component={Link}
+              to="/dashboard"
+            className=" px-8 rounded-sm text-black font-medium">
               {" "}
               <h2 className="font-bold">View Dashboard</h2>{" "}
             </Button>

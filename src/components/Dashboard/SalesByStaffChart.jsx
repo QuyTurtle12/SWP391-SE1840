@@ -17,8 +17,15 @@ const SalesByStaffChart = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        axios.get('http://localhost:8080/api/v2/orders')
-            .then(response => {
+        const fetchChartData = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get('http://localhost:8080/api/v2/orders', {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
                 const data = response.data;
 
                 // Process data to get total sales by each staff member
@@ -46,11 +53,13 @@ const SalesByStaffChart = () => {
                         }
                     ]
                 });
-            })
-            .catch(error => {
+            } catch (error) {
                 console.error(`Error: ${error}`);
                 setError('Failed to fetch data');
-            });
+            }
+        };
+
+        fetchChartData();
     }, []);
 
     if (error) {

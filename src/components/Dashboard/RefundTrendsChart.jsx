@@ -19,8 +19,15 @@ const RefundTrendsChart = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        axios.get('http://localhost:8080/api/refunds')
-            .then(response => {
+        const fetchChartData = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get('http://localhost:8080/api/refunds', {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
                 const data = response.data;
 
                 // Process data to get refund amounts over time
@@ -48,11 +55,13 @@ const RefundTrendsChart = () => {
                         }
                     ]
                 });
-            })
-            .catch(error => {
+            } catch (error) {
                 console.error(`Error: ${error}`);
                 setError('Failed to fetch data');
-            });
+            }
+        };
+
+        fetchChartData();
     }, []);
 
     if (error) {

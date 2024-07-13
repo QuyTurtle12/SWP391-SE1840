@@ -13,9 +13,15 @@ const SalesOverTimeChart = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        const token = localStorage.getItem('token'); // Get token from localStorage
+
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/api/v2/orders');
+                const response = await axios.get('http://localhost:8080/api/v2/orders', {
+                    headers: {
+                        Authorization: `Bearer ${token}`, // Include token in headers
+                    },
+                });
                 const data = response.data;
 
                 // Process data to get sales over time
@@ -76,7 +82,6 @@ const SalesOverTimeChart = () => {
                         legend: {
                             position: 'top',
                         },
-
                     },
                 }}
             />

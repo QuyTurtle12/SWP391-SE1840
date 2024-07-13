@@ -8,10 +8,12 @@ import TopCustomersTable from './TopCustomersTable';
 import RefundTrendsChart from './RefundTrendsChart';
 import SalesByStaffChart from './SalesByStaffChart';
 import './Dashboard.css';
+import AdminMenu from '../Features/Admin/AdminMenu';
 
 const Dashboard = () => {
     return (
         <div className="dashboard">
+            <AdminMenu/>
             <h1>Dashboard</h1>
             <div className="top-section">
                 <div className="left-column">
