@@ -63,16 +63,6 @@ export default function ProductListManager() {
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-3xl font-bold text-gray-800">Our Latest Products</h2>
-            <div className="relative">
-              <Button component={Link} to="/viewcart" className="relative">
-                <ShoppingCartIcon className="text-black" sx={{ fontSize: 40 }} />
-                {cart.length > 0 && (
-                  <div className="absolute top-0 right-0 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-semibold">
-                    {cart.length}
-                  </div>
-                )}
-              </Button>
-            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

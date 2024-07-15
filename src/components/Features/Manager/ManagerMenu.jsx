@@ -9,7 +9,7 @@ export default function ManagerMenu() {
         <Button
           title="Back to Admin Menu"
           component={Link}
-          to="/"
+          to="/manager"
           className="w-full md:w-auto"
         >
           <h1 className="text-black text-3xl font-bold">Manager</h1>
@@ -64,47 +64,48 @@ export default function ManagerMenu() {
             <Button
               component={Link}
               to="/productlist2"
-              className="text-black font-bold"
+              className="text-black font-medium"
             >
-              <h3>View Product Lists</h3>
+              <h2 className="font-bold">View Product Lists</h2>
             </Button>
           </li>
           <li className="px-4 py-2">
             <Button
               component={Link}
               to="/view-counter"
-              className="text-black font-bold"
+              className="text-black font-medium"
             >
-              <h3>View Counter</h3>
+              <h2 className="font-bold">View Counters</h2>
             </Button>
           </li>
           <li className="px-4 py-2">
             <Button
               component={Link}
               to="/view-promotion"
-              className="text-black font-bold"
+              className="text-black font-medium"
             >
-              <h3>View Promotion</h3>
+              <h2 className="font-bold">View Promotion</h2>
             </Button>
           </li>
           <li className="px-4 py-2">
             <Button
               component={Link}
               to="/view-voucher"
-              className="text-black font-bold"
+              className="text-black font-medium"
             >
-              <h3>View Voucher</h3>
+              <h2 className="font-bold">View Category</h2>
             </Button>
           </li>
           <li className="px-4 py-2">
             <Button
               component={Link}
-              to="/file-upload"
-              className="text-black font-bold"
+              to="/view-category"
+              className="text-black font-medium"
             >
-              <h3>up file</h3>
+              <h2 className="font-bold">View Voucher</h2>
             </Button>
           </li>
+ 
         </ul>
         
       </div>

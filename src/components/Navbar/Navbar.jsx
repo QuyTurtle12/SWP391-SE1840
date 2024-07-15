@@ -38,8 +38,7 @@ export default function Navbar() {
         <Toolbar>
           <Typography
             className="flex items-center flex-grow text-2xl no-underline font-medium text-white"
-            component={Link}
-            to="/"
+    
           >
             <img
               src={logodiamond}

@@ -83,9 +83,6 @@ function ViewManagerList() {
                   Full Name
                 </th>
                 <th className="px-6 py-3 font-bold text-left text-xs  text-black uppercase tracking-wider">
-                  Role ID
-                </th>
-                <th className="px-6 py-3 font-bold text-left text-xs  text-black uppercase tracking-wider">
                   Email
                 </th>
                 <th className="px-6 py-3 font-bold text-left text-xs  text-black uppercase tracking-wider">
@@ -111,9 +108,6 @@ function ViewManagerList() {
                   <td className="px-6 py-4 whitespace-nowrap">{manager.id}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {manager.fullName}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {manager.roleID}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {manager.email}
