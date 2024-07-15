@@ -111,6 +111,8 @@ public class CounterController {
         }
     }
 
+    
+
     @GetMapping("/v2/counters/no-sale")
     public ResponseEntity<List<Map<String, Object>>> getCounterListWithNoSaleV2() {
         try {

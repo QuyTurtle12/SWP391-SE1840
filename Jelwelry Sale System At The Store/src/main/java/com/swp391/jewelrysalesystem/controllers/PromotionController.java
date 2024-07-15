@@ -6,7 +6,11 @@ import com.swp391.jewelrysalesystem.models.Promotion;
 import com.swp391.jewelrysalesystem.services.IProductService;
 import com.swp391.jewelrysalesystem.services.IPromotionService;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -101,7 +105,7 @@ public class PromotionController {
     }
 
     @GetMapping("v2/promotions")
-    public ResponseEntity<List<Promotion>> getPromotionListV2() {
+    public ResponseEntity<List<Map<String, Object>>> getPromotionListV2() {
         try {
             List<Promotion> promotionList = promotionService.getPromotionList();
 
@@ -109,7 +113,15 @@ public class PromotionController {
                 return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
             }
 
-            return ResponseEntity.ok(promotionList);
+            List<Map<String, Object>> response = new ArrayList<>();
+            for (Promotion promotion : promotionList) {
+                if (promotion.getStatus() == true) {
+                    Map<String, Object> map = promotion.toMap();
+                    response.add(map);
+                }
+            }
+
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);

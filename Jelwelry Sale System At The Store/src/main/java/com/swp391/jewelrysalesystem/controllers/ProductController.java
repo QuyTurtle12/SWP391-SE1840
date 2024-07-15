@@ -66,7 +66,7 @@ public class ProductController {
             double goldPrice = goldPriceService.getCurrent18kGoldPrice();
             double costPrice = goldWeight * goldPrice + laborCost + stoneCost;
 
-            double priceRate = (costPrice + (costPrice * DESIRED_PROFIT_MARGIN))/costPrice;
+            double priceRate = 1 + DESIRED_PROFIT_MARGIN;
             DecimalFormat decimalFormat = new DecimalFormat("#.##");
 
             double sellingPrice = costPrice * priceRate;

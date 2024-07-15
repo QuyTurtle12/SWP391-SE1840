@@ -23,7 +23,7 @@ public class VNPAYController {
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String orderType = "other";
-        long amountInCents = amount * 100;
+        long amountInCents = amount * 100 * 25000;
 
         String vnp_TxnRef = VnpayConfig.getRandomNumber(8);
         String vnp_IpAddr = VnpayConfig.getIpAddress(req);

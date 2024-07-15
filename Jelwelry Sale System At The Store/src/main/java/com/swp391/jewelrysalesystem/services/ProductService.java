@@ -62,6 +62,12 @@ public class ProductService implements IProductService {
         List<Product> newProductList = new ArrayList<>();
 
         switch (filter) {
+            case "ByProductID":
+            for (Product product : productList) {
+                if (product.getID() == Integer.parseInt(input)) {
+                    newProductList.add(product);
+                }
+            }
             case "ByName":
                 for (Product product : productList) {
                     if (product.getName().toLowerCase().trim().contains(input.toLowerCase())) {
