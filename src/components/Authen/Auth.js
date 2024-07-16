@@ -1,15 +1,23 @@
-const TOKEN_KEY = 'token';
+const TOKEN_KEY = "token";
 
 const saveToken = (token) => {
-    localStorage.setItem(TOKEN_KEY, token);
+  localStorage.setItem(TOKEN_KEY, token);
 };
 
 const getToken = () => {
-    return localStorage.getItem(TOKEN_KEY);
+  return localStorage.getItem(TOKEN_KEY);
 };
 
 const removeToken = () => {
-    localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(TOKEN_KEY);
 };
-
-export { saveToken, getToken, removeToken };
+const getUserRole = () => {
+  // Logic to decode token and retrieve user role
+  const token = getToken();
+  if (token) {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    return payload.roleID; // Assuming role is stored in the token payload
+  }
+  return null;
+};
+export { saveToken, getToken, getUserRole, removeToken };

@@ -12,26 +12,24 @@ export default function Navbar() {
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    try {
-      const response = await axios.post(
-        "https://jewelrysalesystem-backend.onrender.com/api/auth/logout",
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      console.log("Logout success");
-      // Clear the token and navigate to the homepage
-      localStorage.removeItem("token");
-      navigate("/login");
-    } catch (error) {
-      console.error("Error at logging out", error);
-    }
-  };
-
+const handleLogout = async () => {
+  try {
+    await axios.post(
+      "https://jewelrysalesystem-backend.onrender.com/api/auth/logout",
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    localStorage.removeItem("token");
+    localStorage.removeItem("sessionActive");
+    navigate("/login");
+  } catch (error) {
+    console.error("Error at logging out", error);
+  }
+};
   return (
     <Box className="flex-grow w-screen">
       <AppBar position="static" className="bg-black shadow-none z-0">

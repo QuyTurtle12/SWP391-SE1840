@@ -4,14 +4,12 @@ import Login from "./components/Login/Login";
 import ViewPromotion from "./components/Features/Manager/ViewPromotion";
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import ProductDetail from "./components/ProductDetail/ProductDetail";
 import ViewDashboard from "./components/Features/Admin/ViewDashboard";
 import ViewManagerList from "./components/Features/Admin/ViewManagerList";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Profile from "./components/Profile/Profile";
 import EditManager from "./components/Features/Admin/EditManager";
-import Register from "./components/Register/Register";
 import Admin from "./components/Features/Admin/Admin";
 import Staff from "./components/Features/Staff/Staff";
 import CustomerList from "./components/Features/Staff/CustomerList";
@@ -22,8 +20,8 @@ import Manager from "./components/Features/Manager/Manager";
 import AddStaff from "./components/Features/Manager/AddStaff";
 import ViewStaffList from "./components/Features/Manager/ViewStaffList";
 import EditStaff from "./components/Features/Manager/EditStaff";
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import AddProduct from "./components/Features/Manager/AddProduct";
 import ProductDetailManager from "./components/Features/Manager/ProductDetailManager";
 import ProductDetailStaff from "./components/Features/Staff/ProductDetailStaff";
@@ -42,62 +40,199 @@ import ResetForm from "./components/Login/ResetForm";
 import ViewCounter from "./components/Features/Manager/ViewCounter";
 import GoldPrice from "./components/Features/Staff/GoldPrice";
 import Dashboard from "./components/Dashboard/Dashboard";
-
-
 import Voucher from "./components/Features/Manager/Voucher";
-
-import FileUpload from "./components/Features/Manager/FileUpload";
+import { getToken } from "./components/Authen/Auth";
+import { useEffect, useState } from "react";
+import axios from "axios";
 function App() {
+  //check validate pages
+  const ProtectedRoute = ({ role, element }) => {
+    const token = getToken(); // get token from  Auth
+    const [userRole, setUserRole] = useState(null);
+
+    useEffect(() => {
+      const fetchUser = async () => {
+        if (token) {
+          try {
+            const response = await axios.get(
+              "http://localhost:8080/api/this-info",
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+            setUserRole(response.data.roleID); // get roleID
+          } catch (error) {
+            console.error("Error fetching user:", error);
+          }
+        }
+      };
+
+      fetchUser();
+    }, [token]);
+
+    if (userRole === null) {
+      
+      return <div>Loading...</div>; // component loading
+    }
+
+    if (role.includes(userRole)) {
+
+      return element;
+    } else {
+      return <Navigate to="/" />; // Redirect login if no access
+    }
+  };
   return (
     <div className="overflow-hidden">
       <ToastContainer />
       <Navbar />
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/customer-list" element={<CustomerList />} />
+        <Route
+          path="/customer-list"
+          element={<ProtectedRoute role={[1]} element={<CustomerList />} />}
+        />
         <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/view-dashboard" element={<ViewDashboard />} />
-        <Route path="/view-manager-list" element={<ViewManagerList />} />
-        <Route path="/view-staff-list" element={<ViewStaffList />} />
-        <Route path="/add-manager" element={<AddManager />} />
-        <Route path="/add-staff" element={<AddStaff />} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/staff" element={<Staff />} />
-        <Route path="/manager" element={<Manager />} />
-        <Route path="/products/:id" element={<ProductDetail />} />
-        <Route path="/add-product" element={<AddProduct />} />
-        <Route path="/edit-staff/:id" element={<EditStaff />} />
-        <Route path="/view-category" element={<ViewCategory />} />
-        <Route path="/edit-manager/:id" element={<EditManager />} />
-        <Route path="/viewcart" element={<ViewCart />} />
-        <Route path="/productlist" element={<ProductList />} />
-        <Route path="/productlist2" element={<ProductListManager />} />
-        <Route path="/order-list" element={<ViewOrderList />} />
-        <Route path="/order-list/:cusphone" element={<ViewOrderList />} />
-        <Route path="/productdetail/:id" element={<ProductDetailStaff />} />
-        <Route path="/productdetail2/:id" element={<ProductDetailManager />} />
-        <Route path="/orderdetail/:id" element={<OrderDetail />} />
-        <Route path="/refund-detail/:id" element={<RefundDetail />} />
-        <Route path="/refund-form/:id" element={<RefundForm />} />
-        <Route path="/refund-list" element={<RefundList />} />
-        <Route path="/refund-viewcart" element={<RefundViewCart />} />
-        <Route path="/refund-purity/:id/:productID" element={<RefundPurity />} />
-        <Route path="/order-refund" element={<ViewOrderRefund />} />
-        <Route path="/add-category" element={<AddCategory />} />
+        <Route
+          path="/view-dashboard"
+          element={<ProtectedRoute role={[3]} element={<ViewDashboard />} />}
+        />
+        <Route
+          path="/view-manager-list"
+          element={<ProtectedRoute role={[3]} element={<ViewManagerList />} />}
+        />
+        <Route
+          path="/view-staff-list"
+          element={<ProtectedRoute role={[2]} element={<ViewStaffList />} />}
+        />
+        <Route
+          path="/add-manager"
+          element={<ProtectedRoute role={[3]} element={<AddManager />} />}
+        />
+        <Route
+          path="/add-staff"
+          element={<ProtectedRoute role={[2]} element={<AddStaff />} />}
+        />
+        <Route
+          path="/admin"
+          element={<ProtectedRoute role={[3]} element={<Admin />} />}
+        />
+        <Route
+          path="/staff"
+          element={<ProtectedRoute role={[1]} element={<Staff />} />}
+        />
+        <Route
+          path="/manager"
+          element={<ProtectedRoute role={[2]} element={<Manager />} />}
+        />
+        <Route
+          path="/products/:id"
+          element={<ProtectedRoute role={[1]} element={<ProductDetail />} />}
+        />
+        <Route
+          path="/add-product"
+          element={<ProtectedRoute role={[2]} element={<AddProduct />} />}
+        />
+        <Route
+          path="/edit-staff/:id"
+          element={<ProtectedRoute role={[2]} element={<EditStaff />} />}
+        />
+        <Route
+          path="/view-category"
+          element={<ProtectedRoute role={[2]} element={<ViewCategory />} />}
+        />
+        <Route
+          path="/edit-manager/:id"
+          element={<ProtectedRoute role={[3]} element={<EditManager />} />}
+        />
+        <Route
+          path="/viewcart"
+          element={<ProtectedRoute role={[1]} element={<ViewCart />} />}
+        />
+        <Route
+          path="/productlist"
+          element={<ProtectedRoute role={[1]} element={<ProductList />} />}
+        />
+        <Route
+          path="/productlist2"
+          element={
+            <ProtectedRoute role={[2]} element={<ProductListManager />} />
+          }
+        />
+        <Route
+          path="/order-list"
+          element={<ProtectedRoute role={[1]} element={<ViewOrderList />} />}
+        />
+        <Route
+          path="/order-list/:cusphone"
+          element={<ProtectedRoute role={[1]} element={<ViewOrderList />} />}
+        />
+        <Route
+          path="/productdetail/:id"
+          element={
+            <ProtectedRoute role={[1]} element={<ProductDetailStaff />} />
+          }
+        />
+        <Route
+          path="/productdetail2/:id"
+          element={
+            <ProtectedRoute role={[2]} element={<ProductDetailManager />} />
+          }
+        />
+        <Route
+          path="/orderdetail/:id"
+          element={<ProtectedRoute role={[1]} element={<OrderDetail />} />}
+        />
+        <Route
+          path="/refund-detail/:id"
+          element={<ProtectedRoute role={[1]} element={<RefundDetail />} />}
+        />
+        <Route
+          path="/refund-form/:id"
+          element={<ProtectedRoute role={[1]} element={<RefundForm />} />}
+        />
+        <Route
+          path="/refund-list"
+          element={<ProtectedRoute role={[1]} element={<RefundList />} />}
+        />
+        <Route
+          path="/refund-viewcart"
+          element={<ProtectedRoute role={[1]} element={<RefundViewCart />} />}
+        />
+        <Route
+          path="/refund-purity/:id/:productID"
+          element={<ProtectedRoute role={[1]} element={<RefundPurity />} />}
+        />
+        <Route
+          path="/order-refund"
+          element={<ProtectedRoute role={[1]} element={<ViewOrderRefund />} />}
+        />
+        <Route
+          path="/add-category"
+          element={<ProtectedRoute role={[2]} element={<AddCategory />} />}
+        />
         <Route path="/reset-password" element={<ResetForm />} />
         <Route path="/forget-form" element={<ForgetForm />} />
-        <Route path="/view-promotion" element={<ViewPromotion />} />
-        <Route path="/view-counter" element={<ViewCounter />} />
+        <Route
+          path="/view-promotion"
+          element={<ProtectedRoute role={[2]} element={<ViewPromotion />} />}
+        />
+        <Route
+          path="/view-counter"
+          element={<ProtectedRoute role={[2]} element={<ViewCounter />} />}
+        />
         <Route path="/gold-price" element={<GoldPrice />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route
+          path="/dashboard"
+          element={<ProtectedRoute role={[3]} element={<Dashboard />} />}
+        />
 
-
-        <Route path="/view-voucher" element={<Voucher />} />
-
-
-        <Route path="file-upload" element={<FileUpload />} />
+        <Route
+          path="/view-voucher"
+          element={<ProtectedRoute role={[2]} element={<Voucher />} />}
+        />
       </Routes>
       <Routes></Routes>
       <Footer />
