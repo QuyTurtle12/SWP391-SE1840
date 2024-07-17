@@ -206,14 +206,26 @@ function ViewCart() {
   };
 
   const handleCreateOrder = () => {
+
+    for (let item of cart) {
+      if (item.quantity > item.product.stock) {
+        toast.error(
+          `Quantity of ${item.product.name} exceeds stock (${item.product.stock})`
+        );
+        return;
+      }
+    }
     if (!subtotal || !customerPhone) {
       toast.error("Fill all the fields");
       return;
     }
-
-    axiosInstance
+    if (paymentMethod === "online") {
+      const amountInVND = Math.floor(finalPrice); // Convert to integer
+      handleCreatePayment(amountInVND);       
+    
+      axiosInstance
       .post(
-        `https://jewelrysalesystem-backend.onrender.com/api/v2/orders?totalPrice=${subtotal}&staffID=${staffId}&counterID=${counterID}&customerPhone=${customerPhone}&customerName=${customerName}&customerGender=${customerGender}&discountRate=${discountRate}&pointApplied=${point}&discountName=${discountName}`,
+        `https://jewelrysalesystem-backend.onrender.com/api/v2/orders?totalPrice=${subtotal}&staffID=${staffId}&counterID=${counterID}&customerPhone=${customerPhone}&customerName=${customerName}&customerGender=${customerGender}&discountRate=${discountRate}&pointApplied=${pointsToApply}&discountName=${discountName}`,
         cart
       )
 
@@ -221,9 +233,7 @@ function ViewCart() {
       .then(() => {
         toast.success("Order created successfully!");
       
-        if (paymentMethod === "online") {
-          const amountInVND = Math.floor(finalPrice); // Convert to integer
-          handleCreatePayment(amountInVND);        }
+    
         handleClearCart();
         setShowModal(false)
       })
@@ -234,6 +244,22 @@ function ViewCart() {
         console.error(errorMessage);
         toast.error(errorMessage);
       });
+    
+    }axiosInstance
+    .post(
+      `https://jewelrysalesystem-backend.onrender.com/api/v2/orders?totalPrice=${subtotal}&staffID=${staffId}&counterID=${counterID}&customerPhone=${customerPhone}&customerName=${customerName}&customerGender=${customerGender}&discountRate=${discountRate}&pointApplied=${pointsToApply}&discountName=${discountName}`,
+      cart
+    )
+
+    
+    .then(() => {
+      toast.success("Order created successfully!");
+    
+  
+      handleClearCart();
+      setShowModal(false)
+    })
+ 
   };
 
   const handleClearCart = () => {

@@ -6,8 +6,9 @@ function OrderDetail() {
   const { id } = useParams();
   const [orders, setOrders] = useState([]);
   const [orderDetail, setOrderDetail] = useState({});
-  const [customer, setCustomer] = useState({});
   const [staff, setStaff] = useState({});
+  const [totalPriceOfProducts, setTotalPriceOfProducts] = useState(0);
+  const [voucherValue, setVoucherValue] = useState("0.00");
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -31,21 +32,12 @@ function OrderDetail() {
             },
           }
         );
+        console.log(orderDetailResponse.data)
         setOrderDetail(orderDetailResponse.data);
 
-        const customerResponse = await axios.get(
-          `https://jewelrysalesystem-backend.onrender.com/api/v2/customers/customer?id=${orderDetailResponse.data.customerID}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        setCustomer(customerResponse.data);
-        console.log(customerResponse.data);
-
+        const staffID = orderDetailResponse.data.staffID;
         const staffResponse = await axios.get(
-          `https://jewelrysalesystem-backend.onrender.com/api/v2/accounts/staff?id=${orderDetailResponse.data.staffID}`,
+          `https://jewelrysalesystem-backend.onrender.com/api/v2/accounts/staff?id=${staffID}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -53,10 +45,21 @@ function OrderDetail() {
           }
         );
         setStaff(staffResponse.data);
-        console.log(staffResponse.data);
-        console.log(orderDetailResponse.data.staffID);
+
+        // Calculate total price of products
+        const total = orderProductsResponse.data.reduce(
+          (acc, order) => acc + order.productPrice,
+          0
+        );
+        setTotalPriceOfProducts(total);
+
+        // Calculate voucher value if discountApplied is valid
+        if (orderDetailResponse.data.discountApplied) {
+          const voucher = orderDetailResponse.data.discountApplied * total;
+          setVoucherValue(voucher.toFixed(2));
+        }
       } catch (error) {
-        console.error("Error at fetching data staff", error);
+        console.error("Error fetching order data", error);
       }
     };
 
@@ -65,7 +68,10 @@ function OrderDetail() {
 
   const formatTotalPrice = (price) => {
     if (typeof price !== "number") return "";
-    return price.toLocaleString("en-US");
+    return price.toLocaleString("en-US", {
+      style: "currency",
+      currency: "USD",
+    });
   };
 
   const formatDate = (date) => {
@@ -110,40 +116,98 @@ function OrderDetail() {
             <p className="text-lg md:text-xl text-black font-semibold leading-6 xl:leading-5 ">
               Customer’s Cart
             </p>
-            {orders.map((order) => (
-              <div
-                key={order.orderID} // Đây là key duy nhất
-                className="mt-4 md:mt-6 flex flex-col md:flex-row justify-start items-start md:items-center md:space-x-6 xl:space-x-8 w-full"
-              >
-                <div className="pb-4 md:pb-8 w-full md:w-40"></div>
-                <div className="border-b border-black md:flex-row flex-col flex justify-between items-start w-full pb-8 space-y-4 md:space-y-0">
-                  <div className="w-full flex flex-col justify-start items-start space-y-8">
-                    <h3 className="text-xl text-black xl:text-2xl font-semibold leading-6">
-                      {order.productName}
-                    </h3>
-                  </div>
-                  <div className="flex justify-between space-x-8 items-start w-full">
-                    <p className="text-base text-black xl:text-lg leading-6"></p>
-                    <p className="text-base flex text-black xl:text-lg leading-6 ">
-                      {order.amount} pcs
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
+            <div className="container mx-auto p-4">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider"
+                    >
+                      Product Name
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider"
+                    >
+                      Price per product
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider"
+                    >
+                      Quantity
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider"
+                    >
+                      Total Price of product
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {orders.map((order) => {
+                    const pricePerProduct = order.productPrice / order.amount;
+
+                    return (
+                      <tr key={order.productID}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          {order.productName}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          $ {pricePerProduct}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {order.amount} pcs
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          $ {order.productPrice}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
           <div className="flex justify-center flex-col md:flex-row items-stretch w-full space-y-4 md:space-y-0 md:space-x-6 xl:space-x-8">
             <div className="flex flex-col px-4 py-6 md:p-6 xl:p-8 w-full bg-gray-300 space-y-6">
               <h3 className="text-xl text-black font-semibold leading-5">
                 Summary
               </h3>
-              <div className="flex justify-center items-center w-full space-y-4 flex-col border-black border-b pb-4"></div>
+              <div className="flex justify-between items-center w-full">
+                <p className="text-base text-black font-semibold leading-4">
+                  Original price{" "}
+                </p>
+                <p className="text-base text-black font-semibold leading-4">
+                  {formatTotalPrice(totalPriceOfProducts)}
+                </p>
+              </div>
+              <div className="flex justify-between items-center w-full">
+                <p className="text-base text-black font-semibold leading-4">
+                  Voucher : {orderDetail.discountName}
+                </p>
+                <p className="text-base text-gray-500 font-semibold line-through leading-4">
+                  ${voucherValue}
+                </p>
+              </div>
+              <div className="flex justify-between items-center w-full">
+                <p className="text-base text-black font-semibold leading-4">
+                  Customer Point:
+                </p>
+                <p className="text-base text-gray-500 font-semibold line-through leading-4">
+                  ${orderDetail.pointApplied}
+                </p>
+              </div>
+              <div className="flex justify-center items-end w-full space-y-4 flex-col border-black border-b pb-4"></div>
+
               <div className="flex justify-between items-center w-full">
                 <p className="text-base text-black font-semibold leading-4">
                   Total
                 </p>
                 <p className="text-base text-black font-semibold leading-4">
-                  ${formatTotalPrice(orderDetail.totalPrice)}
+                  {formatTotalPrice(orderDetail.totalPrice)}
                 </p>
               </div>
             </div>
@@ -160,19 +224,11 @@ function OrderDetail() {
                   <p className="text-base text-wrap text-black font-semibold leading-4 text-left">
                     <ul>
                       <li className="pb-2 flex">
-                        ID: <p className="pl-4">{orderDetail.customerID}</p>
+                        Name: <p className="pl-4">{orderDetail.customerName}</p>
                       </li>
                       <li className="pb-2 flex">
-                        Name: <p className="pl-4">{customer.name}</p>
-                      </li>
-                      <li className="pb-2 flex">
-                        Contact: <p className="pl-4"> {customer.contactInfo}</p>
-                      </li>
-                      <li className="pb-2 flex">
-                        Gender: <p className="pl-4"> {customer.gender}</p>
-                      </li>
-                      <li className="pb-2 flex">
-                        Point:<p className="pl-4">{customer.point}</p>
+                        Contact:{" "}
+                        <p className="pl-4"> {orderDetail.customerPhone}</p>
                       </li>
                     </ul>
                   </p>

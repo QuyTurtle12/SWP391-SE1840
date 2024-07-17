@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 function ViewOrderList() {
   const [orders, setOrder] = useState([]);
+  const [sortOrder, setSortOrder] = useState('asc'); // Add this line
   const navigate = useNavigate();
   const { cusphone } = useParams();
   const token = localStorage.getItem("token");
@@ -25,8 +26,14 @@ function ViewOrderList() {
         },
       })
       .then((response) => {
-        console.log(response.data);
-        setOrder(response.data);
+        const sortedOrders = response.data.sort((a, b) => {
+          if (sortOrder === 'asc') {
+            return a.id > b.id ? 1 : -1;
+          } else {
+            return a.id < b.id ? 1 : -1;
+          }
+        });
+        setOrder(sortedOrders);
       })
       .catch((error) => console.error("Error at fetching data", error));
     console.log(token);
@@ -35,22 +42,41 @@ function ViewOrderList() {
   const searchOrder = (customerPhone) => {
     axios
       .get(
-        `https://jewelrysalesystem-backend.onrender.com/api/v2/orders/search?input=${customerPhone}&filter=ByPhoneNumber`
-      ,{
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+        `https://jewelrysalesystem-backend.onrender.com/api/v2/orders/search?input=${customerPhone}&filter=ByPhoneNumber`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
       .then((response) => {
-        setOrder(response.data);
+        const sortedOrders = response.data.sort((a, b) => {
+          if (sortOrder === 'asc') {
+            return a.id > b.id ? 1 : -1;
+          } else {
+            return a.id < b.id ? 1 : -1;
+          }
+        });
+        setOrder(sortedOrders);
       })
       .catch((error) => console.error("Error order customer:", error));
-      console.log(token);
-
+    console.log(token);
   };
 
   const handleOrder = (orderId) => {
     navigate(`/orderdetail/${orderId}`, { state: { orderId } });
+  };
+
+  const sortOrdersById = () => {
+    const sortedOrders = [...orders].sort((a, b) => {
+      if (sortOrder === 'asc') {
+        return a.id > b.id ? 1 : -1;
+      } else {
+        return a.id < b.id ? 1 : -1;
+      }
+    });
+    setOrder(sortedOrders);
+    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
   };
 
   return (
@@ -65,8 +91,11 @@ function ViewOrderList() {
             <table className="border border-black min-w-full divide-y divide-gray-500">
               <thead>
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
-                    Order
+                  <th 
+                    className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider cursor-pointer" 
+                    onClick={sortOrdersById}
+                  >
+                    Order {sortOrder === 'asc' ? '▼' :'▲' }
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">
                     Customer name
