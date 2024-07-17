@@ -120,6 +120,7 @@ public class OrderController {
                 orderDTO.setOrderID(newOrder.getID());
                 orderDTO.setProductID(item.getProduct().getID());
                 orderDTO.setAmount(item.getQuantity());
+                orderDTO.setProductPrice(item.getPrice());
                 orderDTOs.add(orderDTO);
                 orderService.saveOrderDTO(orderDTO);
             }
@@ -161,7 +162,8 @@ public class OrderController {
                 orderMap.put("totalPrice", order.getTotalPrice());
                 orderMap.put("discountName", discountName);
                 orderMap.put("discountApplied", order.getDiscountApplied());
-
+                orderMap.put("pointApplied", order.getPointApplied());
+                
                 Customer customer = customerService.getCustomer(order.getCustomerID());
                 String customerName = customer.getName();
                 String customerPhone = customer.getContactInfo();
@@ -186,15 +188,39 @@ public class OrderController {
     }
 
     @GetMapping("/v2/orders/order")
-    public ResponseEntity<Order> getOrderV2(@RequestParam int id) {
+    public ResponseEntity<Map<String, Object>> getOrderV2(@RequestParam int id) {
         try {
             Order order = orderService.getOrder(id);
 
             if (order == null) {
                 return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
             }
+            String discountName = customerPromotionService.getCustomerPromotion(order.getDiscountID())
+                    .getDiscountName();
+            Map<String, Object> orderMap = new HashMap<>();
+            orderMap.put("id", order.getID());
+            orderMap.put("date", order.getDate());
+            orderMap.put("staffID", order.getStaffID());
+            orderMap.put("counterID", order.getCounterID());
+            orderMap.put("totalPrice", order.getTotalPrice());
+            orderMap.put("discountName", discountName);
+            orderMap.put("discountApplied", order.getDiscountApplied());
+            orderMap.put("pointApplied", order.getPointApplied());
 
-            return ResponseEntity.ok(order);
+            Customer customer = customerService.getCustomer(order.getCustomerID());
+            String customerName = customer.getName();
+            String customerPhone = customer.getContactInfo();
+            orderMap.put("customerName", customerName);
+            orderMap.put("customerPhone", customerPhone);
+
+            User staff = userService.getUserByField(order.getStaffID(), "id", "user");
+            String staffName = "N/A";
+            if (staff != null) {
+                staffName = staff.getFullName();
+            }
+            orderMap.put("staffName", staffName);
+
+            return ResponseEntity.ok(orderMap);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
@@ -216,6 +242,7 @@ public class OrderController {
                 Map<String, Object> orderDetailMap = new HashMap<>();
                 orderDetailMap.put("productName", productName);
                 orderDetailMap.put("amount", orderDetail.getAmount());
+                orderDetailMap.put("productPrice", orderDetail.getProductPrice());
 
                 responseList.add(orderDetailMap);
             }

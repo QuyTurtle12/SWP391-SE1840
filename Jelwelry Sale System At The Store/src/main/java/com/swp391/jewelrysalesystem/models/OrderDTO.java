@@ -14,5 +14,6 @@ import lombok.Setter;
 public class OrderDTO {
     private int orderID; //Link from Order table
     private int productID; //Link from Product table
+    private double productPrice;
     private int amount; //Quantity of the product in the order
 }
