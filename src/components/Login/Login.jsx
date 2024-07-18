@@ -27,17 +27,17 @@ export default function Login() {
     };
 
     checkToken();
-  });
+  }, [navigate]);
 
   const fetchUser = async (jwt) => {
     try {
       const response = await axios.get("http://localhost:8080/api/this-info", {
         headers: {
-          'Authorization': `Bearer ${jwt}`
-        }
+          Authorization: `Bearer ${jwt}`,
+        },
       });
       console.log(response.data);
-      return response.data.roleID;  // Return roleID directly
+      return response.data.roleID; // Return roleID directly
     } catch (error) {
       console.error("Error fetching user:", error);
       return null;
@@ -86,7 +86,11 @@ export default function Login() {
     }
   };
 
-
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleLogin();
+    }
+  };
 
   return (
     <div className="login">
@@ -100,6 +104,7 @@ export default function Login() {
           label="Email"
           defaultValue=""
           onChange={(e) => setEmail(e.target.value)}
+          onKeyPress={handleKeyPress}
         />
         <TextField
           required
@@ -109,6 +114,7 @@ export default function Login() {
           label="Password"
           defaultValue=""
           onChange={(e) => setPassword(e.target.value)}
+          onKeyPress={handleKeyPress}
         />
         <a href="/forget-form">Forget password?</a>
         {!isRequesting ? (

@@ -7,8 +7,10 @@ function CustomerList() {
   const [customers, setCustomers] = useState([]);
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
-  const [searchInput, setSearchInput]= useState();
-  useEffect(() => {
+  const [searchInput, setSearchInput] = useState("");
+  const [error, setError] = useState("");
+
+  const fetchCustomers = () => {
     axios
       .get("https://jewelrysalesystem-backend.onrender.com/api/v2/customers", {
         headers: {
@@ -20,16 +22,34 @@ function CustomerList() {
         setCustomers(response.data);
       })
       .catch((error) => console.error("Error at fetching data", error));
-  },[]);
+  };
+
+  useEffect(() => {
+    fetchCustomers();
+  }, []);
 
   const handleViewOrder = (cusphone) => {
     navigate(`/order-list/${cusphone}`);
-  }
+  };
+
   const searchCustomer = () => {
+    if (!searchInput.trim()) {
+      fetchCustomers();
+      return;
+    }
+
+    const phoneRegex = /^0\d{9,10}$/;
+    if (!phoneRegex.test(searchInput)) {
+      setError("Phone number must start with 0 and be 10-11 digits long");
+      return;
+    } else {
+      setError("");
+    }
+
     if (token) {
       axios
         .get(
-          `http://localhost:8080/api/v2/customers/search?input=${searchInput}&filter=ByPhoneNumber`,
+          `https://jewelrysalesystem-backend.onrender.com/api/v2/customers/search?input=${searchInput}&filter=ByPhoneNumber`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -39,36 +59,41 @@ function CustomerList() {
         .then((response) => {
           setCustomers(response.data);
         })
-        .catch((error) => console.error("Error searching c:", error));
+        .catch((error) => console.error("Error searching customer:", error));
     } else {
       console.error("No token found");
     }
   };
+
   const handleSearchInputChange = (event) => {
     setSearchInput(event.target.value);
+    setError(""); // Clear error when user types
   };
+
   return (
     <>
       <StaffMenu />
-      <div className="text-3xl justify-between text-center font-bold pt-10 text-black mb-8">
+      <div className="text-3xl justify-between text-center font-bold pt-10 text-black mb-4">
         <h1>Customer List</h1>
+        <div className="pt-10 font-bold">
+          <input
+            type="text"
+            value={searchInput}
+            onChange={handleSearchInputChange}
+            placeholder="Search Customer number..."
+            className="border text-3xl items-center "
+          />
+          <button
+            onClick={searchCustomer}
+            className="bg-gray-900 text-white py-2 px-4 rounded-full font-bold hover:bg-gray-500"
+          >
+            Search
+          </button>
+          {error && <div className="text-red-500 mt-2">{error}</div>}
+        </div>
       </div>
-      <div className=" font-bold">
-            <input
-              type="text"
-              value={searchInput}
-              onChange={handleSearchInputChange}
-              placeholder="Search Customer's number..."
-              className="border p-2 mr-2"
-            />
-            <button
-              onClick={searchCustomer}
-              className="bg-gray-900 text-white py-2 px-4 rounded-full font-bold hover:bg-gray-500"
-            >
-              Search
-            </button>
-          </div>
-      <div className="bg-white py-16 view-manager-list flex justify-center h-screen">
+      
+      <div className="bg-white py-16 view-manager-list flex justify-center h-min-screen h-full">
         <div className="justify-between items-center px-10">
           <table className="border border-black min-w-full divide-y divide-gray-500">
             <thead>
