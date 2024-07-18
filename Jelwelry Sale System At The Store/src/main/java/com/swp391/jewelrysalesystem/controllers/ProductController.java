@@ -28,8 +28,8 @@ public class ProductController {
     private IPromotionService promotionService;
     private GoldPriceService goldPriceService;
 
-    private final double DESIRED_PROFIT_MARGIN = 0.2; //20%
-    private final double REFUND_RATE = 0.7;
+    // private final double DESIRED_PROFIT_MARGIN = 0.2; //20%
+    // private final double REFUND_RATE = 0.7;
 
     @Autowired
     public ProductController(IProductService productService, ICategoryService categoryService,
@@ -52,7 +52,11 @@ public class ProductController {
             @RequestParam int stock,
             @RequestParam String categoryName,
             @RequestParam String img,
-            @RequestParam int promotionID) {
+            @RequestParam int promotionID,
+            @RequestParam double desiredProditMargin, // The profit percentage you want to get when sell a product, for
+                                                      // example: 0.2 (stand for 20%)
+            @RequestParam double refundRate) { // if you want refund price of a product is 70% of it's selling price,
+                                               // input 0.7 (stand for 70%)
 
         try {
 
@@ -61,12 +65,18 @@ public class ProductController {
                 return ResponseEntity.badRequest().body("This category is not exist");
             }
 
+            String error = productService.isGeneralValidated(name, goldWeight, laborCost, stoneCost,
+                    stock, img, promotionID, desiredProditMargin, refundRate);
+            if (error != null) {
+                return ResponseEntity.badRequest().body(error);
+            }
+
             int categoryID = category.getID();
 
             double goldPrice = goldPriceService.getCurrent18kGoldPrice();
             double costPrice = goldWeight * goldPrice + laborCost + stoneCost;
 
-            double priceRate = 1 + DESIRED_PROFIT_MARGIN;
+            double priceRate = 1 + desiredProditMargin;
             DecimalFormat decimalFormat = new DecimalFormat("#.##");
 
             double sellingPrice = costPrice * priceRate;
@@ -75,21 +85,14 @@ public class ProductController {
 
             double refundPrice = 0;
             if (stoneType.equals("Jewel")) {
-                refundPrice = sellingPrice * REFUND_RATE;
+                refundPrice = sellingPrice * refundRate;
             }
-            
+
             if (stoneType.equals("Normal Stone")) {
                 refundPrice = goldPrice * goldWeight;
             }
-            
 
             refundPrice = Double.parseDouble(decimalFormat.format(refundPrice));
-
-            String error = productService.isGeneralValidated(name, goldWeight, laborCost, stoneCost,
-                    stock, img, promotionID);
-            if (error != null) {
-                return ResponseEntity.badRequest().body(error);
-            }
 
             int ID = productService.generateID();
 
@@ -103,7 +106,8 @@ public class ProductController {
                 discountPrice = Double.parseDouble(decimalFormat.format(discountPrice));
             }
 
-            Product newProduct = new Product(ID, img, name, sellingPrice, refundPrice, discountPrice, description, goldWeight, laborCost,
+            Product newProduct = new Product(ID, img, name, sellingPrice, refundPrice, discountPrice, description,
+                    goldWeight, laborCost,
                     stoneCost, stoneName, stoneType, stock, promotionID, categoryID, true);
             if (productService.saveProduct(newProduct)) {
                 return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -129,7 +133,11 @@ public class ProductController {
             @RequestParam int stock,
             @RequestParam String categoryName,
             @RequestParam String img,
-            @RequestParam int promotionID) {
+            @RequestParam int promotionID,
+            @RequestParam double desiredProditMargin, // The profit percentage you want to get when sell a product, for
+            // example: 0.2 (stand for 20%F
+            @RequestParam double refundRate) {// if you want refund price of a product is 70% of it's selling price,
+        // input 0.7 (stand for 70%)
 
         try {
 
@@ -147,7 +155,7 @@ public class ProductController {
             double goldPrice = goldPriceService.getCurrent18kGoldPrice();
             double costPrice = goldWeight * goldPrice + laborCost + stoneCost;
 
-            double priceRate = (costPrice + (costPrice * DESIRED_PROFIT_MARGIN))/costPrice;
+            double priceRate = (costPrice + (costPrice * desiredProditMargin)) / costPrice;
             DecimalFormat decimalFormat = new DecimalFormat("#.##");
 
             double sellingPrice = costPrice * priceRate;
@@ -156,15 +164,15 @@ public class ProductController {
 
             double refundPrice = 0;
             if (stoneType.equals("Jewel")) {
-                refundPrice = sellingPrice * REFUND_RATE;
+                refundPrice = sellingPrice * refundRate;
             }
-            
+
             if (stoneType.equals("Normal Stone")) {
                 refundPrice = goldPrice * goldWeight;
             }
 
             String error = productService.isGeneralValidated(name, goldWeight, laborCost, stoneCost,
-                    stock, img, promotionID);
+                    stock, img, promotionID, desiredProditMargin, refundRate);
             if (error != null) {
                 return ResponseEntity.badRequest().body(error);
             }
@@ -253,7 +261,7 @@ public class ProductController {
         }
     }
 
-    //This is an updated product list with the current gold price
+    // This is an updated product list with the current gold price
     @GetMapping("/v2/products/refund-products")
     public ResponseEntity<List<Map<String, Object>>> getUpdatedRefundProductListV2() {
         try {
@@ -271,12 +279,11 @@ public class ProductController {
                 }
                 String categoryName = categoryService.getCategory(product.getCategoryID()).getName();
                 if (product.getStoneType().equals("Normal Stone")) {
-                    double refundPrice = goldPrice * product.getGoldWeight(); //Update goldPrice
+                    double refundPrice = goldPrice * product.getGoldWeight(); // Update goldPrice
                     DecimalFormat decimalFormat = new DecimalFormat("#.##");
                     refundPrice = Double.parseDouble(decimalFormat.format(refundPrice));
                     product.setRefundPrice(refundPrice);
                 }
-
 
                 Map<String, Object> productMap = new HashMap<>();
                 productMap.put("id", product.getID());

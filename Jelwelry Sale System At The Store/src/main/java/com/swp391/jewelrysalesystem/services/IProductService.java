@@ -24,7 +24,8 @@ public interface IProductService {
     boolean isNotNullProduct(int ID);
 
     String isGeneralValidated(String name,
-            double goldWeight, double laborCost, double stoneCost, int stock, String img, int promotionID);
+            double goldWeight, double laborCost, double stoneCost, int stock, String img, int promotionID,
+            double desiredProditMargin, double refundRate);
 
     int generateID();
 

@@ -159,11 +159,20 @@ public class ProductService implements IProductService {
 
     @Override
     public String isGeneralValidated(String name, double goldWeight,
-            double laborCost, double stoneCost, int stock, String img, int promotionID) {
+            double laborCost, double stoneCost, int stock, String img, int promotionID, double desiredProditMargin, double refundRate) {
 
         String error = null;
         if (name.isBlank() || name.equals(null)) {
             return "Name cannot not be empty";
+        }
+
+        //0 = 0% and 1 = 100%
+        if (desiredProditMargin < 0 && desiredProditMargin > 1) {
+            return "The profit margin cannot lower than 0 or higher than 1 ";
+        }
+
+        if (refundRate < 0 && refundRate > 1) {
+            return "The refund rate cannot lower than 0 or higher than 1 ";
         }
 
         if (goldWeight < 0) {
