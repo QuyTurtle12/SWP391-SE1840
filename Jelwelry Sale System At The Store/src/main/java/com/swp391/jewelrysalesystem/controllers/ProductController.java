@@ -150,6 +150,12 @@ public class ProductController {
                 return ResponseEntity.badRequest().body("This category is not exist");
             }
 
+            String error = productService.isGeneralValidated(name, goldWeight, laborCost, stoneCost,
+                    stock, img, promotionID, desiredProditMargin, refundRate);
+            if (error != null) {
+                return ResponseEntity.badRequest().body(error);
+            }
+
             int categoryID = category.getID();
 
             double goldPrice = goldPriceService.getCurrent18kGoldPrice();
@@ -169,12 +175,6 @@ public class ProductController {
 
             if (stoneType.equals("Normal Stone")) {
                 refundPrice = goldPrice * goldWeight;
-            }
-
-            String error = productService.isGeneralValidated(name, goldWeight, laborCost, stoneCost,
-                    stock, img, promotionID, desiredProditMargin, refundRate);
-            if (error != null) {
-                return ResponseEntity.badRequest().body(error);
             }
 
             Promotion promotion = promotionService.getPromotion(promotionID);
