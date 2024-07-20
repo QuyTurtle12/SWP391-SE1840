@@ -115,6 +115,28 @@ public class PromotionController {
 
             List<Map<String, Object>> response = new ArrayList<>();
             for (Promotion promotion : promotionList) {
+                Map<String, Object> map = promotion.toMap();
+                response.add(map);
+            }
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @GetMapping("v2/promotions/availablle-promotion")
+    public ResponseEntity<List<Map<String, Object>>> getAvailablePromotionListV2() {
+        try {
+            List<Promotion> promotionList = promotionService.getPromotionList();
+
+            if (promotionList == null || promotionList.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(null);
+            }
+
+            List<Map<String, Object>> response = new ArrayList<>();
+            for (Promotion promotion : promotionList) {
                 if (promotion.getStatus() == true) {
                     Map<String, Object> map = promotion.toMap();
                     response.add(map);
