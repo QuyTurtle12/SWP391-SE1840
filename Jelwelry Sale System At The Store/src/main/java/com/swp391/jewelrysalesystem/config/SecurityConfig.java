@@ -46,6 +46,7 @@ public class SecurityConfig {
                                                 .requestMatchers("/api/auth/manager/**",
                                                                 "/api/categories/**",
                                                                 "/api/v2/accounts/STAFF/**",
+                                                                "/api/v2/products/disable",
                                                                 "/api/v2/promotions/**")
                                                 .hasAuthority("ROLE_MANAGER")
                                                 .requestMatchers("/api/v2/orders", "/api/v2/customers/top",
@@ -61,7 +62,7 @@ public class SecurityConfig {
                                                                 "/api/customer-promotions/**")
                                                 .hasAnyAuthority("ROLE_MANAGER", "ROLE_STAFF")
                                                 .requestMatchers("/api/auth/staff/**", "/cart/**",
-                                                                "/api/v2/accounts/staff")
+                                                                "/api/v2/accounts/staff", "/api/v2/products/stock-checking")
                                                 .hasAuthority("ROLE_STAFF")
 
                                                 .anyRequest().authenticated()) // Secure other endpoints
