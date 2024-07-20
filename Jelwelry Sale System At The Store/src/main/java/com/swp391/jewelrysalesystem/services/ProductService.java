@@ -20,6 +20,7 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.firebase.cloud.FirestoreClient;
+import com.swp391.jewelrysalesystem.models.CartItem;
 import com.swp391.jewelrysalesystem.models.Category;
 import com.swp391.jewelrysalesystem.models.Product;
 
@@ -63,11 +64,11 @@ public class ProductService implements IProductService {
 
         switch (filter) {
             case "ByProductID":
-            for (Product product : productList) {
-                if (product.getID() == Integer.parseInt(input)) {
-                    newProductList.add(product);
+                for (Product product : productList) {
+                    if (product.getID() == Integer.parseInt(input)) {
+                        newProductList.add(product);
+                    }
                 }
-            }
             case "ByName":
                 for (Product product : productList) {
                     if (product.getName().toLowerCase().trim().contains(input.toLowerCase())) {
@@ -159,14 +160,15 @@ public class ProductService implements IProductService {
 
     @Override
     public String isGeneralValidated(String name, double goldWeight,
-            double laborCost, double stoneCost, int stock, String img, int promotionID, double desiredProditMargin, double refundRate) {
+            double laborCost, double stoneCost, int stock, String img, int promotionID, double desiredProditMargin,
+            double refundRate) {
 
         String error = null;
         if (name.isBlank() || name.equals(null)) {
             return "Name cannot not be empty";
         }
 
-        //0 = 0% and 1 = 100%
+        // 0 = 0% and 1 = 100%
         if (desiredProditMargin < 0 && desiredProditMargin > 1) {
             return "The profit margin cannot lower than 0 or higher than 1 ";
         }
@@ -257,6 +259,26 @@ public class ProductService implements IProductService {
         }
 
         return productCategories;
+    }
+
+    @Override
+    public String isValidStock(int productID, int quantity) {
+        try {
+            List<Product> products = getProductList();
+            for (Product product : products) {
+                if (product.getID() == productID && product.getStock() == 0) {
+                    return "Product name" + product.getName() + " is out of stock";
+                }
+
+                if (product.getID() == productID && quantity < product.getStock()) {
+                    return "Product name" + product.getName() + " is not enough stock";
+                }
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
 }

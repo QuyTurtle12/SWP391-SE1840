@@ -61,8 +61,8 @@ public class OrderController {
             @RequestParam String discountName,
             @RequestParam double discountRate,
             @RequestParam int pointApplied) {
-
-        String error = orderService.isGeneralValidated(staffID, counterID, customerGender, customerName,
+        
+        String error = orderService.isGeneralValidated(staffID, counterID, customerGender, customerName, customerPhone,
                 discountRate);
 
         if (error != null) {

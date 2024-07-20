@@ -2,7 +2,6 @@ package com.swp391.jewelrysalesystem.controllers;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.swp391.jewelrysalesystem.models.CartItem;
 import com.swp391.jewelrysalesystem.models.Category;
 import com.swp391.jewelrysalesystem.models.Product;
 import com.swp391.jewelrysalesystem.models.Promotion;
@@ -18,6 +18,7 @@ import com.swp391.jewelrysalesystem.services.GoldPriceService;
 import com.swp391.jewelrysalesystem.services.ICategoryService;
 import com.swp391.jewelrysalesystem.services.IProductService;
 import com.swp391.jewelrysalesystem.services.IPromotionService;
+
 
 @RestController
 @RequestMapping("/api")
@@ -419,5 +420,17 @@ public class ProductController {
             return ResponseEntity.internalServerError().body("Error disabling promotion ID " + promotionID);
         }
     }
+    
+    @GetMapping("/v2/products/stock-checking")
+    public ResponseEntity<String> checkProductStock(@RequestBody List<CartItem> cart) {
+        for (CartItem cartItem : cart) {
+            String error = productService.isValidStock(cartItem.getProduct().getID(), cartItem.getQuantity());
+            if (error != null) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+            }
+        }
 
+        return ResponseEntity.ok().body("Valid Stock");
+    }
+    
 }

@@ -288,8 +288,9 @@ public class UserController {
     }
 
     private boolean isValidEmail(String email) {
-        // Regular expression to check if email ends with @gmail.com or @yahoo.com
-        String emailPattern = "^[\\w-\\.]+@(gmail\\.com|yahoo\\.com)$";
+        // Regular expression to check if email contains "@" and ends with ".com"
+        String emailPattern = "^[\\w-\\.]+@[\\w-]+\\.com$";
         return Pattern.compile(emailPattern).matcher(email).matches();
     }
+    
 }

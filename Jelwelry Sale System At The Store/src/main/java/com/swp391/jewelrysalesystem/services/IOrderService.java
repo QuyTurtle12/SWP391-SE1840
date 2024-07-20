@@ -30,7 +30,7 @@ public interface IOrderService {
 
     boolean isNotNullCounter(int ID);
 
-    String isGeneralValidated(int staffID, int counterID, String customerGender, String customerName,
+    String isGeneralValidated(int staffID, int counterID, String customerGender, String customerName, String customerPhone,
             double discountApplied);
 
     int generateID();

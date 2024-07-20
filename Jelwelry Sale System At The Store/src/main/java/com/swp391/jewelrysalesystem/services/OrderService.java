@@ -183,7 +183,7 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public String isGeneralValidated(int staffID, int counterID, String customerGender, String customerName,
+    public String isGeneralValidated(int staffID, int counterID, String customerGender, String customerName, String customerPhone,
             double discountApplied) {
 
         if (!isNotNullStaff(staffID)) {
@@ -192,6 +192,14 @@ public class OrderService implements IOrderService {
 
         if (!isNotNullCounter(counterID)) {
             return "Counter ID " + counterID + " is not existing";
+        }
+
+        if (!Pattern.matches("^[0-9]+$", customerPhone)) {
+            return "Incorrect phone number format";
+        }
+
+        if (customerPhone.length() < 10 || customerPhone.length() > 11) {
+            return "Phone number only need to contains 10-11 digits";
         }
 
         if (!customerGender.equals("Male") && !customerGender.equals("Female") && !customerGender.equals("Other")) {
