@@ -119,7 +119,7 @@ const ViewCounter = () => {
             <tr>
               <th className="py-2 px-4 border-b">ID</th>
               <th className="py-2 px-4 border-b">Sale</th>
-              <th className="py-2 px-4 border-b">Status</th>
+             
             </tr>
           </thead>
           <tbody>
@@ -127,27 +127,12 @@ const ViewCounter = () => {
               <tr key={counter.id} className="hover:bg-gray-100">
                 <td className="py-2 px-4 border-b">{counter.id}</td>
                 <td className="py-2 px-4 border-b">{counter.sale !== null ? `$${counter.sale.toFixed(2)}` : 'Error fetching sale'}</td>
-                <td className="py-2 px-4 border-b">{counter.status ? 'Active' : 'Inactive'}</td>
+               
               </tr>
             ))}
           </tbody>
         </table>
-        <div className="bg-gray-100 p-4 rounded-lg mt-4">
-          <h2 className="text-xl font-bold mb-2">Sales Data for {startDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long' })}</h2>
-          {loading ? (
-            <p>Loading...</p>
-          ) : salesData.length > 0 ? (
-            <ul>
-              {salesData.map((data) => (
-                <li key={data.id} className="border-b py-2">
-                  Counter ID: {data.id}, Total Sales: ${data.sale.toFixed(2)}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>No sales data available for this period.</p>
-          )}
-        </div>
+        
       </div>
       <ToastContainer />
     </div>
