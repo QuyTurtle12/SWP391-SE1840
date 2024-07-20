@@ -126,7 +126,7 @@ public class PromotionController {
         }
     }
 
-    @GetMapping("v2/promotions/availablle-promotion")
+    @GetMapping("v2/promotions/available-promotion")
     public ResponseEntity<List<Map<String, Object>>> getAvailablePromotionListV2() {
         try {
             List<Promotion> promotionList = promotionService.getPromotionList();
