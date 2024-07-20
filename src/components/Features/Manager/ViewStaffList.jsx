@@ -135,7 +135,6 @@ export default function ViewStaffList() {
               <tr className="bg-gray-50">
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Full Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role ID</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gender</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact Information</th>
@@ -150,7 +149,6 @@ export default function ViewStaffList() {
                 <tr key={staff.id}>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{staff.id}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{staff.fullName}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{staff.roleID}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{staff.email}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{staff.gender}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{staff.contactInfo}</td>

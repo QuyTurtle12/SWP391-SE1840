@@ -1,29 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import ManagerMenu from './ManagerMenu';
-import FileUpload from './FileUpload';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import ManagerMenu from "./ManagerMenu";
+import FileUpload from "./FileUpload";
 
 const AddProduct = () => {
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [goldWeight, setGoldWeight] = useState('');
-  const [laborCost, setLaborCost] = useState('');
-  const [stoneCost, setStoneCost] = useState('');
-  const [stock, setStock] = useState('');
-  const [categoryName, setCategoryName] = useState('');
-  const [img, setImg] = useState('');
-  const [promotionID, setPromotionID] = useState('');
-  const [stoneName, setStoneName] = useState('');
-  const [stoneType, setStoneType] = useState('');
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [goldWeight, setGoldWeight] = useState("");
+  const [laborCost, setLaborCost] = useState("");
+  const [stoneCost, setStoneCost] = useState("");
+  const [stock, setStock] = useState("");
+  const [categoryName, setCategoryName] = useState("");
+  const [img, setImg] = useState("");
+  const [promotionID, setPromotionID] = useState(0);
+  const [stoneName, setStoneName] = useState("");
+  const [stoneType, setStoneType] = useState("");
   const [categories, setCategories] = useState([]);
-  const [promotions, setPromotions] = useState([]);
-  const [desiredProditMargin, setDesiredProditMargin] = useState('');
-  const [refundRate, setRefundRate] = useState('');
+  const [promotions, setPromotions] = useState(["Default Promotion"]);
+  const [desiredProditMargin, setDesiredProditMargin] = useState("");
+  const [refundRate, setRefundRate] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const navigate = useNavigate();
 
@@ -33,39 +33,42 @@ const AddProduct = () => {
   }, []);
 
   const fetchCategories = async () => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     try {
-      const response = await axios.get('http://localhost:8080/api/categories', {
+      const response = await axios.get("http://localhost:8080/api/categories", {
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
       setCategories(response.data);
     } catch (error) {
       console.error("Error fetching categories", error);
-      setError('Error fetching categories');
+      setError("Error fetching categories");
     }
   };
 
   const fetchPromotions = async () => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:8080/api/v2/promotions', {
-        headers: {
-          'Authorization': `Bearer ${token}`
+      const response = await axios.get(
+        "http://localhost:8080/api/v2/promotions",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      });
+      );
       setPromotions(response.data);
     } catch (err) {
       console.error("Error fetching promotions", err);
-      setError('Error fetching promotions');
+      setError("Error fetching promotions");
     } finally {
       setLoading(false);
     }
   };
 
-  const notifySuccess = () => toast.success('Product added successfully!');
+  const notifySuccess = () => toast.success("Product added successfully!");
   const notifyError = (message) => toast.error(message);
 
   const validateInputs = () => {
@@ -76,14 +79,22 @@ const AddProduct = () => {
       parseFloat(stoneCost) < 0 ||
       parseInt(stock) < 0 ||
       parseInt(promotionID) < 0 ||
-      parseFloat(desiredProditMargin) < 0 || parseFloat(desiredProditMargin) > 1 ||
-      parseFloat(refundRate) < 0 || parseFloat(refundRate) > 1
+      parseFloat(desiredProditMargin) < 0 ||
+      parseFloat(desiredProditMargin) > 1 ||
+      parseFloat(refundRate) < 0 ||
+      parseFloat(refundRate) > 1
     ) {
-      notifyError('Numeric values cannot be below zero. Margin and refund rate must be between 0 and 1.');
+      notifyError(
+        "Numeric values cannot be below zero. Margin and refund rate must be between 0 and 1."
+      );
       return false;
     }
-    if (specialCharPattern.test(name) || specialCharPattern.test(description) || specialCharPattern.test(stoneName)) {
-      notifyError('Special characters are not allowed.');
+    if (
+      specialCharPattern.test(name) ||
+      specialCharPattern.test(description) ||
+      specialCharPattern.test(stoneName)
+    ) {
+      notifyError("Special characters are not allowed.");
       return false;
     }
     return true;
@@ -96,10 +107,10 @@ const AddProduct = () => {
       return;
     }
 
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (!token) {
-      notifyError('User not authenticated. Please login.');
-      navigate('/login');
+      notifyError("User not authenticated. Please login.");
+      navigate("/login");
       return;
     }
 
@@ -116,44 +127,51 @@ const AddProduct = () => {
       img,
       promotionID: parseInt(promotionID),
       desiredProditMargin: parseFloat(desiredProditMargin),
-      refundRate: parseFloat(refundRate)
+      refundRate: parseFloat(refundRate),
     });
 
     try {
-      const response = await axios.post(`http://localhost:8080/api/v2/products?${params.toString()}`, null, {
-        headers: {
-          'Authorization': `Bearer ${token}`
+      const response = await axios.post(
+        `http://localhost:8080/api/v2/products?${params.toString()}`,
+        null,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      });
+      );
 
       if (response.status === 201) {
         notifySuccess();
-        navigate('/productlist2');
+        navigate("/productlist2");
         // Optionally reset form fields
-        setName('');
-        setDescription('');
-        setGoldWeight('');
-        setLaborCost('');
-        setStoneCost('');
-        setStoneName('');
-        setStoneType('');
-        setStock('');
-        setCategoryName('');
-        setImg('');
-        setPromotionID('');
-        setDesiredProditMargin('');
-        setRefundRate('');
+        setName("");
+        setDescription("");
+        setGoldWeight("");
+        setLaborCost("");
+        setStoneCost("");
+        setStoneName("");
+        setStoneType("");
+        setStock("");
+        setCategoryName("");
+        setImg("");
+        setPromotionID("");
+        setDesiredProditMargin("");
+        setRefundRate("");
       } else {
-        notifyError('Failed to add product. Please try again.');
+        notifyError("Failed to add product. Please try again.");
       }
     } catch (error) {
-      console.error('Error adding product:', error.response ? error.response.data : error.message);
-      notifyError('Failed to add product. Please try again.');
+      console.error(
+        "Error adding product:",
+        error.response ? error.response.data : error.message
+      );
+      notifyError("Failed to add product. Please try again.");
     }
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === '-' || e.key === 'e' || e.key === 'E') {
+    if (e.key === "-" || e.key === "e" || e.key === "E") {
       e.preventDefault();
     }
   };
@@ -176,7 +194,7 @@ const AddProduct = () => {
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <div className="bg-white py-8 px-6 shadow sm:rounded-lg sm:px-10">
             <form onSubmit={handleSubmit}>
-              <div className='mt-6'>
+              <div className="mt-6">
                 <label className="block text-sm font-medium text-gray-700">
                   Name
                 </label>
@@ -191,8 +209,8 @@ const AddProduct = () => {
                   />
                 </div>
               </div>
-              
-              <div className='mt-6'>
+
+              <div className="mt-6">
                 <label className="block text-sm font-medium text-gray-700">
                   Description
                 </label>
@@ -208,7 +226,7 @@ const AddProduct = () => {
                 </div>
               </div>
 
-              <div className='mt-6'>
+              <div className="mt-6">
                 <label className="block text-sm font-medium text-gray-700">
                   Gold Weight
                 </label>
@@ -226,7 +244,7 @@ const AddProduct = () => {
                 </div>
               </div>
 
-              <div className='mt-6'>
+              <div className="mt-6">
                 <label className="block text-sm font-medium text-gray-700">
                   Labor Cost
                 </label>
@@ -244,7 +262,7 @@ const AddProduct = () => {
                 </div>
               </div>
 
-              <div className='mt-6'>
+              <div className="mt-6">
                 <label className="block text-sm font-medium text-gray-700">
                   Stone Cost
                 </label>
@@ -262,7 +280,7 @@ const AddProduct = () => {
                 </div>
               </div>
 
-              <div className='mt-6'>
+              <div className="mt-6">
                 <label className="block text-sm font-medium text-gray-700">
                   Stock
                 </label>
@@ -280,7 +298,7 @@ const AddProduct = () => {
                 </div>
               </div>
 
-              <div className='mt-6'>
+              <div className="mt-6">
                 <label className="block text-sm font-medium text-gray-700">
                   Desired Profit Margin
                 </label>
@@ -298,7 +316,7 @@ const AddProduct = () => {
                 </div>
               </div>
 
-              <div className='mt-6'>
+              <div className="mt-6">
                 <label className="block text-sm font-medium text-gray-700">
                   Refund Rate
                 </label>
@@ -316,7 +334,7 @@ const AddProduct = () => {
                 </div>
               </div>
 
-              <div className='mt-6'>
+              <div className="mt-6">
                 <label className="block text-sm font-medium text-gray-700">
                   Stone Name
                 </label>
@@ -332,19 +350,31 @@ const AddProduct = () => {
                 </div>
               </div>
 
-              <div className='mt-6'>
+              <div className="mt-6">
                 <label className="block text-sm font-medium text-gray-700">
                   Stone Type
                 </label>
                 <div className="mt-1">
-                  <input
+                  {/* <input
                     type="text"
                     placeholder="Enter stone type"
                     required
                     value={stoneType}
                     onChange={(e) => setStoneType(e.target.value)}
                     className="block w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  />
+                  /> */}
+                  <select
+                    value={stoneType}
+                    onChange={(e) => setStoneType(e.target.value)}
+                    className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    required
+                  >
+                    <option value="" disabled>
+                      Select Stone type
+                    </option>
+                    <option>Normal Stone</option>
+                    <option>Jewel</option>
+                  </select>
                 </div>
               </div>
 
@@ -358,7 +388,9 @@ const AddProduct = () => {
                   className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   required
                 >
-                  <option value="" disabled>Select category</option>
+                  <option value="" disabled>
+                    Select category
+                  </option>
                   {categories.map((category) => (
                     <option key={category.id} value={category.name}>
                       {category.name}
@@ -376,7 +408,9 @@ const AddProduct = () => {
                   onChange={(e) => setPromotionID(e.target.value)}
                   className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 >
-                  <option value="" disabled>Select promotion</option>
+                  <option value="" disabled>
+                    Select promotion
+                  </option>
                   {promotions.map((promotion) => (
                     <option key={promotion.id} value={promotion.id}>
                       {promotion.description}
@@ -392,11 +426,7 @@ const AddProduct = () => {
                 <FileUpload setImg={setImg} />
               </div>
 
-              {error && (
-                <div className="mt-4 text-red-600">
-                  {error}
-                </div>
-              )}
+              {error && <div className="mt-4 text-red-600">{error}</div>}
 
               <div className="mt-6">
                 <button
