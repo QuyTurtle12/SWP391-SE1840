@@ -21,7 +21,7 @@ const AddStaff = () => {
       const token = localStorage.getItem('token');
 
       try {
-        const response = await axios.get('https://jewelrysalesystem-backend.onrender.com/api/v2/counters', {
+        const response = await axios.get('https://jewelrysalesystem-backend.onrender.com/api/v2/counters/no-sale', {
           headers: {
             'Authorization': `Bearer ${token}`
           }

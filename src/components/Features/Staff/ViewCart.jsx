@@ -204,6 +204,41 @@ function ViewCart() {
         toast.error("Error creating payment URL", error);
       });
   };
+  const handlePaymentReturn = (queryParams) => {
+    const vnp_ResponseCode = queryParams.get("vnp_ResponseCode");
+    if (vnp_ResponseCode === "00") {
+      // Payment was successful, proceed with creating the order
+      axiosInstance
+        .post(
+          `https://jewelrysalesystem-backend.onrender.com/api/v2/orders?totalPrice=${subtotal}&staffID=${staffId}&counterID=${counterID}&customerPhone=${customerPhone}&customerName=${customerName}&customerGender=${customerGender}&discountRate=${discountRate}&pointApplied=${pointsToApply}&discountName=${discountName}`,
+          cart
+        )
+        .then(() => {
+          toast.success("Order created successfully!");
+          handleClearCart();
+          setShowModal(false);
+        })
+        .catch((error) => {
+          const errorMessage = error.response.data
+            ? error.response.data
+            : error.message;
+          console.error(errorMessage);
+          toast.error(errorMessage);
+        });
+    } else {
+      // Payment failed or was canceled
+      toast.error("Payment failed or was canceled.");
+    }
+  };
+  
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    if (queryParams.has("vnp_ResponseCode")) {
+      handlePaymentReturn(queryParams);
+    }
+  }, [location.search]);
+
+
 
   const handleCreateOrder = () => {
 
@@ -220,7 +255,7 @@ function ViewCart() {
       return;
     }
     if (paymentMethod === "online") {
-      const amountInVND = Math.floor(finalPrice); // Convert to integer
+      const amountInVND = (finalPrice); 
       handleCreatePayment(amountInVND);       
     
       axiosInstance

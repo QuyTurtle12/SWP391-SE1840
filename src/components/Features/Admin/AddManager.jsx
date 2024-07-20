@@ -20,7 +20,7 @@ const AddManager = () => {
   useEffect(() => {
     const fetchCounters = async () => {
       try {
-        const response = await axios.get("https://jewelrysalesystem-backend.onrender.com/api/v2/counters", {
+        const response = await axios.get("https://jewelrysalesystem-backend.onrender.com/api/v2/counters/no-sale", {
           headers: {
             Authorization: `Bearer ${token}`,
           },

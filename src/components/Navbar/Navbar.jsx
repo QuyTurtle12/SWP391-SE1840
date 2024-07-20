@@ -15,7 +15,7 @@ export default function Navbar() {
 const handleLogout = async () => {
   try {
     await axios.post(
-      "https://jewelrysalesystem-backend.onrender.com/api/auth/logout",
+      "http://localhost:8080/api/auth/logout",
       {},
       {
         headers: {
