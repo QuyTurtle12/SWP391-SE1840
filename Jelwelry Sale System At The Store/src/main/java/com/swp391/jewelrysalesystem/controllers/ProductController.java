@@ -106,7 +106,8 @@ public class ProductController {
                 discountPrice = Double.parseDouble(decimalFormat.format(discountPrice));
             }
 
-            Product newProduct = new Product(ID, img, name, sellingPrice, refundPrice, discountPrice, description,
+            Product newProduct = new Product(ID, img, name, refundRate, desiredProditMargin, sellingPrice, refundPrice,
+                    discountPrice, description,
                     goldWeight, laborCost,
                     stoneCost, stoneName, stoneType, stock, promotionID, categoryID, true);
             if (productService.saveProduct(newProduct)) {
@@ -135,7 +136,7 @@ public class ProductController {
             @RequestParam String img,
             @RequestParam int promotionID,
             @RequestParam double desiredProditMargin, // The profit percentage you want to get when sell a product, for
-            // example: 0.2 (stand for 20%F
+            // example: 0.2 (stand for 20%)
             @RequestParam double refundRate) {// if you want refund price of a product is 70% of it's selling price,
         // input 0.7 (stand for 70%)
 
@@ -188,6 +189,8 @@ public class ProductController {
 
             existingProduct.setName(name);
             existingProduct.setImg(img);
+            existingProduct.setRefundRate(refundRate);
+            existingProduct.setDesiredProditMargin(desiredProditMargin);
             existingProduct.setPrice(sellingPrice);
             existingProduct.setRefundPrice(refundPrice);
             existingProduct.setDiscountPrice(discountPrice);
@@ -235,23 +238,10 @@ public class ProductController {
             for (Product product : productList) {
                 String categoryName = categoryService.getCategory(product.getCategoryID()).getName();
 
-                Map<String, Object> productMap = new HashMap<>();
-                productMap.put("id", product.getID());
-                productMap.put("img", product.getImg());
-                productMap.put("name", product.getName());
-                productMap.put("price", product.getPrice());
-                // productMap.put("refundPrice", product.getRefundPrice());
-                productMap.put("discountPrice", product.getDiscountPrice());
-                productMap.put("description", product.getDescription());
-                productMap.put("goldWeight", product.getGoldWeight());
-                productMap.put("laborCost", product.getLaborCost());
-                productMap.put("stoneCost", product.getStoneCost());
-                productMap.put("stoneName", product.getStoneName());
-                productMap.put("stoneType", product.getStoneType());
-                productMap.put("stock", product.getStock());
-                productMap.put("promotionID", product.getPromotionID());
+                Map<String, Object> productMap = product.toMap();
+
                 productMap.put("categoryName", categoryName);
-                productMap.put("status", product.getStatus());
+
                 productMaps.add(productMap);
             }
 
@@ -285,23 +275,10 @@ public class ProductController {
                     product.setRefundPrice(refundPrice);
                 }
 
-                Map<String, Object> productMap = new HashMap<>();
-                productMap.put("id", product.getID());
-                productMap.put("img", product.getImg());
-                productMap.put("name", product.getName());
-                productMap.put("price", product.getPrice());
-                productMap.put("refundPrice", product.getRefundPrice());
-                productMap.put("discountPrice", product.getDiscountPrice());
-                productMap.put("description", product.getDescription());
-                productMap.put("goldWeight", product.getGoldWeight());
-                productMap.put("laborCost", product.getLaborCost());
-                productMap.put("stoneCost", product.getStoneCost());
-                productMap.put("stoneName", product.getStoneName());
-                productMap.put("stoneType", product.getStoneType());
-                productMap.put("stock", product.getStock());
-                productMap.put("promotionID", product.getPromotionID());
+                Map<String, Object> productMap = product.toMap();
+
                 productMap.put("categoryName", categoryName);
-                productMap.put("status", product.getStatus());
+
                 productMaps.add(productMap);
             }
 
@@ -321,23 +298,8 @@ public class ProductController {
 
             String categoryName = categoryService.getCategory(product.getCategoryID()).getName();
 
-            Map<String, Object> productMap = new HashMap<>();
-            productMap.put("id", product.getID());
-            productMap.put("img", product.getImg());
-            productMap.put("name", product.getName());
-            productMap.put("price", product.getPrice());
-            productMap.put("refundPrice", product.getRefundPrice());
-            productMap.put("discountPrice", product.getDiscountPrice());
-            productMap.put("description", product.getDescription());
-            productMap.put("goldWeight", product.getGoldWeight());
-            productMap.put("laborCost", product.getLaborCost());
-            productMap.put("stoneCost", product.getStoneCost());
-            productMap.put("stoneName", product.getStoneName());
-            productMap.put("stoneType", product.getStoneType());
-            productMap.put("stock", product.getStock());
-            productMap.put("promotionID", product.getPromotionID());
+            Map<String, Object> productMap = product.toMap();
             productMap.put("categoryName", categoryName);
-            productMap.put("status", product.getStatus());
             return ResponseEntity.ok(productMap);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -372,23 +334,10 @@ public class ProductController {
             for (Product product : productList) {
                 String categoryName = categoryService.getCategory(product.getCategoryID()).getName();
 
-                Map<String, Object> productMap = new HashMap<>();
-                productMap.put("id", product.getID());
-                productMap.put("img", product.getImg());
-                productMap.put("name", product.getName());
-                productMap.put("price", product.getPrice());
-                productMap.put("refundPrice", product.getRefundPrice());
-                productMap.put("discountPrice", product.getDiscountPrice());
-                productMap.put("description", product.getDescription());
-                productMap.put("goldWeight", product.getGoldWeight());
-                productMap.put("laborCost", product.getLaborCost());
-                productMap.put("stoneCost", product.getStoneCost());
-                productMap.put("stoneName", product.getStoneName());
-                productMap.put("stoneType", product.getStoneType());
-                productMap.put("stock", product.getStock());
-                productMap.put("promotionID", product.getPromotionID());
+                Map<String, Object> productMap = product.toMap();
+
                 productMap.put("categoryName", categoryName);
-                productMap.put("status", product.getStatus());
+
                 productMaps.add(productMap);
             }
 
@@ -413,23 +362,10 @@ public class ProductController {
             for (Product product : productList) {
                 String categoryName = categoryService.getCategory(product.getCategoryID()).getName();
 
-                Map<String, Object> productMap = new HashMap<>();
-                productMap.put("id", product.getID());
-                productMap.put("img", product.getImg());
-                productMap.put("name", product.getName());
-                productMap.put("price", product.getPrice());
-                productMap.put("refundPrice", product.getRefundPrice());
-                productMap.put("discountPrice", product.getDiscountPrice());
-                productMap.put("description", product.getDescription());
-                productMap.put("goldWeight", product.getGoldWeight());
-                productMap.put("laborCost", product.getLaborCost());
-                productMap.put("stoneCost", product.getStoneCost());
-                productMap.put("stoneName", product.getStoneName());
-                productMap.put("stoneType", product.getStoneType());
-                productMap.put("stock", product.getStock());
-                productMap.put("promotionID", product.getPromotionID());
+                Map<String, Object> productMap = product.toMap();
+
                 productMap.put("categoryName", categoryName);
-                productMap.put("status", product.getStatus());
+
                 productMaps.add(productMap);
             }
 
@@ -457,23 +393,10 @@ public class ProductController {
             for (Product product : productList) {
                 String categoryName = categoryService.getCategory(product.getCategoryID()).getName();
 
-                Map<String, Object> productMap = new HashMap<>();
-                productMap.put("id", product.getID());
-                productMap.put("img", product.getImg());
-                productMap.put("name", product.getName());
-                productMap.put("price", product.getPrice());
-                productMap.put("refundPrice", product.getRefundPrice());
-                productMap.put("discountPrice", product.getDiscountPrice());
-                productMap.put("description", product.getDescription());
-                productMap.put("goldWeight", product.getGoldWeight());
-                productMap.put("laborCost", product.getLaborCost());
-                productMap.put("stoneCost", product.getStoneCost());
-                productMap.put("stoneName", product.getStoneName());
-                productMap.put("stoneType", product.getStoneType());
-                productMap.put("stock", product.getStock());
-                productMap.put("promotionID", product.getPromotionID());
+                Map<String, Object> productMap = product.toMap();
+
                 productMap.put("categoryName", categoryName);
-                productMap.put("status", product.getStatus());
+
                 productMaps.add(productMap);
             }
 
