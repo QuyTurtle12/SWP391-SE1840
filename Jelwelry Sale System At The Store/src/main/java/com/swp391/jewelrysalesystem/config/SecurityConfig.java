@@ -35,7 +35,7 @@ public class SecurityConfig {
                                                 .requestMatchers("/api/auth/login", "/api/auth/forgot-password",
                                                                 "/api/auth/reset-password",
                                                                 "/api/auth/logout", "/upload/**",
-                                                                "/**.jpg", "/**.jpeg", "/**.png")
+                                                                "/**.jpg", "/**.jpeg", "/**.png", "api/vnpay_return")
                                                 .permitAll() // Allow access
                                                 .requestMatchers("/api/auth/admin/**", "/api/v2/accounts/MANAGER/**",
                                                                 "/api/v2/accounts/dashboard",

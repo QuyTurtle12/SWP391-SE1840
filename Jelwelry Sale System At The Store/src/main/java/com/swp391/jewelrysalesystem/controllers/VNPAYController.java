@@ -94,8 +94,21 @@ public class VNPAYController {
     }
 
     @GetMapping("/vnpay_return")
-    public ResponseEntity<?> vnPayReturn(HttpServletRequest req) {
-        // Handle return URL logic
-        return ResponseEntity.ok("Payment Success.");
+    public ResponseEntity<Map<String, String>> vnPayReturn(HttpServletRequest req) {
+        String vnp_ResponseCode = req.getParameter("vnp_ResponseCode");
+        Map<String, String> response = new HashMap<>();
+
+        if ("24".equals(vnp_ResponseCode)) {
+            response.put("code", "24");
+            response.put("message", "Cancel Transaction.");
+        } else if ("00".equals(vnp_ResponseCode)) {
+            response.put("code", "00");
+            response.put("message", "Transaction Success.");
+        } else {
+            response.put("code", "99");
+            response.put("message", "Unknown Response Code.");
+        }
+
+        return ResponseEntity.ok(response);
     }
 }
