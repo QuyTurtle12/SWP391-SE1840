@@ -18,6 +18,9 @@ import com.swp391.jewelrysalesystem.services.GoldPriceService;
 import com.swp391.jewelrysalesystem.services.ICategoryService;
 import com.swp391.jewelrysalesystem.services.IProductService;
 import com.swp391.jewelrysalesystem.services.IPromotionService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 @RestController

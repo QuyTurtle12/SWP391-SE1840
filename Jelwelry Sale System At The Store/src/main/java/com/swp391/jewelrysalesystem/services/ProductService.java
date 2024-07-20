@@ -267,11 +267,11 @@ public class ProductService implements IProductService {
             List<Product> products = getProductList();
             for (Product product : products) {
                 if (product.getID() == productID && product.getStock() == 0) {
-                    return "Product name" + product.getName() + " is out of stock";
+                    return "Product name " + product.getName() + " is out of stock";
                 }
 
                 if (product.getID() == productID && quantity < product.getStock()) {
-                    return "Product name" + product.getName() + " is not enough stock";
+                    return "Product name " + product.getName() + " is not enough stock";
                 }
             }
         } catch (InterruptedException | ExecutionException e) {

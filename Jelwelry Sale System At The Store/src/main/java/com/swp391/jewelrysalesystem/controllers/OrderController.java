@@ -91,7 +91,7 @@ public class OrderController {
 
         totalPrice = totalPrice - (totalPrice * discountRate); // Discount range from 0 to 1
 
-        // totalPrice = totalPrice - pointApplied; //1 point == 1
+        totalPrice = totalPrice - pointApplied; //1 point == 1
 
         int discountID = customerPromotionService.getCustomerPromotion(discountName).getID();
 
@@ -116,11 +116,14 @@ public class OrderController {
 
             List<OrderDTO> orderDTOs = new ArrayList<>();
             for (CartItem item : cart) {
+                double productOriginalPrice = productService.getProductByID(item.getProduct().getID()).getPrice();
+
                 OrderDTO orderDTO = new OrderDTO();
                 orderDTO.setOrderID(newOrder.getID());
                 orderDTO.setProductID(item.getProduct().getID());
                 orderDTO.setAmount(item.getQuantity());
                 orderDTO.setProductPrice(item.getPrice());
+                orderDTO.setProductOriginalPrice(productOriginalPrice);
                 orderDTOs.add(orderDTO);
                 orderService.saveOrderDTO(orderDTO);
             }
