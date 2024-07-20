@@ -93,7 +93,8 @@ export default function ManagerMenu() {
               to="/view-voucher"
               className="text-black font-medium"
             >
-              <h2 className="font-bold">View Category</h2>
+              <h2 className="font-bold">Customer Promotions
+              </h2>
             </Button>
           </li>
           <li className="px-4 py-2">

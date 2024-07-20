@@ -15,11 +15,11 @@ const AddProduct = () => {
   const [stock, setStock] = useState("");
   const [categoryName, setCategoryName] = useState("");
   const [img, setImg] = useState("");
-  const [promotionID, setPromotionID] = useState(0);
+  const [promotionID, setPromotionID] = useState("");
   const [stoneName, setStoneName] = useState("");
   const [stoneType, setStoneType] = useState("");
   const [categories, setCategories] = useState([]);
-  const [promotions, setPromotions] = useState(["Default Promotion"]);
+  const [promotions, setPromotions] = useState([]);
   const [desiredProditMargin, setDesiredProditMargin] = useState("");
   const [refundRate, setRefundRate] = useState("");
   const [loading, setLoading] = useState(false);
@@ -52,7 +52,7 @@ const AddProduct = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        "http://localhost:8080/api/v2/promotions",
+        "http://localhost:8080/api/v2/promotions/available-promotion",
         {
           headers: {
             Authorization: `Bearer ${token}`,
