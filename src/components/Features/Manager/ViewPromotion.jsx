@@ -101,7 +101,7 @@ const ViewPromotion = () => {
     try {
       const token = localStorage.getItem('token');
       const headers = { Authorization: `Bearer ${token}` };
-      await axios.put(`https://jewelrysalesystem-backend.onrender.com/api/v2/promotions/${selectedPromotion.id}`, null, {
+      await axios.put(`http://localhost:8080/api/v2/promotions/${selectedPromotion.id}`, null, {
         headers,
         params: {
           description,

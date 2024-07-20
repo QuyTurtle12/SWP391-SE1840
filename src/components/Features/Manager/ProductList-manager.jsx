@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import ManagerMenu from "./ManagerMenu";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import { Button } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function ProductListManager() {
   const [products, setProducts] = useState([]);
-  const [cart, setCart] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,7 +16,7 @@ export default function ProductListManager() {
   const fetchProducts = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get("https://jewelrysalesystem-backend.onrender.com/api/v2/products", {
+      const response = await axios.get("http://localhost:8080/api/v2/products", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -35,22 +32,23 @@ export default function ProductListManager() {
     navigate(`/productdetail2/${id}`);
   };
 
-  const handleDeleteProduct = async (id) => {
+  const handleChangeStatus = async (id, status) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.delete(`https://jewelrysalesystem-backend.onrender.com/api/v2/products/${id}`, {
+      const response = await axios.put(`http://localhost:8080/api/v2/products/${id}/status`, null, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+
       if (response.status === 200) {
-        toast.success("Product deleted successfully!");
-        setProducts(products.filter((product) => product.id !== id));
+        toast.success(`Product ${status ? 'deactivated' : 'activated'} successfully!`);
+        fetchProducts(); // Refresh the product list
       } else {
-        toast.error(`Failed to delete product. Error: ${response.data}`);
+        toast.error(`Failed to change product status. Error: ${response.data}`);
       }
     } catch (error) {
-      toast.error(`Failed to delete product. Error: ${error.response ? error.response.data : error.message}`);
+      toast.error(`Failed to change product status. Error: ${error.response ? error.response.data : error.message}`);
     }
   };
 
@@ -88,12 +86,21 @@ export default function ProductListManager() {
                     <span className="text-green-600 font-medium">In Stock: {product.stock}</span>
                   )}
                   <div className="mt-4 flex justify-between items-center">
-                    <button
-                      onClick={() => handleDeleteProduct(product.id)}
-                      className="bg-red-600 text-white py-2 px-4 rounded-full font-semibold hover:bg-red-700"
-                    >
-                      Delete Product
-                    </button>
+                    {product.status ? (
+                      <button
+                        onClick={() => handleChangeStatus(product.id, false)}
+                        className="bg-red-600 text-white py-2 px-4 rounded-full font-semibold hover:bg-red-700"
+                      >
+                        Deactivate
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleChangeStatus(product.id, true)}
+                        className="bg-green-600 text-white py-2 px-4 rounded-full font-semibold hover:bg-green-700"
+                      >
+                        Activate
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

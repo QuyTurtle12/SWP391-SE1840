@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ManagerMenu from './ManagerMenu';
-import FileUpload from "./FileUpload";
+import FileUpload from './FileUpload';
 
 const AddProduct = () => {
   const [name, setName] = useState('');
@@ -20,6 +20,8 @@ const AddProduct = () => {
   const [stoneType, setStoneType] = useState('');
   const [categories, setCategories] = useState([]);
   const [promotions, setPromotions] = useState([]);
+  const [desiredProditMargin, setDesiredProditMargin] = useState('');
+  const [refundRate, setRefundRate] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -68,8 +70,16 @@ const AddProduct = () => {
 
   const validateInputs = () => {
     const specialCharPattern = /[!@#$%^&*().":{}|<>]/;
-    if (parseFloat(goldWeight) < 0 || parseFloat(laborCost) < 0 || parseFloat(stoneCost) < 0 || parseInt(stock) < 0) {
-      notifyError('Numeric values cannot be below zero.');
+    if (
+      parseFloat(goldWeight) < 0 ||
+      parseFloat(laborCost) < 0 ||
+      parseFloat(stoneCost) < 0 ||
+      parseInt(stock) < 0 ||
+      parseInt(promotionID) < 0 ||
+      parseFloat(desiredProditMargin) < 0 || parseFloat(desiredProditMargin) > 1 ||
+      parseFloat(refundRate) < 0 || parseFloat(refundRate) > 1
+    ) {
+      notifyError('Numeric values cannot be below zero. Margin and refund rate must be between 0 and 1.');
       return false;
     }
     if (specialCharPattern.test(name) || specialCharPattern.test(description) || specialCharPattern.test(stoneName)) {
@@ -104,7 +114,9 @@ const AddProduct = () => {
       stock: parseInt(stock),
       categoryName,
       img,
-      promotionID: parseInt(promotionID)
+      promotionID: parseInt(promotionID),
+      desiredProditMargin: parseFloat(desiredProditMargin),
+      refundRate: parseFloat(refundRate)
     });
 
     try {
@@ -129,12 +141,20 @@ const AddProduct = () => {
         setCategoryName('');
         setImg('');
         setPromotionID('');
+        setDesiredProditMargin('');
+        setRefundRate('');
       } else {
         notifyError('Failed to add product. Please try again.');
       }
     } catch (error) {
       console.error('Error adding product:', error.response ? error.response.data : error.message);
       notifyError('Failed to add product. Please try again.');
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === '-' || e.key === 'e' || e.key === 'E') {
+      e.preventDefault();
     }
   };
 
@@ -187,7 +207,7 @@ const AddProduct = () => {
                   />
                 </div>
               </div>
-              
+
               <div className='mt-6'>
                 <label className="block text-sm font-medium text-gray-700">
                   Gold Weight
@@ -195,15 +215,17 @@ const AddProduct = () => {
                 <div className="mt-1">
                   <input
                     type="number"
+                    step="0.01"
                     placeholder="Enter gold weight"
                     required
                     value={goldWeight}
                     onChange={(e) => setGoldWeight(e.target.value)}
+                    onKeyDown={handleKeyDown}
                     className="block w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
               </div>
-              
+
               <div className='mt-6'>
                 <label className="block text-sm font-medium text-gray-700">
                   Labor Cost
@@ -211,15 +233,17 @@ const AddProduct = () => {
                 <div className="mt-1">
                   <input
                     type="number"
+                    step="0.01"
                     placeholder="Enter labor cost"
                     required
                     value={laborCost}
                     onChange={(e) => setLaborCost(e.target.value)}
+                    onKeyDown={handleKeyDown}
                     className="block w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
               </div>
-              
+
               <div className='mt-6'>
                 <label className="block text-sm font-medium text-gray-700">
                   Stone Cost
@@ -227,15 +251,71 @@ const AddProduct = () => {
                 <div className="mt-1">
                   <input
                     type="number"
+                    step="0.01"
                     placeholder="Enter stone cost"
                     required
                     value={stoneCost}
                     onChange={(e) => setStoneCost(e.target.value)}
+                    onKeyDown={handleKeyDown}
                     className="block w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
               </div>
-              
+
+              <div className='mt-6'>
+                <label className="block text-sm font-medium text-gray-700">
+                  Stock
+                </label>
+                <div className="mt-1">
+                  <input
+                    type="number"
+                    step="0.01"
+                    placeholder="Enter stock quantity"
+                    required
+                    value={stock}
+                    onChange={(e) => setStock(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    className="block w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+              </div>
+
+              <div className='mt-6'>
+                <label className="block text-sm font-medium text-gray-700">
+                  Desired Profit Margin
+                </label>
+                <div className="mt-1">
+                  <input
+                    type="number"
+                    step="0.01"
+                    placeholder="Enter desired profit margin (0-1)"
+                    required
+                    value={desiredProditMargin}
+                    onChange={(e) => setDesiredProditMargin(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    className="block w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+              </div>
+
+              <div className='mt-6'>
+                <label className="block text-sm font-medium text-gray-700">
+                  Refund Rate
+                </label>
+                <div className="mt-1">
+                  <input
+                    type="number"
+                    step="0.01"
+                    placeholder="Enter refund rate (0-1)"
+                    required
+                    value={refundRate}
+                    onChange={(e) => setRefundRate(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    className="block w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+              </div>
+
               <div className='mt-6'>
                 <label className="block text-sm font-medium text-gray-700">
                   Stone Name
@@ -257,98 +337,71 @@ const AddProduct = () => {
                   Stone Type
                 </label>
                 <div className="mt-1">
-                  <select
+                  <input
+                    type="text"
+                    placeholder="Enter stone type"
                     required
                     value={stoneType}
                     onChange={(e) => setStoneType(e.target.value)}
-                    className="block w-full bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  >
-                    <option value="">Select a stone type</option>
-                    <option value="Normal Stone">Normal Stone</option>
-                    <option value="Jewel">Jewel</option>
-                  </select>
-                </div>
-              </div>
-              
-              <div className='mt-6'>
-                <label className="block text-sm font-medium text-gray-700">
-                  Stock
-                </label>
-                <div className="mt-1">
-                  <input
-                    type="number"
-                    placeholder="Enter stock"
-                    required
-                    value={stock}
-                    onChange={(e) => setStock(e.target.value)}
                     className="block w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
               </div>
-              
-              <div className='mt-6'>
+
+              <div className="mt-6">
                 <label className="block text-sm font-medium text-gray-700">
                   Category
                 </label>
-                <div className="mt-1">
-                  <select
-                    required
-                    value={categoryName}
-                    onChange={(e) => setCategoryName(e.target.value)}
-                    className="block w-full bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  >
-                    <option value="">Select a category</option>
-                    {categories.map((category) => (
-                      <option key={category.id} value={category.name}>
-                        {category.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <select
+                  value={categoryName}
+                  onChange={(e) => setCategoryName(e.target.value)}
+                  className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  required
+                >
+                  <option value="" disabled>Select category</option>
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.name}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
               </div>
-              
-              <div className='mt-6'>
-                <label className="block text-sm font-medium text-gray-700">
-                  Image URL
-                </label>
-                <div className="mt-1">
-                  <input
-                    type="text"
-                    placeholder="Enter image URL"
-                    required
-                    value={img}
-                    onChange={(e) => setImg(e.target.value)}
-                    className="block w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  />
-                </div>
-              </div>
-              
-              <div className='mt-6'>
+
+              <div className="mt-6">
                 <label className="block text-sm font-medium text-gray-700">
                   Promotion
                 </label>
-                <div className="mt-1">
-                  <select
-                    required
-                    value={promotionID}
-                    onChange={(e) => setPromotionID(e.target.value)}
-                    className="block w-full bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  >
-                    <option value="">Select a promotion</option>
-                    {promotions.map((promotion) => (
-                      <option key={promotion.id} value={promotion.id}>
-                        {promotion.description}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <select
+                  value={promotionID}
+                  onChange={(e) => setPromotionID(e.target.value)}
+                  className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                >
+                  <option value="" disabled>Select promotion</option>
+                  {promotions.map((promotion) => (
+                    <option key={promotion.id} value={promotion.id}>
+                      {promotion.description}
+                    </option>
+                  ))}
+                </select>
               </div>
-              
+
               <div className="mt-6">
-                <FileUpload/>
+                <label className="block text-sm font-medium text-gray-700">
+                  Image
+                </label>
+                <FileUpload setImg={setImg} />
+              </div>
+
+              {error && (
+                <div className="mt-4 text-red-600">
+                  {error}
+                </div>
+              )}
+
+              <div className="mt-6">
                 <button
                   type="submit"
-                  className="w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150 ease-in-out"
+                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
                   Add Product
                 </button>

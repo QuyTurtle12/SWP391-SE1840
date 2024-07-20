@@ -18,7 +18,7 @@ function ViewCategory() {
     const token = localStorage.getItem('token');
     
     axios
-      .get("https://jewelrysalesystem-backend.onrender.com/api/categories", {
+      .get("http://localhost:8080/api/categories", {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -63,25 +63,6 @@ function ViewCategory() {
       });
   };
 
-  const handleDeleteClick = (id) => {
-    const token = localStorage.getItem('token');
-    
-    axios
-      .delete(`https://jewelrysalesystem-backend.onrender.com/api/categories?ID=${id}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-      .then(() => {
-        fetchCategories();
-        toast.success("Category deleted successfully");
-      })
-      .catch((error) => {
-        console.error("Error deleting category", error);
-        setError(error);
-        toast.error("Error deleting category");
-      });
-  };
   return (
     <div className="flex flex-col min-h-screen h-screen overflow-hidden">
       <ManagerMenu />
@@ -111,12 +92,6 @@ function ViewCategory() {
                           className="bg-blue-500 text-white px-4 py-2 rounded"
                         >
                           Edit
-                        </button>
-                        <button
-                          onClick={() => handleDeleteClick(category.id)}
-                          className="bg-red-500 text-white px-4 py-2 rounded"
-                        >
-                          Delete
                         </button>
                       </td>
                     </tr>

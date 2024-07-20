@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const FileUpload = () => {
+const FileUpload = ({ setImg }) => {
   const [file, setFile] = useState(null);
   const [uploadedUrl, setUploadedUrl] = useState(null);
   const [uploading, setUploading] = useState(false);
-  const [url, setUrl] = useState(null); // Corrected variable name
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const generatedUrl = 'https://example.com/uploaded-image.jpg';
-    setUrl(generatedUrl);
+    setUploadedUrl(generatedUrl);
   }, []); // This runs only once when the component mounts
 
   const handleFileChange = (e) => {
@@ -33,6 +32,7 @@ const FileUpload = () => {
       });
 
       setUploadedUrl(response.data);
+      setImg(response.data); // Call the setImg callback with the uploaded URL
     } catch (error) {
       console.error('Error uploading file: ', error);
       setError('Failed to upload file.');

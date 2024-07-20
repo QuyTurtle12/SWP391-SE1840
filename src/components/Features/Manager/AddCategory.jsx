@@ -17,12 +17,17 @@ const AddCategory = () => {
 		};
 
 		try {
+			const token = localStorage.getItem("token"); // Retrieve the token from local storage
+
 			console.log('Submitting data:', data);
 			const response = await axios.post(
-				'https://jewelrysalesystem-backend.onrender.com/api/categories',
+				'http://localhost:8080/api/categories',
 				null,
 				{
-					params: data
+					params: data,
+					headers: {
+						Authorization: `Bearer ${token}` // Add Authorization header
+					}
 				}
 			);
 			toast.success('Category created successfully!');

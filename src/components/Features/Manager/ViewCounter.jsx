@@ -4,6 +4,8 @@ import AddCounter from './AddCounter';
 import ManagerMenu from './ManagerMenu';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Helper function to format date to 'yyyy-MM-dd'
 const formatDate = (date) => {
@@ -29,7 +31,8 @@ const ViewCounter = () => {
   const [startDate, setStartDate] = useState(getStartOfMonth());
   const [endDate, setEndDate] = useState(getEndOfMonth());
   const [salesData, setSalesData] = useState([]);
-  
+  const [dateError, setDateError] = useState('');
+
   useEffect(() => {
     fetchCounters(startDate, endDate);
   }, [startDate, endDate]);
@@ -39,7 +42,7 @@ const ViewCounter = () => {
     try {
       const token = localStorage.getItem('token'); // Retrieve token from localStorage
       const headers = { Authorization: `Bearer ${token}` };
-      const response = await axios.get('https://jewelrysalesystem-backend.onrender.com/api/v2/counters', {
+      const response = await axios.get('http://localhost:8080/api/v2/counters', {
         headers,
         params: {
           startDate: formatDate(startDate),
@@ -55,31 +58,31 @@ const ViewCounter = () => {
     }
   };
 
-  const deleteCounter = async (id) => {
-    setLoading(true);
-    try {
-      const token = localStorage.getItem('token');
-      const headers = { Authorization: `Bearer ${token}` };
-      await axios.delete(`https://jewelrysalesystem-backend.onrender.com/api/v2/counters?id=${id}`, { headers });
-      fetchCounters(startDate, endDate); // Refresh the counter list
-    } catch (err) {
-      setError('Error deleting counter');
-    } finally {
-      setLoading(false);
+  const handleStartDateChange = (date) => {
+    if (date > endDate) {
+      setDateError('Start date cannot be after end date.');
+    } else {
+      setDateError('');
+      setStartDate(date);
     }
   };
 
-  const updateCounterStatus = async (id) => {
-    setLoading(true);
+  const handleEndDateChange = (date) => {
+    if (date < startDate) {
+      setDateError('End date cannot be before start date.');
+    } else {
+      setDateError('');
+      setEndDate(date);
+    }
+  };
+
+  const handleAddCounter = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const headers = { Authorization: `Bearer ${token}` };
-      await axios.put(`https://jewelrysalesystem-backend.onrender.com/api/v2/counters/${id}/status`, null, { headers });
-      fetchCounters(startDate, endDate); // Refresh the counter list
-    } catch (err) {
-      setError('Error updating counter status');
-    } finally {
-      setLoading(false);
+      // Assume AddCounter component triggers fetching counters
+      await fetchCounters(startDate, endDate);
+      toast.success('Counter added successfully!');
+    } catch (error) {
+      toast.error('Error adding counter');
     }
   };
 
@@ -89,14 +92,15 @@ const ViewCounter = () => {
       <div className="container mx-auto p-4">
         <h1 className="text-2xl font-bold mb-4">Counter List</h1>
         {error && <p className="text-red-500">{error}</p>}
-        <AddCounter onAdd={() => fetchCounters(startDate, endDate)} />
+        {dateError && <p className="text-red-500">{dateError}</p>}
+        <AddCounter onAdd={handleAddCounter} />
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="start-date">
             Start Date:
           </label>
           <DatePicker
             selected={startDate}
-            onChange={(date) => setStartDate(date)}
+            onChange={handleStartDateChange}
             dateFormat="yyyy-MM-dd"
             className="border border-gray-300 rounded p-2"
           />
@@ -105,7 +109,7 @@ const ViewCounter = () => {
           </label>
           <DatePicker
             selected={endDate}
-            onChange={(date) => setEndDate(date)}
+            onChange={handleEndDateChange}
             dateFormat="yyyy-MM-dd"
             className="border border-gray-300 rounded p-2"
           />
@@ -116,7 +120,6 @@ const ViewCounter = () => {
               <th className="py-2 px-4 border-b">ID</th>
               <th className="py-2 px-4 border-b">Sale</th>
               <th className="py-2 px-4 border-b">Status</th>
-              <th className="py-2 px-4 border-b">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -125,20 +128,6 @@ const ViewCounter = () => {
                 <td className="py-2 px-4 border-b">{counter.id}</td>
                 <td className="py-2 px-4 border-b">{counter.sale !== null ? `$${counter.sale.toFixed(2)}` : 'Error fetching sale'}</td>
                 <td className="py-2 px-4 border-b">{counter.status ? 'Active' : 'Inactive'}</td>
-                <td className="py-2 px-4 border-b space-x-2">
-                  <button
-                    onClick={() => deleteCounter(counter.id)}
-                    className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
-                  >
-                    Delete
-                  </button>
-                  <button
-                    onClick={() => updateCounterStatus(counter.id)}
-                    className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
-                  >
-                    Update Status
-                  </button>
-                </td>
               </tr>
             ))}
           </tbody>
@@ -160,6 +149,7 @@ const ViewCounter = () => {
           )}
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };
