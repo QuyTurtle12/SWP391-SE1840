@@ -3,14 +3,15 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ManagerMenu from './ManagerMenu';
+
 export default function Voucher() {
     const [promotions, setPromotions] = useState([]);
     const [editingPromotion, setEditingPromotion] = useState(null);
     const [newPromotion, setNewPromotion] = useState({
         discountName: '',
         discountDescription: '',
-        discountType: 'None',
-        discountCondition: '',
+        discountType: 'Normal',
+        discountCondition: 'None',
         discountRate: ''
     });
     const [isAdding, setIsAdding] = useState(false);
@@ -19,6 +20,18 @@ export default function Voucher() {
     useEffect(() => {
         fetchPromotions();
     }, []);
+
+    useEffect(() => {
+        if (editingPromotion && editingPromotion.discountType === 'Normal') {
+            setEditingPromotion({ ...editingPromotion, discountCondition: 'None' });
+        }
+    }, [editingPromotion?.discountType]);
+
+    useEffect(() => {
+        if (newPromotion.discountType === 'Normal') {
+            setNewPromotion({ ...newPromotion, discountCondition: 'None' });
+        }
+    }, [newPromotion.discountType]);
 
     const fetchPromotions = async () => {
         try {
@@ -35,16 +48,21 @@ export default function Voucher() {
     };
 
     const handleEdit = (promotion) => {
+        setIsAdding(false); // Ensure Add form is hidden
         setEditingPromotion({ ...promotion });
     };
 
-    const handleUpdate = async () => {
-        if (!editingPromotion) return;
-
-        if (editingPromotion.discountRate < 0 || editingPromotion.discountRate > 1) {
-            toast.error('Discount rate must be between 0 and 1.');
-            return;
+    const validateInputs = (promotion) => {
+        const { discountRate, discountCondition } = promotion;
+        if (discountRate < 0 || discountRate > 1 || discountCondition.includes('-') || discountRate.includes('-')) {
+            toast.error('Invalid input: Discount rate must be between 0 and 1, and Condition cannot contain "-"');
+            return false;
         }
+        return true;
+    };
+
+    const handleUpdate = async () => {
+        if (!editingPromotion || !validateInputs(editingPromotion)) return;
 
         try {
             const { id, discountName, discountType, discountCondition, discountDescription, discountRate } = editingPromotion;
@@ -76,10 +94,7 @@ export default function Voucher() {
     };
 
     const handleAddPromotion = async () => {
-        if (newPromotion.discountRate < 0 || newPromotion.discountRate > 1) {
-            toast.error('Discount rate must be between 0 and 1.');
-            return;
-        }
+        if (!validateInputs(newPromotion)) return;
 
         try {
             const { discountName, discountDescription, discountType, discountCondition, discountRate } = newPromotion;
@@ -94,8 +109,8 @@ export default function Voucher() {
             setNewPromotion({
                 discountName: '',
                 discountDescription: '',
-                discountType: 'None',
-                discountCondition: '',
+                discountType: 'Normal',
+                discountCondition: 'None',
                 discountRate: ''
             });
         } catch (error) {
@@ -104,12 +119,14 @@ export default function Voucher() {
     };
 
     return (
-       
         <div className="container mx-auto p-6">
             <h1 className="text-3xl font-bold mb-6 text-center">Customer Promotions</h1>
             <button
                 className="bg-green-500 text-white px-4 py-2 mb-4 rounded hover:bg-green-600"
-                onClick={() => setIsAdding(true)}
+                onClick={() => {
+                    setIsAdding(true);
+                    setEditingPromotion(null); // Ensure Edit form is hidden
+                }}
             >
                 Add Promotion
             </button>
@@ -192,6 +209,7 @@ export default function Voucher() {
                             onChange={(e) =>
                                 setEditingPromotion({ ...editingPromotion, discountCondition: e.target.value })
                             }
+                            readOnly={editingPromotion.discountType === 'Normal'}
                         />
                     </div>
                     <div className="mb-4">
@@ -214,13 +232,14 @@ export default function Voucher() {
                             onChange={(e) =>
                                 setEditingPromotion({ ...editingPromotion, discountRate: parseFloat(e.target.value) })
                             }
+                            min="0" step="0.01"
                         />
                     </div>
                     <button
-                        className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
                         onClick={handleUpdate}
                     >
-                        Save
+                        Update
                     </button>
                 </div>
             )}
@@ -235,10 +254,7 @@ export default function Voucher() {
                             className="border p-2 w-full rounded"
                             value={newPromotion.discountName}
                             onChange={(e) =>
-                                setNewPromotion({
-                                    ...newPromotion,
-                                    discountName: e.target.value
-                                })
+                                setNewPromotion({ ...newPromotion, discountName: e.target.value })
                             }
                         />
                     </div>
@@ -265,6 +281,7 @@ export default function Voucher() {
                             onChange={(e) =>
                                 setNewPromotion({ ...newPromotion, discountCondition: e.target.value })
                             }
+                            readOnly={newPromotion.discountType === 'Normal'}
                         />
                     </div>
                     <div className="mb-4">
@@ -287,23 +304,17 @@ export default function Voucher() {
                             onChange={(e) =>
                                 setNewPromotion({ ...newPromotion, discountRate: parseFloat(e.target.value) })
                             }
+                            min="0" step="0.01"
                         />
                     </div>
                     <button
                         className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
                         onClick={handleAddPromotion}
                     >
-                        Add Promotion
-                    </button>
-                    <button
-                        className="bg-gray-500 text-white px-4 py-2 ml-2 rounded hover:bg-gray-600"
-                        onClick={() => setIsAdding(false)}
-                    >
-                        Cancel
+                        Add
                     </button>
                 </div>
             )}
         </div>
-       
     );
-};
+}
