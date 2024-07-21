@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { ToastContainer, toast } from "react-toastify";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const token = localStorage.getItem("token"); // Fetch the token from local storage
 
@@ -24,11 +24,9 @@ function ViewCart() {
   const [staff, setStaff] = useState();
   const [discountRate, setDiscountRate] = useState(0);
   const [counterID, setCounterID] = useState("");
-  const [customerPhone, setCustomerPhone] = useState("");
   const [discountApplied, setDiscountApplied] = useState(0);
   const [vouchers, setVouchers] = useState([]);
   const [selectedVoucher, setSelectedVoucher] = useState("");
-  const [selectedPoint, setSelectedPoint] = useState("");
   const [pointsToApply, setPointsToApply] = useState(0);
   const [customerGender, setCustomerGender] = useState("");
   const [customerName, setCustomerName] = useState("");
@@ -41,6 +39,8 @@ function ViewCart() {
   const queryParams = new URLSearchParams(location.search);
   const staffId = queryParams.get("staffId");
   const [newCart, setNewCart] = useState([]);
+  const [orderCreated, setOrderCreated] = useState(false); // New state to track if order has been created
+  const navigate = useNavigate();
   useEffect(() => {
     fetchCartData();
     fetchStaff();
@@ -48,13 +48,11 @@ function ViewCart() {
 
   const fetchCartData = () => {
     axiosInstance
-      .get(
-        `https://jewelrysalesystem-backend.onrender.com/cart?staffId=${staffId}`
-      )
+      .get(`https://jewelrysalesystem-backend.onrender.com/cart?staffId=${staffId}`)
       .then((response) => {
+        console.log(response.data);
         setCart(response.data);
         calculateSubtotal(response.data);
-
       })
       .catch((error) => {
         console.error("Error fetching cart data", error);
@@ -63,13 +61,9 @@ function ViewCart() {
 
   const fetchDiscounts = () => {
     axiosInstance
-      .get(
-        `http://localhost:8080/api/customer-promotions/customer-coupons?totalPrice=${subtotal}`,
-        {}
-      )
+      .get(`http://localhost:8080/api/customer-promotions/customer-coupons?totalPrice=${subtotal}`, {})
       .then((response) => {
         setVouchers(response.data);
-
         console.log(response.data.discountRate);
         console.log(response.data);
       })
@@ -77,12 +71,10 @@ function ViewCart() {
         console.error("Error fetching discount data", error);
       });
   };
+
   const fetchPoint = () => {
     axiosInstance
-      .get(
-        `http://localhost:8080/api/v2/customers/customer/point?customerPhone=${cusphone}`,
-        {}
-      )
+      .get(`http://localhost:8080/api/v2/customers/customer/point?customerPhone=${cusphone}`, {})
       .then((response) => {
         setPoint(response.data);
         console.log(response.data);
@@ -91,6 +83,7 @@ function ViewCart() {
         console.error("Error fetching discount data", error);
       });
   };
+
   const handlePointApply = () => {
     fetchPoint();
     if (pointsToApply === 0 || pointsToApply > point) {
@@ -105,6 +98,7 @@ function ViewCart() {
     // Close the points modal
     handleClosePoint();
   };
+
   const fetchStaff = async () => {
     if (token) {
       try {
@@ -135,6 +129,7 @@ function ViewCart() {
     });
     setSubtotal(total);
   };
+
   const checkStock = () => {
     axiosInstance
       .post(`http://localhost:8080/api/v2/products/stock-checking`, cart)
@@ -152,7 +147,12 @@ function ViewCart() {
         setShowModal(false);
       });
   };
+
   const handleCheckout = () => {
+    // Update all quantities before checking stock
+    cart.forEach((item) => {
+      handleUpdateQuantity(item.product.id, item.quantity);
+    });
     checkStock();
     setShowModal(true);
   };
@@ -161,12 +161,15 @@ function ViewCart() {
     fetchDiscounts();
     setShowModalVoucher(true);
   };
+
   const handlePoint = () => {
     setShowModalPoint(true);
   };
+
   const handlePhone = () => {
     setShowModalPhone(true);
   };
+
   const handleClose = () => {
     setShowModal(false);
   };
@@ -174,12 +177,15 @@ function ViewCart() {
   const handleCloseVoucher = () => {
     setShowModalVoucher(false);
   };
+
   const handleClosePoint = () => {
     setShowModalPoint(false);
   };
+
   const handleClosePhone = () => {
     setShowModalPhone(false);
   };
+
   const validatePhone = (phone) => {
     const phoneRegex = /^0\d{9,10}$/;
     return phoneRegex.test(phone);
@@ -196,6 +202,7 @@ function ViewCart() {
       );
     }
   };
+
   const handleVoucherApply = () => {
     if (!selectedVoucher) {
       toast.error("Please select a voucher");
@@ -234,23 +241,22 @@ function ViewCart() {
 
   const handleCreatePayment = (amount) => {
     axiosInstance
-      .post(`http://localhost:8080/api/create_payment?amount=${amount}&totalPrice=${subtotal}&staffId=${staffId}&counterId=${counterID}&customerPhone=${cusphone}&customerName=${customerName}&customerGender=${customerGender}&discountRate=${discountRate}&pointApplied=${pointsToApply}&discountName=${discountName}`)
+      .post(
+        `http://localhost:8080/api/create_payment?amount=${amount}&totalPrice=${amount}&staffId=${staffId}&counterId=${counterID}&customerPhone=${cusphone}&customerName=${customerName}&customerGender=${customerGender}&discountRate=${discountRate}&pointApplied=${pointsToApply}&discountName=${discountName}`
+      )
       .then((response) => {
         const { data } = response;
         const paymentUrl = data.data;
         window.location.href = paymentUrl;
       })
       .catch((error) => {
-        console.log(error);
         toast.error("Error creating payment URL", error);
       });
   };
+
   const handlePaymentReturn = (queryParams) => {
     const vnp_ResponseCode = queryParams.get("vnp_ResponseCode");
-
-    if (vnp_ResponseCode === "00") {
-      // fetchStaff();
-      // Payment was successful, proceed with creating the order
+    if (vnp_ResponseCode === "00" && !orderCreated) {
       const totalPrice = queryParams.get("totalPrice");
       const counterID = queryParams.get("counterId");
       const customerPhone = queryParams.get("customerPhone");
@@ -260,52 +266,39 @@ function ViewCart() {
       const pointApplied = queryParams.get("pointApplied");
       const discountName = queryParams.get("discountName");
       const newStaffId = queryParams.get("staffId");
-      console.log(newStaffId);
-      //fetchCartData(newStaffId); // Cart còn nè
-      {
-        axiosInstance
-          .get(
-            `https://jewelrysalesystem-backend.onrender.com/cart?staffId=${newStaffId}`
-          )
-          .then((response) => {
-            setNewCart(response.data); // newCart = 
-            console.log(response.data); // =1 
-            console.log("Cart của response data");
-            calculateSubtotal(response.data);
-          })
-          .catch((error) => {
-            console.error("Error fetching cart data", error);
-          });
-      };
 
-      console.log(newCart); // 0
-      console.log("Cart của set new cart");
-      // Post request with extracted parameters
       axiosInstance
-        .post(
-          `http://localhost:8080/api/v2/orders?totalPrice=${totalPrice}&staffID=${staffId}&counterID=${counterID}&customerPhone=${customerPhone}&customerName=${customerName}&customerGender=${customerGender}&discountRate=${discountRate}&pointApplied=${pointApplied}&discountName=${discountName}`,
-          newCart
-        )
-        .then(() => {
-          toast.success("Order created successfully!");
-          //handleClearCart();
-          console.log(newCart);
-          console.log("after create order");
-
-          setShowModal(false);
+        .get(`https://jewelrysalesystem-backend.onrender.com/cart?staffId=${newStaffId}`)
+        .then((response) => {
+          const cartnew = response.data;
+          setNewCart(response.data);
+          axiosInstance
+            .post(
+              `http://localhost:8080/api/v2/orders?totalPrice=${totalPrice}&staffID=${staffId}&counterID=${counterID}&customerPhone=${customerPhone}&customerName=${customerName}&customerGender=${customerGender}&discountRate=${discountRate}&pointApplied=${pointApplied}&discountName=${discountName}`,
+              cartnew
+            )
+            .then(() => {
+              console.log("debug1");
+              toast.success("Order created successfully!");
+              handleClearCart();
+              setOrderCreated(true); // Prevent future order creation
+              navigate("/productlist")
+            })
+            .catch((error) => {
+              const errorMessage = error.response.data
+                ? error.response.data
+                : error.message;
+              toast.error(errorMessage);
+            });
         })
         .catch((error) => {
-          const errorMessage = error.response.data
-            ? error.response.data
-            : error.message;
-          console.error(errorMessage);
-          toast.error(errorMessage);
+          console.error("Error fetching new cart data", error);
         });
     } else {
-      // Payment failed or was canceled
-      toast.error("Payment failed or was canceled. Order not created.");
+      toast.error("Payment failed");
     }
   };
+
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     if (queryParams.has("vnp_ResponseCode")) {
@@ -328,8 +321,12 @@ function ViewCart() {
     }
     if (paymentMethod === "online") {
       const amountInVND = finalPrice;
+      console.log("debug2")
+
       handleCreatePayment(amountInVND);
-    } else {
+      console.log("debug3")
+
+    } else if (paymentMethod === "offline") {
       axiosInstance
         .post(
           `http://localhost:8080/api/v2/orders?totalPrice=${subtotal}&staffID=${staffId}&counterID=${counterID}&customerPhone=${cusphone}&customerName=${customerName}&customerGender=${customerGender}&discountRate=${discountRate}&pointApplied=${pointsToApply}&discountName=${discountName}`,
@@ -352,9 +349,7 @@ function ViewCart() {
 
   const handleClearCart = () => {
     axiosInstance
-      .put(
-        `https://jewelrysalesystem-backend.onrender.com/cart/clear?staffId=${staffId}`
-      )
+      .put(`https://jewelrysalesystem-backend.onrender.com/cart/clear?staffId=${staffId}`)
       .then((response) => {
         setCart([]);
         setSubtotal(0);
@@ -364,18 +359,20 @@ function ViewCart() {
         console.error("Error clearing cart", error);
       });
   };
+
   const handleRemoveVoucher = () => {
     setDiscountRate(0);
-    // setDiscountName("None");
     setDiscountApplied(0);
     setSelectedVoucher("");
     toast.success("Voucher removed successfully");
   };
+
   const handleRemovePoint = () => {
     setPoint(0);
     setPointsToApply(0);
     toast.success("Point removed successfully");
   };
+
   const handleChangeQuantity = (productId, newQuantity) => {
     if (newQuantity < 1) {
       toast.error("Quantity cannot be less than 1");
@@ -407,7 +404,9 @@ function ViewCart() {
         fetchCartData();
       });
   };
+
   const finalPrice = subtotal - discountApplied - pointsToApply;
+
   const handleRemoveItem = (productID) => {
     axiosInstance
       .delete(
@@ -421,7 +420,6 @@ function ViewCart() {
         toast.error("Error removing product", error);
       });
   };
-
   return (
     <>
       <ToastContainer />
@@ -448,6 +446,7 @@ function ViewCart() {
                   </button>
                 </a>
                 <div className="bg-white rounded-lg shadow-md p-6 mb-4">
+                  
                   <table className="w-full">
                     <thead>
                       <tr>
@@ -519,13 +518,14 @@ function ViewCart() {
                       ))}
                     </tbody>
                   </table>
+                 
                 </div>
                 <button
-                  className=" bg-emerald-600 text-white py-2 px-4 rounded "
-                  onClick={handlePhone}
-                >
-                  Add customer phone
-                </button>
+                    className=" bg-emerald-600 text-white py-2 px-4 rounded "
+                    onClick={handlePhone}
+                  >
+                    Add customer phone
+                  </button>
               </div>
               <div className="md:w-1/4">
                 <div className="bg-white rounded-lg shadow-md p-6">
@@ -536,9 +536,7 @@ function ViewCart() {
                       <span>${subtotal.toLocaleString("en-US")}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="font-semibold">
-                        Discount with voucher
-                      </span>
+                      <span className="font-semibold">Discount with voucher</span>
                       <span>- ${discountApplied.toLocaleString("en-US")}</span>
                     </div>
                     <div className="flex justify-between">
@@ -547,7 +545,9 @@ function ViewCart() {
                     </div>
                     <div className="flex justify-between">
                       <span className="font-semibold">Total</span>
-                      <span>${finalPrice.toLocaleString("en-US")}</span>
+                      <span>
+                        ${(finalPrice).toLocaleString("en-US")}
+                      </span>
                     </div>
                   </div>
 
@@ -585,11 +585,15 @@ function ViewCart() {
                   >
                     Checkout
                   </button>
+               
+                  
                 </div>
               </div>
             </div>
           )}
+          
         </div>
+        
       </div>
       <Modal show={showModal} onHide={handleClose}>
         <Modal.Header closeButton>
@@ -626,17 +630,17 @@ function ViewCart() {
                 <option value="Female">Female</option>
               </Form.Control>
               <Form.Group controlId="paymentMethod">
-                <Form.Label>Payment Method</Form.Label>
-                <Form.Control
-                  as="select"
-                  value={paymentMethod}
-                  onChange={(e) => setPaymentMethod(e.target.value)}
-                >
-                  <option value="">Select Payment Method</option>
-                  <option value="online">Online</option>
-                  <option value="offline">Offline</option>
-                </Form.Control>
-              </Form.Group>
+              <Form.Label>Payment Method</Form.Label>
+              <Form.Control
+                as="select"
+                value={paymentMethod}
+                onChange={(e) => setPaymentMethod(e.target.value)}
+              >
+                <option value="">Select Payment Method</option>
+                <option value="online">Online</option>
+                <option value="offline">Offline</option>
+              </Form.Control>
+            </Form.Group>
             </Form.Group>
           </Form>
         </Modal.Body>
@@ -683,70 +687,71 @@ function ViewCart() {
         </Modal.Footer>
       </Modal>
       <Modal show={showModalPoint} onHide={handleClosePoint}>
-        <Modal.Header closeButton>
-          <Modal.Title>Apply Points</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form.Group controlId="customerPhonePoints">
-            <Form.Label>Customer Phone</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Enter customer phone"
-              value={cusphone}
-              onChange={(e) => setCusphone(e.target.value)}
-            />
-          </Form.Group>
-          <Button variant="primary" onClick={fetchPoint}>
-            Fetch Points
-          </Button>
-          {point > 0 && (
-            <>
-              <p>Customer Points: {point}</p>
-              <Form.Group controlId="pointsToApply">
-                <Form.Label>Points to Apply</Form.Label>
-                <Form.Control
-                  type="number"
-                  placeholder="Enter points to apply"
-                  value={pointsToApply}
-                  onChange={(e) => setPointsToApply(parseInt(e.target.value))}
-                />
-              </Form.Group>
-            </>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClosePoint}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handlePointApply}>
-            Apply Points
-          </Button>
-        </Modal.Footer>
-      </Modal>
-      <Modal show={showModalPhone} onHide={handleClosePhone}>
-        <Modal.Header closeButton>
-          <Modal.Title>Add Customer Phone</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form.Group controlId="customerPhonePoints">
-            <Form.Label>Customer Phone</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Enter customer phone"
-              value={cusphone}
-              onChange={(e) => setCusphone(e.target.value)}
-            />
-          </Form.Group>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClosePhone}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleApplyPhone}>
-            Apply
-          </Button>
-        </Modal.Footer>
-      </Modal>
+  <Modal.Header closeButton>
+    <Modal.Title>Apply Points</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    <Form.Group controlId="customerPhonePoints">
+      <Form.Label>Customer Phone</Form.Label>
+      <Form.Control
+        type="text"
+        placeholder="Enter customer phone"
+        value={cusphone}
+        onChange={(e) => setCusphone(e.target.value)}
+      />
+    </Form.Group>
+    <Button variant="primary" onClick={fetchPoint}>
+      Fetch Points
+    </Button>
+    {point > 0 && (
+      <>
+        <p>Customer Points: {point}</p>
+        <Form.Group controlId="pointsToApply">
+          <Form.Label>Points to Apply</Form.Label>
+          <Form.Control
+            type="number"
+            placeholder="Enter points to apply"
+            value={pointsToApply}
+            onChange={(e) => setPointsToApply(parseInt(e.target.value))}
+          />
+        </Form.Group>
+      </>
+    )}
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={handleClosePoint}>
+      Close
+    </Button>
+    <Button variant="primary" onClick={handlePointApply}>
+      Apply Points
+    </Button>
+  </Modal.Footer>
+</Modal>
+<Modal show={showModalPhone} onHide={handleClosePhone}>
+  <Modal.Header closeButton>
+    <Modal.Title>Add Customer Phone</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    <Form.Group controlId="customerPhonePoints">
+      <Form.Label>Customer Phone</Form.Label>
+      <Form.Control
+        type="text"
+        placeholder="Enter customer phone"
+        value={cusphone}
+        onChange={(e) => setCusphone(e.target.value)}
+      />
+    </Form.Group>
+     </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={handleClosePhone}>
+      Close
+    </Button>
+    <Button variant="primary" onClick={handleApplyPhone}>
+      Apply
+    </Button>
+  </Modal.Footer>
+</Modal>
+
     </>
   );
 }
