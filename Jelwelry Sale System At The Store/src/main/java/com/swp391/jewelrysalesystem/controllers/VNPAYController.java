@@ -19,7 +19,8 @@ import java.util.*;
 public class VNPAYController {
 
     @PostMapping("/create_payment")
-    public String createPayment(HttpServletRequest req, @RequestParam("amount") double amount) {
+    public String createPayment(HttpServletRequest req, @RequestParam("amount") double amount,
+            @RequestParam("staffId") int staffId) {
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String orderType = "other";
@@ -39,7 +40,7 @@ public class VNPAYController {
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
         vnp_Params.put("vnp_OrderInfo", "Thanh toan hoa don JSS Store:" + vnp_TxnRef);
         vnp_Params.put("vnp_OrderType", orderType);
-        vnp_Params.put("vnp_ReturnUrl", VnpayConfig.vnp_ReturnUrl);
+        vnp_Params.put("vnp_ReturnUrl", VnpayConfig.vnp_ReturnUrl + "?staffId=" + staffId);
         vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
         vnp_Params.put("vnp_Locale", vnp_Locale);
 
