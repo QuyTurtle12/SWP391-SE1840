@@ -7,11 +7,6 @@ const FileUpload = ({ setImg }) => {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const generatedUrl = 'https://example.com/uploaded-image.jpg';
-    setUploadedUrl(generatedUrl);
-  }, []); // This runs only once when the component mounts
-
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
@@ -28,6 +23,7 @@ const FileUpload = ({ setImg }) => {
       const response = await axios.post('http://localhost:8080/upload/image', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${token}`, // Add Authorization header with token
         }
       });
 
@@ -49,10 +45,9 @@ const FileUpload = ({ setImg }) => {
       </button>
 
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      {uploadedUrl && (
+      {uploadedUrl && !uploading && (
         <div>
-          <p>File uploaded successfully:</p>
-          <a href={uploadedUrl} target="_blank" rel="noopener noreferrer">{uploadedUrl}</a>
+          <p>File uploaded successfully</p>
         </div>
       )}
     </div>

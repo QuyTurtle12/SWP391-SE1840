@@ -134,6 +134,7 @@ const ViewPromotion = () => {
           onChange={(e) => setDescription(e.target.value)}
           className="border p-2 mr-2"
         />
+        Discount Rate
         <input
           type="number"
           placeholder="Discount Rate"

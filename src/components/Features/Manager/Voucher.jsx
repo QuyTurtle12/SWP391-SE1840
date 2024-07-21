@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import ManagerMenu from './ManagerMenu';
 export default function Voucher() {
     const [promotions, setPromotions] = useState([]);
     const [editingPromotion, setEditingPromotion] = useState(null);
@@ -104,6 +104,7 @@ export default function Voucher() {
     };
 
     return (
+       
         <div className="container mx-auto p-6">
             <h1 className="text-3xl font-bold mb-6 text-center">Customer Promotions</h1>
             <button
@@ -303,5 +304,6 @@ export default function Voucher() {
                 </div>
             )}
         </div>
+       
     );
 };
