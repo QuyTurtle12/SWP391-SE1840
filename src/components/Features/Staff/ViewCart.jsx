@@ -40,7 +40,7 @@ function ViewCart() {
   const [paymentMethod, setPaymentMethod] = useState("");
   const queryParams = new URLSearchParams(location.search);
   const staffId = queryParams.get("staffId");
-
+  const [newCart, setNewCart] = useState([]);
   useEffect(() => {
     fetchCartData();
     fetchStaff();
@@ -54,6 +54,7 @@ function ViewCart() {
       .then((response) => {
         setCart(response.data);
         calculateSubtotal(response.data);
+
       })
       .catch((error) => {
         console.error("Error fetching cart data", error);
@@ -233,7 +234,7 @@ function ViewCart() {
 
   const handleCreatePayment = (amount) => {
     axiosInstance
-      .post(`http://localhost:8080/api/create_payment?amount=${amount}&staffId=${staffId}`)
+      .post(`http://localhost:8080/api/create_payment?amount=${amount}&totalPrice=${subtotal}&staffId=${staffId}&counterId=${counterID}&customerPhone=${cusphone}&customerName=${customerName}&customerGender=${customerGender}&discountRate=${discountRate}&pointApplied=${pointsToApply}&discountName=${discountName}`)
       .then((response) => {
         const { data } = response;
         const paymentUrl = data.data;
@@ -246,18 +247,51 @@ function ViewCart() {
   };
   const handlePaymentReturn = (queryParams) => {
     const vnp_ResponseCode = queryParams.get("vnp_ResponseCode");
-    
+
     if (vnp_ResponseCode === "00") {
       // fetchStaff();
       // Payment was successful, proceed with creating the order
+      const totalPrice = queryParams.get("totalPrice");
+      const counterID = queryParams.get("counterId");
+      const customerPhone = queryParams.get("customerPhone");
+      const customerName = queryParams.get("customerName");
+      const customerGender = queryParams.get("customerGender");
+      const discountRate = queryParams.get("discountRate");
+      const pointApplied = queryParams.get("pointApplied");
+      const discountName = queryParams.get("discountName");
+      const newStaffId = queryParams.get("staffId");
+      console.log(newStaffId);
+      //fetchCartData(newStaffId); // Cart còn nè
+      {
+        axiosInstance
+          .get(
+            `https://jewelrysalesystem-backend.onrender.com/cart?staffId=${newStaffId}`
+          )
+          .then((response) => {
+            setNewCart(response.data); // newCart = 
+            console.log(response.data); // =1 
+            console.log("Cart của response data");
+            calculateSubtotal(response.data);
+          })
+          .catch((error) => {
+            console.error("Error fetching cart data", error);
+          });
+      };
+
+      console.log(newCart); // 0
+      console.log("Cart của set new cart");
+      // Post request with extracted parameters
       axiosInstance
         .post(
-          `http://localhost:8080/api/v2/orders?totalPrice=${subtotal}&staffID=${staffId}&counterID=${counterID}&customerPhone=${cusphone}&customerName=${customerName}&customerGender=${customerGender}&discountRate=${discountRate}&pointApplied=${pointsToApply}&discountName=${discountName}`,
-          cart
+          `http://localhost:8080/api/v2/orders?totalPrice=${totalPrice}&staffID=${staffId}&counterID=${counterID}&customerPhone=${customerPhone}&customerName=${customerName}&customerGender=${customerGender}&discountRate=${discountRate}&pointApplied=${pointApplied}&discountName=${discountName}`,
+          newCart
         )
         .then(() => {
           toast.success("Order created successfully!");
-          handleClearCart();
+          //handleClearCart();
+          console.log(newCart);
+          console.log("after create order");
+
           setShowModal(false);
         })
         .catch((error) => {
