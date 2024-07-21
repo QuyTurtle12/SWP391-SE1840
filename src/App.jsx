@@ -44,6 +44,7 @@ import Voucher from "./components/Features/Manager/Voucher";
 import { getToken } from "./components/Authen/Auth";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import SuccessPayment from "./components/Features/Staff/SuccessPayment";
 function App() {
   //check validate pages
   const ProtectedRoute = ({ role, element }) => {
@@ -204,6 +205,10 @@ function App() {
         <Route
           path="/refund-purity/:id/:productID"
           element={<ProtectedRoute role={[1]} element={<RefundPurity />} />}
+        />
+        <Route
+          path="/success"
+          element={<ProtectedRoute role={[1]} element={<SuccessPayment />} />}
         />
         <Route
           path="/order-refund"

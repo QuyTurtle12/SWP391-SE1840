@@ -233,7 +233,7 @@ function ViewCart() {
 
   const handleCreatePayment = (amount) => {
     axiosInstance
-      .post(`http://localhost:8080/api/create_payment?amount=${amount}`)
+      .post(`http://localhost:8080/api/create_payment?amount=${amount}&staffId=${staffId}`)
       .then((response) => {
         const { data } = response;
         const paymentUrl = data.data;
@@ -246,7 +246,9 @@ function ViewCart() {
   };
   const handlePaymentReturn = (queryParams) => {
     const vnp_ResponseCode = queryParams.get("vnp_ResponseCode");
+    
     if (vnp_ResponseCode === "00") {
+      // fetchStaff();
       // Payment was successful, proceed with creating the order
       axiosInstance
         .post(
