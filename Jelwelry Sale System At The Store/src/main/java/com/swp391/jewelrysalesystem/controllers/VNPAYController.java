@@ -20,7 +20,15 @@ public class VNPAYController {
 
     @PostMapping("/create_payment")
     public String createPayment(HttpServletRequest req, @RequestParam("amount") double amount,
-            @RequestParam("staffId") int staffId) {
+            @RequestParam("totalPrice") String subtotal,
+            @RequestParam("staffId") int staffId,
+            @RequestParam("counterId") String counterID,
+            @RequestParam("customerPhone") String customerPhone,
+            @RequestParam("customerName") String customerName,
+            @RequestParam("customerGender") String customerGender,
+            @RequestParam("discountRate") String discountRate,
+            @RequestParam("pointApplied") String pointsToApply,
+            @RequestParam("discountName") String discountName) {
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String orderType = "other";
@@ -40,7 +48,15 @@ public class VNPAYController {
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
         vnp_Params.put("vnp_OrderInfo", "Thanh toan hoa don JSS Store:" + vnp_TxnRef);
         vnp_Params.put("vnp_OrderType", orderType);
-        vnp_Params.put("vnp_ReturnUrl", VnpayConfig.vnp_ReturnUrl + "?staffId=" + staffId);
+        vnp_Params.put("vnp_ReturnUrl", VnpayConfig.vnp_ReturnUrl + "?staffId=" + staffId +
+                "&totalPrice=" + subtotal +
+                "&counterId=" + counterID +
+                "&customerPhone=" + customerPhone +
+                "&customerName=" + customerName +
+                "&customerGender=" + customerGender +
+                "&discountRate=" + discountRate +
+                "&pointApplied=" + pointsToApply +
+                "&discountName=" + discountName);
         vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
         vnp_Params.put("vnp_Locale", vnp_Locale);
 
