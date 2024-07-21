@@ -270,7 +270,7 @@ public class ProductService implements IProductService {
                     return "Product name " + product.getName() + " is out of stock";
                 }
 
-                if (product.getID() == productID && quantity < product.getStock()) {
+                if (product.getID() == productID && quantity > product.getStock()) {
                     return "Product name " + product.getName() + " is not enough stock";
                 }
             }

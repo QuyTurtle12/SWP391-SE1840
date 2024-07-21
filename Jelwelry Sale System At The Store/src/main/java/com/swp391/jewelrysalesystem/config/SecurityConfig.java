@@ -62,7 +62,7 @@ public class SecurityConfig {
                                                                 "/api/customer-promotions/**")
                                                 .hasAnyAuthority("ROLE_MANAGER", "ROLE_STAFF")
                                                 .requestMatchers("/api/auth/staff/**", "/cart/**",
-                                                                "/api/v2/accounts/staff", "/api/v2/products/stock-checking")
+                                                                "/api/v2/accounts/staff", "/api/v2/products/stock-checking", "/v2/products/available-products")
                                                 .hasAuthority("ROLE_STAFF")
 
                                                 .anyRequest().authenticated()) // Secure other endpoints

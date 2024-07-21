@@ -21,8 +21,6 @@ import com.swp391.jewelrysalesystem.services.IPromotionService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-
-
 @RestController
 @RequestMapping("/api")
 public class ProductController {
@@ -255,6 +253,33 @@ public class ProductController {
         }
     }
 
+    @GetMapping("/v2/products/available-products")
+    public ResponseEntity<List<Map<String, Object>>> getAvailableProductListV2() {
+        try {
+            List<Product> productList = productService.getProductList();
+            if (productList.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+
+            List<Map<String, Object>> productMaps = new ArrayList<>();
+            for (Product product : productList) {
+                if (product.getStatus() == true) {
+                    String categoryName = categoryService.getCategory(product.getCategoryID()).getName();
+
+                    Map<String, Object> productMap = product.toMap();
+
+                    productMap.put("categoryName", categoryName);
+
+                    productMaps.add(productMap);
+                }
+            }
+
+            return ResponseEntity.ok(productMaps);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
     // This is an updated product list with the current gold price
     @GetMapping("/v2/products/refund-products")
     public ResponseEntity<List<Map<String, Object>>> getUpdatedRefundProductListV2() {
@@ -423,8 +448,8 @@ public class ProductController {
             return ResponseEntity.internalServerError().body("Error disabling promotion ID " + promotionID);
         }
     }
-    
-    @GetMapping("/v2/products/stock-checking")
+
+    @PostMapping("/v2/products/stock-checking")
     public ResponseEntity<String> checkProductStock(@RequestBody List<CartItem> cart) {
         for (CartItem cartItem : cart) {
             String error = productService.isValidStock(cartItem.getProduct().getID(), cartItem.getQuantity());
@@ -435,5 +460,5 @@ public class ProductController {
 
         return ResponseEntity.ok().body("Valid Stock");
     }
-    
+
 }
