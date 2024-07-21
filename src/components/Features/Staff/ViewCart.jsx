@@ -39,7 +39,6 @@ function ViewCart() {
   const queryParams = new URLSearchParams(location.search);
   const staffId = queryParams.get("staffId");
   const [newCart, setNewCart] = useState([]);
-  const [orderCreated, setOrderCreated] = useState(false); // New state to track if order has been created
   const navigate = useNavigate();
   useEffect(() => {
     fetchCartData();
@@ -149,6 +148,7 @@ function ViewCart() {
   };
 
   const handleCheckout = () => {
+    console.log(finalPrice)
     // Update all quantities before checking stock
     cart.forEach((item) => {
       handleUpdateQuantity(item.product.id, item.quantity);
@@ -195,6 +195,7 @@ function ViewCart() {
     if (validatePhone(cusphone)) {
       // Phone number is valid, proceed with your logic here
       console.log("Phone number is valid:", cusphone);
+      toast.success("add customer phone successfully!")
       handleClosePhone();
     } else {
       toast.error(
@@ -242,7 +243,7 @@ function ViewCart() {
   const handleCreatePayment = (amount) => {
     axiosInstance
       .post(
-        `http://localhost:8080/api/create_payment?amount=${amount}&totalPrice=${amount}&staffId=${staffId}&counterId=${counterID}&customerPhone=${cusphone}&customerName=${customerName}&customerGender=${customerGender}&discountRate=${discountRate}&pointApplied=${pointsToApply}&discountName=${discountName}`
+        `http://localhost:8080/api/create_payment?amount=${amount}&totalPrice=${finalPrice}&staffId=${staffId}&counterId=${counterID}&customerPhone=${cusphone}&customerName=${customerName}&customerGender=${customerGender}&discountRate=${discountRate}&pointApplied=${pointsToApply}&discountName=${discountName}`
       )
       .then((response) => {
         const { data } = response;
@@ -256,7 +257,7 @@ function ViewCart() {
 
   const handlePaymentReturn = (queryParams) => {
     const vnp_ResponseCode = queryParams.get("vnp_ResponseCode");
-    if (vnp_ResponseCode === "00" && !orderCreated) {
+    if (vnp_ResponseCode === "00") {
       const totalPrice = queryParams.get("totalPrice");
       const counterID = queryParams.get("counterId");
       const customerPhone = queryParams.get("customerPhone");
@@ -279,10 +280,13 @@ function ViewCart() {
             )
             .then(() => {
               console.log("debug1");
+              console.log(response.data)
+              console.log(totalPrice)
+              // handleClearCart();
+               // Prevent future order creation
+              // navigate("/productlist")
               toast.success("Order created successfully!");
-              handleClearCart();
-              setOrderCreated(true); // Prevent future order creation
-              navigate("/productlist")
+
             })
             .catch((error) => {
               const errorMessage = error.response.data
@@ -395,7 +399,6 @@ function ViewCart() {
         {}
       )
       .then(() => {
-        toast.success("Updated successfully with quantity: " + newQuantity);
         fetchCartData();
       })
       .catch((error) => {
@@ -603,11 +606,10 @@ function ViewCart() {
           <Form>
             <Form.Group controlId="formPhoneNumber">
               <Form.Label>Phone Number</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="customer phone number"
-                value={cusphone}
-              />
+        
+        <div className="font-bold">    {cusphone}</div>
+            
+          
             </Form.Group>
             <Form.Group controlId="formCustomerName">
               <Form.Label>Customer Name</Form.Label>
