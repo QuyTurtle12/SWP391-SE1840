@@ -85,9 +85,9 @@ function ViewCart() {
 
   const handlePointApply = () => {
     fetchPoint();
-    if (pointsToApply === 0 || pointsToApply > point) {
+    if (pointsToApply === 0 || pointsToApply > point || pointsToApply <10 || pointsToApply >101) {
       toast.error(
-        "Invalid points input. Points must be greater than 0 and less than or equal to available points."
+        "Invalid points input. Points must be greater than 10 and less than or equal to 100."
       );
       return;
     }
@@ -714,6 +714,7 @@ function ViewCart() {
             type="number"
             placeholder="Enter points to apply"
             value={pointsToApply}
+            
             onChange={(e) => setPointsToApply(parseInt(e.target.value))}
           />
         </Form.Group>

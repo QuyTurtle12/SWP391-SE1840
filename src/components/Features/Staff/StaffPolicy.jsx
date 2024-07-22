@@ -34,7 +34,7 @@ export default function StaffPolicy() {
                         At least, 10 points = $10 discount.
                     </p>
                     <p>
-                        At least, 100 points = $100.
+                        limit, 100 points = $100.
                     </p>
                 </div>
 
