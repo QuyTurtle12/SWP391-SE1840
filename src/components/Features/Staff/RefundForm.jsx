@@ -86,7 +86,7 @@ function RefundForm() {
       );
       console.log(response.data);
       toast.success("Created refund order successfully!!");
-      setTimeout(() => navigate(`/productlist`), 2000); // Navigate after 2 seconds
+      setTimeout(() => navigate(`/refund-detail/${id}`), 2000); // Navigate after 2 seconds
     } catch (error) {
       console.error("Error submitting data", error);
       toast.error("Error creating refund order.");

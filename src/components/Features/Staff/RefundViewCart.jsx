@@ -122,34 +122,6 @@ function RefundViewCart() {
     calculateSubtotal(updatedCart); // Recalculate subtotal based on updated quantities
   };
 
-  const handleUpdateQuantity = (productID, newQuantity) => {
-    if (token) {
-      axios
-        .put(
-          `https://jewelrysalesystem-backend.onrender.com/cart?staffId=${staffId}&productID=${productID}&quantity=${newQuantity}`,
-          {},
-          {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          }
-        )
-        .then((response) => {
-          console.log(response);
-          toast.success("Quantity updated successfully");
-          console.log("Quantity updated successfully" + newQuantity);
-          fetchCartData(); // Fetch updated cart data after update
-        })
-        .catch((error) => {
-          toast.error(`${error.response ? error.response.data : error.message}`);
-          console.error("Error updating quantity", error);
-          fetchCartData();
-        });
-    } else {
-      console.error("No token found");
-    }
-  };
-
   const handleRemoveItem = (productID) => {
     if (token) {
       axios
@@ -248,19 +220,7 @@ function RefundViewCart() {
                           >
                             Remove
                           </button>{" "}
-                          <button
-                            className="bg-black text-white py-1 px-3 rounded"
-                            onClick={() => {
-                              console.log(item.product.id);
-                              console.log(item.quantity);
-                              handleUpdateQuantity(
-                                item.product.id,
-                                item.quantity // Use newQuantity here
-                              );
-                            }}
-                          >
-                            Update
-                          </button>
+                       
                         </td>
                       </tr>
                     ))}
