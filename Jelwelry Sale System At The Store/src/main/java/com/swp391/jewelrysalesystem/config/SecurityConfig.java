@@ -39,7 +39,8 @@ public class SecurityConfig {
                                                 .permitAll() // Allow access
                                                 .requestMatchers("/api/v2/orders", "/api/v2/customers/top",
                                                                 "/api/v2/products", "/api/v2/orders/order/products/top",
-                                                                "api/v2/promotions/promotion")
+                                                                "api/v2/promotions/promotion",
+                                                                "/api/v2/orders/categories/**")
                                                 .hasAnyAuthority("ROLE_MANAGER", "ROLE_STAFF", "ROLE_ADMIN")
                                                 .requestMatchers("/api/v2/accounts/user", "/api/v2/counters/**")
                                                 .hasAnyAuthority("ROLE_ADMIN", "ROLE_MANAGER")
@@ -54,8 +55,7 @@ public class SecurityConfig {
                                                 .hasAnyAuthority("ROLE_MANAGER", "ROLE_STAFF")
 
                                                 .requestMatchers("/api/auth/admin/**", "/api/v2/accounts/MANAGER/**",
-                                                                "/api/v2/accounts/dashboard",
-                                                                "/api/v2/orders/categories/**")
+                                                                "/api/v2/accounts/dashboard")
                                                 .hasAuthority("ROLE_ADMIN")
                                                 .requestMatchers("/api/auth/manager/**",
                                                                 "/api/categories/**",
