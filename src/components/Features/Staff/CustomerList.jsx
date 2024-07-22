@@ -10,7 +10,7 @@ function CustomerList() {
   const token = localStorage.getItem('token');
   const [searchInput, setSearchInput] = useState("");
   const [error, setError] = useState("");
-
+// ss
   const fetchCustomers = () => {
     axios
       .get("https://jewelrysalesystem-backend.onrender.com/api/v2/customers", {
