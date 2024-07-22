@@ -54,6 +54,13 @@ function StaffMenu() {
               </h3>
             </Button>
           </li>
+          <li className=" px-8  text-nowrap ">
+            <Button component={Link} to="/staff-policy">
+              <h3 className=" px-4 rounded-sm text-black font-bold">
+                Policy
+              </h3>
+            </Button>
+          </li>
         </ul>
       </div>
     </>

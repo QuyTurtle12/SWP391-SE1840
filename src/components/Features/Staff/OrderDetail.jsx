@@ -15,7 +15,7 @@ function OrderDetail() {
     const fetchOrderData = async () => {
       try {
         const orderProductsResponse = await axios.get(
-          `https://jewelrysalesystem-backend.onrender.com/api/v2/orders/order/products?id=${id}`,
+          `http://localhost:8080/api/v2/orders/order/products?id=${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -23,16 +23,16 @@ function OrderDetail() {
           }
         );
         setOrders(orderProductsResponse.data);
-
+        console.log(orderProductsResponse.data);
         const orderDetailResponse = await axios.get(
-          `https://jewelrysalesystem-backend.onrender.com/api/v2/orders/order?id=${id}`,
+          `http://localhost:8080/api/v2/orders/order?id=${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
-        console.log(orderDetailResponse.data)
+        console.log(orderDetailResponse.data);
         setOrderDetail(orderDetailResponse.data);
 
         const staffID = orderDetailResponse.data.staffID;
@@ -155,9 +155,24 @@ function OrderDetail() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                           {order.productName}
                         </td>
+
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          $ {pricePerProduct}
+                          {pricePerProduct !== order.productOriginalPrice ? (
+                            <>
+                              <span className="text-gray-400 font-bold text-lg line-through px-2">
+                                  $ {order.productOriginalPrice}
+                              </span>
+                              <span className="text-gray-500 font-bold text-lg">
+                              $ {pricePerProduct}
+                              </span>
+                            </>
+                          ) : (
+                            <span className="text-gray-400 font-bold text-lg">
+                              $ {order.productOriginalPrice}
+                            </span>
+                          )}
                         </td>
+
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {order.amount} pcs
                         </td>

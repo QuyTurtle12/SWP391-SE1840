@@ -45,6 +45,7 @@ import { getToken } from "./components/Authen/Auth";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import SuccessPayment from "./components/Features/Staff/SuccessPayment";
+import StaffPolicy from "./components/Features/Staff/StaffPolicy";
 function App() {
   //check validate pages
   const ProtectedRoute = ({ role, element }) => {
@@ -237,6 +238,11 @@ function App() {
         <Route
           path="/view-voucher"
           element={<ProtectedRoute role={[2]} element={<Voucher />} />}
+        />
+
+        <Route
+          path="/staff-policy"
+          element={<ProtectedRoute role={[1]} element={<StaffPolicy />} />}
         />
       </Routes>
       <Routes></Routes>

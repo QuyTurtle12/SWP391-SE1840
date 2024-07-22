@@ -13,6 +13,7 @@ function ProductList() {
   const [searchInput, setSearchInput] = useState("");
   const token = localStorage.getItem("token"); // Fetch the token from local storage
   const [staff, setStaff] = useState("");
+  const [filter, setFilter] = useState("ByName");
 
   useEffect(() => {
     if (token) {
@@ -59,7 +60,7 @@ function ProductList() {
     if (token) {
       axios
         .get(
-          `https://jewelrysalesystem-backend.onrender.com/api/v2/products/search?input=${searchInput}&filter=ByName`,
+          `https://jewelrysalesystem-backend.onrender.com/api/v2/products/search?input=${searchInput}&filter=${filter}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -69,12 +70,14 @@ function ProductList() {
         .then((response) => {
           setProducts(response.data);
         })
-        .catch((error) => console.error("Error searching products:", error));
+        .catch((error) => toast.error("Product not found!", error));
     } else {
       console.error("No token found");
     }
   };
-
+  const handleFilterChange = (event) => {
+    setFilter(event.target.value);
+  };
   const handleSearchInputChange = (event) => {
     setSearchInput(event.target.value);
   };
@@ -110,15 +113,17 @@ function ProductList() {
       toast.error("Product is out of stock.");
       return;
     }
-  
+
     const isAlreadyInCart = cart.some((item) => item.product.id === product.id);
     if (isAlreadyInCart) {
       toast.error("Product is already in the cart.");
       return;
     }
-  
-    const priceToAdd = product.discountPrice ? product.discountPrice : product.price;
-  
+
+    const priceToAdd = product.discountPrice
+      ? product.discountPrice
+      : product.price;
+
     if (token) {
       axios
         .post(
@@ -174,7 +179,15 @@ function ProductList() {
               </div>
             </div>
           </h2>
-          <div className="mb-8 font-bold">
+          <div className="mb-8 font-bold flex">
+            <select
+            onChange={handleFilterChange}
+              id="filter"
+              class=" block w-42 rounded-md border border-gray-100 bg-gray-100 px-2 py-2 shadow-sm outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+            >
+              <option value="ByProductID">ByProductID</option>
+              <option value="ByName">ByName</option>
+            </select>
             <input
               type="text"
               value={searchInput}
