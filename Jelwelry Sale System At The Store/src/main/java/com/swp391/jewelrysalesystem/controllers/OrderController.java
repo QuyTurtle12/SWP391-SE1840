@@ -137,7 +137,7 @@ public class OrderController {
             int currentPoints = customer.getPoint();
             customer.setPoint(currentPoints - pointApplied); // update new point
             customerService.saveCustomer(customer);
-            return ResponseEntity.status(HttpStatus.SC_CREATED).body("Create order Successfully");
+            return ResponseEntity.status(HttpStatus.SC_CREATED).body(String.valueOf(newOrder.getID()));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body("Error creating an order");
