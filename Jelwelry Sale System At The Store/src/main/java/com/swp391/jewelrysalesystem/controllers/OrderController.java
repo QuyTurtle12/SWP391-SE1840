@@ -61,7 +61,7 @@ public class OrderController {
             @RequestParam String discountName,
             @RequestParam double discountRate,
             @RequestParam int pointApplied) {
-        
+
         String error = orderService.isGeneralValidated(staffID, counterID, customerGender, customerName, customerPhone,
                 discountRate);
 
@@ -91,7 +91,7 @@ public class OrderController {
 
         totalPrice = totalPrice - (totalPrice * discountRate); // Discount range from 0 to 1
 
-        totalPrice = totalPrice - pointApplied; //1 point == 1
+        totalPrice = totalPrice - pointApplied; // 1 point == 1
 
         int discountID = customerPromotionService.getCustomerPromotion(discountName).getID();
 
@@ -166,7 +166,7 @@ public class OrderController {
                 orderMap.put("discountName", discountName);
                 orderMap.put("discountApplied", order.getDiscountApplied());
                 orderMap.put("pointApplied", order.getPointApplied());
-                
+
                 Customer customer = customerService.getCustomer(order.getCustomerID());
                 String customerName = customer.getName();
                 String customerPhone = customer.getContactInfo();
@@ -245,6 +245,7 @@ public class OrderController {
                 Map<String, Object> orderDetailMap = new HashMap<>();
                 orderDetailMap.put("productName", productName);
                 orderDetailMap.put("amount", orderDetail.getAmount());
+                orderDetailMap.put("Product", orderDetail.getAmount());
                 orderDetailMap.put("productPrice", orderDetail.getProductPrice());
 
                 responseList.add(orderDetailMap);
