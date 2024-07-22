@@ -97,15 +97,7 @@ export default function ManagerMenu() {
               </h2>
             </Button>
           </li>
-          <li className="px-4 py-2">
-            <Button
-              component={Link}
-              to="/view-category"
-              className="text-black font-medium"
-            >
-              <h2 className="font-bold">View Voucher</h2>
-            </Button>
-          </li>
+          
  
         </ul>
         

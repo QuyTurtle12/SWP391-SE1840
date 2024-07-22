@@ -34,7 +34,12 @@ export default function ViewStaffList() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchStaffs(startDate, endDate);
+    // Validate dates before fetching staff data
+    if (startDate <= endDate) {
+      fetchStaffs(startDate, endDate);
+    } else {
+      setError('Start date cannot be after end date');
+    }
   }, [startDate, endDate]);
 
   const fetchStaffs = async (startDate, endDate) => {
@@ -48,7 +53,11 @@ export default function ViewStaffList() {
           endDate: formatDate(endDate),
         },
       });
-      setStaffs(response.data);
+
+      // Sort staffs by ID
+      const sortedStaffs = response.data.sort((a, b) => a.id - b.id);
+      setStaffs(sortedStaffs);
+      setError('');
     } catch (err) {
       setError('Error fetching staff data');
     }
@@ -81,7 +90,10 @@ export default function ViewStaffList() {
         return staff;
       });
 
-      setStaffs(updatedStaffs);
+      // Sort updated staffs by ID
+      const sortedUpdatedStaffs = updatedStaffs.sort((a, b) => a.id - b.id);
+      setStaffs(sortedUpdatedStaffs);
+
       setShowConfirmation(false);
       setStaffToUpdate(null);
       toast.success("Status updated successfully!");
@@ -113,7 +125,14 @@ export default function ViewStaffList() {
               </label>
               <DatePicker
                 selected={startDate}
-                onChange={(date) => setStartDate(date)}
+                onChange={(date) => {
+                  if (date <= endDate) {
+                    setStartDate(date);
+                    setError('');
+                  } else {
+                    setError('Start date cannot be after end date');
+                  }
+                }}
                 dateFormat="yyyy-MM-dd"
                 className="border border-gray-300 rounded-lg p-2 w-full sm:w-48"
               />
@@ -124,7 +143,14 @@ export default function ViewStaffList() {
               </label>
               <DatePicker
                 selected={endDate}
-                onChange={(date) => setEndDate(date)}
+                onChange={(date) => {
+                  if (date >= startDate) {
+                    setEndDate(date);
+                    setError('');
+                  } else {
+                    setError('End date cannot be before start date');
+                  }
+                }}
                 dateFormat="yyyy-MM-dd"
                 className="border border-gray-300 rounded-lg p-2 w-full sm:w-48"
               />
