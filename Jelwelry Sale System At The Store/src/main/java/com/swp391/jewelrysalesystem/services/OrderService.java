@@ -206,7 +206,7 @@ public class OrderService implements IOrderService {
             return "Incorrect gender format";
         }
 
-        if (!Pattern.matches("^[a-zA-Z]+$", customerName)) {
+        if (!Pattern.matches("^[a-zA-Z ]+$", customerName)) {
             return "Incorrect name format! Must contain only alphabetic characters";
         }
 
