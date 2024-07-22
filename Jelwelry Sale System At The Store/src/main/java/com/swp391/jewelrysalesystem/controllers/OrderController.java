@@ -247,6 +247,7 @@ public class OrderController {
                 orderDetailMap.put("amount", orderDetail.getAmount());
                 orderDetailMap.put("Product", orderDetail.getAmount());
                 orderDetailMap.put("productPrice", orderDetail.getProductPrice());
+                orderDetailMap.put("productOriginalPrice", orderDetail.getProductOriginalPrice());
 
                 responseList.add(orderDetailMap);
             }
