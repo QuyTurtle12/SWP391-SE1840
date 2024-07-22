@@ -52,7 +52,7 @@ export default function Login() {
     } else if (roleID === 3) {
       navigate("/admin");
     } else {
-      navigate("/homepage");
+      navigate("/login");
     }
   };
 
