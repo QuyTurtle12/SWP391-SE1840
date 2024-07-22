@@ -63,7 +63,6 @@ function ViewCart() {
       .get(`http://localhost:8080/api/customer-promotions/customer-coupons?totalPrice=${subtotal}`, {})
       .then((response) => {
         setVouchers(response.data);
-        console.log(response.data.discountRate);
         console.log(response.data);
       })
       .catch((error) => {
@@ -148,6 +147,7 @@ function ViewCart() {
   };
 
   const handleCheckout = () => {
+    console.log(subtotal +"sub ne")
     console.log(finalPrice)
     // Update all quantities before checking stock
     cart.forEach((item) => {
@@ -243,7 +243,7 @@ function ViewCart() {
   const handleCreatePayment = (amount) => {
     axiosInstance
       .post(
-        `http://localhost:8080/api/create_payment?amount=${amount}&totalPrice=${finalPrice}&staffId=${staffId}&counterId=${counterID}&customerPhone=${cusphone}&customerName=${customerName}&customerGender=${customerGender}&discountRate=${discountRate}&pointApplied=${pointsToApply}&discountName=${discountName}`
+        `http://localhost:8080/api/create_payment?amount=${amount}&totalPrice=${subtotal}&staffId=${staffId}&counterId=${counterID}&customerPhone=${cusphone}&customerName=${customerName}&customerGender=${customerGender}&discountRate=${discountRate}&pointApplied=${pointsToApply}&discountName=${discountName}`
       )
       .then((response) => {
         const { data } = response;
@@ -258,7 +258,7 @@ function ViewCart() {
   const handlePaymentReturn = (queryParams) => {
     const vnp_ResponseCode = queryParams.get("vnp_ResponseCode");
     if (vnp_ResponseCode === "00") {
-      const totalPrice = queryParams.get("totalPrice");
+      const subtotalonline = queryParams.get("totalPrice");
       const counterID = queryParams.get("counterId");
       const customerPhone = queryParams.get("customerPhone");
       const customerName = queryParams.get("customerName");
@@ -275,16 +275,17 @@ function ViewCart() {
           setNewCart(response.data);
           axiosInstance
             .post(
-              `http://localhost:8080/api/v2/orders?totalPrice=${totalPrice}&staffID=${staffId}&counterID=${counterID}&customerPhone=${customerPhone}&customerName=${customerName}&customerGender=${customerGender}&discountRate=${discountRate}&pointApplied=${pointApplied}&discountName=${discountName}`,
+              `http://localhost:8080/api/v2/orders?totalPrice=${subtotalonline}&staffID=${staffId}&counterID=${counterID}&customerPhone=${customerPhone}&customerName=${customerName}&customerGender=${customerGender}&discountRate=${discountRate}&pointApplied=${pointApplied}&discountName=${discountName}`,
               cartnew
             )
             .then(() => {
               console.log("debug1");
               console.log(response.data)
-              console.log(totalPrice)
-              // handleClearCart();
+              console.log(subtotalonline)
+          
+              handleClearCart();
                // Prevent future order creation
-              // navigate("/productlist")
+              navigate("/productlist")
               toast.success("Order created successfully!");
 
             })
