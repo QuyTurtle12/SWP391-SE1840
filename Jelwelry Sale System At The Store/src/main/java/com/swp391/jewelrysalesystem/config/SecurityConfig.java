@@ -37,21 +37,12 @@ public class SecurityConfig {
                                                                 "/api/auth/logout", "/upload/**",
                                                                 "/**.jpg", "/**.jpeg", "/**.png", "api/vnpay_return")
                                                 .permitAll() // Allow access
-                                                .requestMatchers("/api/auth/admin/**", "/api/v2/accounts/MANAGER/**",
-                                                                "/api/v2/accounts/dashboard",
-                                                                "/api/v2/orders/categories/**")
-                                                .hasAuthority("ROLE_ADMIN")
+                                                .requestMatchers("/api/v2/orders", "/api/v2/customers/top",
+                                                                "/api/v2/products", "/api/v2/orders/order/products/top",
+                                                                "api/v2/promotions/promotion")
+                                                .hasAnyAuthority("ROLE_MANAGER", "ROLE_STAFF", "ROLE_ADMIN")
                                                 .requestMatchers("/api/v2/accounts/user", "/api/v2/counters/**")
                                                 .hasAnyAuthority("ROLE_ADMIN", "ROLE_MANAGER")
-                                                .requestMatchers("/api/auth/manager/**",
-                                                                "/api/categories/**",
-                                                                "/api/v2/accounts/STAFF/**",
-                                                                "/api/v2/products/disable",
-                                                                "/api/v2/promotions/**")
-                                                .hasAuthority("ROLE_MANAGER")
-                                                .requestMatchers("/api/v2/orders", "/api/v2/customers/top",
-                                                                "/api/v2/products", "/api/v2/orders/order/products/top")
-                                                .hasAnyAuthority("ROLE_MANAGER", "ROLE_STAFF", "ROLE_ADMIN")
                                                 .requestMatchers("/api/v2/products/{ID}",
                                                                 "/api/v2/products/sort",
                                                                 "/api/v2/products/search",
@@ -61,8 +52,21 @@ public class SecurityConfig {
                                                                 "/api/v2/customers/promotion/**",
                                                                 "/api/customer-promotions/**")
                                                 .hasAnyAuthority("ROLE_MANAGER", "ROLE_STAFF")
+
+                                                .requestMatchers("/api/auth/admin/**", "/api/v2/accounts/MANAGER/**",
+                                                                "/api/v2/accounts/dashboard",
+                                                                "/api/v2/orders/categories/**")
+                                                .hasAuthority("ROLE_ADMIN")
+                                                .requestMatchers("/api/auth/manager/**",
+                                                                "/api/categories/**",
+                                                                "/api/v2/accounts/STAFF/**",
+                                                                "/api/v2/products/disable",
+                                                                "/api/v2/promotions/**")
+                                                .hasAuthority("ROLE_MANAGER")
                                                 .requestMatchers("/api/auth/staff/**", "/cart/**",
-                                                                "/api/v2/accounts/staff", "/api/v2/products/stock-checking", "/v2/products/available-products")
+                                                                "/api/v2/accounts/staff",
+                                                                "/api/v2/products/stock-checking",
+                                                                "/v2/products/available-products")
                                                 .hasAuthority("ROLE_STAFF")
 
                                                 .anyRequest().authenticated()) // Secure other endpoints

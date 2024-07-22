@@ -43,6 +43,10 @@ public class AuthController {
                 LOGGER.warning("Authentication failed for user: " + authenticationRequest.getEmail());
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthenticationResponse(null, 500));
             }
+            if (!user.getStatus()) {
+                LOGGER.warning("This account is inactivated: " + authenticationRequest.getEmail());
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthenticationResponse(null, 500));
+            }
 
             List<String> roles = List.of(user.getRoleID() == 1 ? "ROLE_STAFF"
                     : user.getRoleID() == 2 ? "ROLE_MANAGER" : user.getRoleID() == 3 ? "ROLE_ADMIN" : "");
