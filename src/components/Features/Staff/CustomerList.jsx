@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import StaffMenu from "./StaffMenu";
 import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 
 function CustomerList() {
   const [customers, setCustomers] = useState([]);
@@ -40,7 +41,7 @@ function CustomerList() {
 
     const phoneRegex = /^0\d{9,10}$/;
     if (!phoneRegex.test(searchInput)) {
-      setError("Phone number must start with 0 and be 10-11 digits long");
+      toast.error("Phone number must start with 0 and be 10-11 digits long");
       return;
     } else {
       setError("");
@@ -72,8 +73,9 @@ function CustomerList() {
 
   return (
     <>
+    <ToastContainer/>
       <StaffMenu />
-      <div className="text-3xl justify-between text-center font-bold pt-10 text-black mb-4">
+      <div className="text-3xl justify-between h-min-screen h-auto text-center font-bold pt-10 text-black mb-4">
         <h1>Customer List</h1>
         <div className="pt-10 font-bold">
           <input

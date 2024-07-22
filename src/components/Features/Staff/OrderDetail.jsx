@@ -177,7 +177,7 @@ function OrderDetail() {
                           {order.amount} pcs
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          $ {order.productPrice}
+                          $ {order.productPrice.toLocaleString("en-US")}
                         </td>
                       </tr>
                     );

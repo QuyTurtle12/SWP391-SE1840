@@ -16,24 +16,26 @@ function ProductList() {
   const [filter, setFilter] = useState("ByName");
 
   useEffect(() => {
-    if (token) {
-      axios
-        .get("http://localhost:8080/api/v2/products/available-products", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((response) => {
-          console.log(response.data);
-          setProducts(response.data);
-        })
-        .catch((error) => console.error("Error fetching products:", error));
-      fetchStaff();
-    } else {
-      console.error("No token found");
-    }
+    fetchProduct();
   }, [token]);
-
+const fetchProduct = () => {
+  if (token) {
+    axios
+      .get("http://localhost:8080/api/v2/products/available-products", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        console.log(response.data);
+        setProducts(response.data);
+      })
+      .catch((error) => console.error("Error fetching products:", error));
+    fetchStaff();
+  } else {
+    console.error("No token found");
+  }
+}
   const fetchStaff = async () => {
     if (token) {
       try {
@@ -57,6 +59,9 @@ function ProductList() {
   };
 
   const searchProduct = () => {
+    if(searchInput === ""){
+      fetchProduct();
+    }
     if (token) {
       axios
         .get(
@@ -185,8 +190,9 @@ function ProductList() {
               id="filter"
               class=" block w-42 rounded-md border border-gray-100 bg-gray-100 px-2 py-2 shadow-sm outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
             >
-              <option value="ByProductID">ByProductID</option>
               <option value="ByName">ByName</option>
+              <option value="ByProductID">ByProductID</option>
+
             </select>
             <input
               type="text"

@@ -71,9 +71,9 @@ function ViewManagerList() {
   return (
     <>
       <AdminMenu />
-      <div className="bg-white view-manager-list flex justify-center h-auto ">
+      <div className="bg-white view-manager-list flex justify-center h-min-screen ">
         <div className="justify-between items-center px-10">
-          <table className="min-w-full min-h-full divide-y divide-gray-200 ">
+          <table className="min-w-full min-h-screen divide-y divide-gray-200 ">
             <thead>
               <tr>
                 <th className="px-6 py-3 font-bold text-left text-xs  text-black uppercase tracking-wider">

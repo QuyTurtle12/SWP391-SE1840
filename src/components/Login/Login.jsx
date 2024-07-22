@@ -78,9 +78,9 @@ export default function Login() {
       // Navigate based on roleID
       navigateBasedOnRole(roleID);
     } catch (e) {
-      console.error(e);
-      console.error("Login error");
-      toast.error("Wrong email or password!");
+      // console.error(e);
+      // console.error("Login error");
+      toast.error("Authentication failed for user" + email);
     } finally {
       setRequesting(false);
     }

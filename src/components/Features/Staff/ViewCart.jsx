@@ -278,15 +278,15 @@ function ViewCart() {
               `http://localhost:8080/api/v2/orders?totalPrice=${subtotalonline}&staffID=${staffId}&counterID=${counterID}&customerPhone=${customerPhone}&customerName=${customerName}&customerGender=${customerGender}&discountRate=${discountRate}&pointApplied=${pointApplied}&discountName=${discountName}`,
               cartnew
             )
-            .then(() => {
+            .then((res) => {
               console.log("debug1");
-              console.log(response.data)
+              console.log(res.data)
               console.log(subtotalonline)
           
               handleClearCart();
                // Prevent future order creation
-              navigate("/productlist")
-              toast.success("Order created successfully!");
+               navigate(`/orderdetail/${res.data}`)
+               toast.success("Order created successfully!");
 
             })
             .catch((error) => {
@@ -337,10 +337,14 @@ function ViewCart() {
           `http://localhost:8080/api/v2/orders?totalPrice=${subtotal}&staffID=${staffId}&counterID=${counterID}&customerPhone=${cusphone}&customerName=${customerName}&customerGender=${customerGender}&discountRate=${discountRate}&pointApplied=${pointsToApply}&discountName=${discountName}`,
           cart
         )
-        .then(() => {
-          toast.success("Order created successfully!");
+        .then((response) => {
+          console.log(response.data);
+
           handleClearCart();
           setShowModal(false);
+          navigate(`/orderdetail/${response.data}`)
+          toast.success("Order created successfully!");
+
         })
         .catch((error) => {
           const errorMessage = error.response.data
@@ -556,20 +560,20 @@ function ViewCart() {
                   </div>
 
                   <button
-                    className="mb-4 bg-red-500 text-white py-2 px-4 rounded w-full"
+                    className="mb-4 bg-orange-600 text-white py-2 px-4 rounded w-full"
                     onClick={handleVoucher}
                   >
                     Add Voucher
                   </button>
                   <button
-                    className="mb-4 bg-pink-500 text-white py-2 px-4 rounded w-full"
+                    className="mb-4 bg-orange-600 text-white py-2 px-4 rounded w-full"
                     onClick={handlePoint}
                   >
                     Add Customer Point
                   </button>
                   {discountApplied > 0 && (
                     <button
-                      className="mb-4 bg-red-300 text-white py-2 px-4 rounded w-full"
+                      className="mb-4 bg-red-800 text-white py-2 px-4 rounded w-full"
                       onClick={handleRemoveVoucher}
                     >
                       Remove Voucher
@@ -577,7 +581,7 @@ function ViewCart() {
                   )}
                   {point > 0 && (
                     <button
-                      className="mb-4 bg-red-300 text-white py-2 px-4 rounded w-full"
+                      className="mb-4 bg-red-800 text-white py-2 px-4 rounded w-full"
                       onClick={handleRemovePoint}
                     >
                       Remove Point
