@@ -7,6 +7,8 @@ import "react-toastify/dist/ReactToastify.css";
 
 export default function ProductListManager() {
   const [products, setProducts] = useState([]);
+  const [searchInput, setSearchInput] = useState("");
+  const [searchFilter, setSearchFilter] = useState("ByName");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,6 +28,34 @@ export default function ProductListManager() {
       console.error("Error fetching products", error);
       toast.error("Failed to fetch products");
     }
+  };
+
+  const handleSearch = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get("http://localhost:8080/api/v2/products/search", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        params: {
+          input: searchInput,
+          filter: searchFilter,
+        },
+      });
+      if (response.status === 200) {
+        setProducts(response.data);
+      } else {
+        toast.error("No products found");
+      }
+    } catch (error) {
+      console.error("Error searching products", error);
+      toast.error("Failed to search products");
+    }
+  };
+
+  const handleReset = () => {
+    setSearchInput("");
+    fetchProducts();
   };
 
   const handleProductClick = (id) => {
@@ -61,6 +91,38 @@ export default function ProductListManager() {
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-3xl font-bold text-gray-800">Our Latest Products</h2>
+          </div>
+
+          <div className="mb-8">
+            <div className="flex items-center">
+              <select
+                value={searchFilter}
+                onChange={(e) => setSearchFilter(e.target.value)}
+                className="border p-2 rounded mr-4"
+              >
+                <option value="ByName">Search by Name</option>
+                <option value="ByProductID">Search by ID</option>
+              </select>
+              <input
+                type="text"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                placeholder={`Enter product ${searchFilter === 'ByName' ? 'name' : 'ID'}`}
+                className="border p-2 rounded w-full mr-4"
+              />
+              <button
+                onClick={handleSearch}
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              >
+                Search
+              </button>
+              <button
+                onClick={handleReset}
+                className="bg-gray-500 text-white px-4 py-2 rounded ml-4 hover:bg-gray-600"
+              >
+                Reset
+              </button>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
