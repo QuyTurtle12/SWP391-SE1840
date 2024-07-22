@@ -57,7 +57,7 @@ function App() {
         if (token) {
           try {
             const response = await axios.get(
-              "http://localhost:8080/api/this-info",
+              "https://jewelrysalesystem-backend.onrender.com/api/this-info",
               {
                 headers: {
                   Authorization: `Bearer ${token}`,

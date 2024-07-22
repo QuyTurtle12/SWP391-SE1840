@@ -15,7 +15,7 @@ function OrderDetail() {
     const fetchOrderData = async () => {
       try {
         const orderProductsResponse = await axios.get(
-          `http://localhost:8080/api/v2/orders/order/products?id=${id}`,
+          `https://jewelrysalesystem-backend.onrender.com/api/v2/orders/order/products?id=${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -25,7 +25,7 @@ function OrderDetail() {
         setOrders(orderProductsResponse.data);
         console.log(orderProductsResponse.data);
         const orderDetailResponse = await axios.get(
-          `http://localhost:8080/api/v2/orders/order?id=${id}`,
+          `https://jewelrysalesystem-backend.onrender.com/api/v2/orders/order?id=${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

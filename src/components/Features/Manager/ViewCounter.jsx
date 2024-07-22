@@ -42,7 +42,7 @@ const ViewCounter = () => {
     try {
       const token = localStorage.getItem('token'); // Retrieve token from localStorage
       const headers = { Authorization: `Bearer ${token}` };
-      const response = await axios.get('http://localhost:8080/api/v2/counters', {
+      const response = await axios.get('https://jewelrysalesystem-backend.onrender.com/api/v2/counters', {
         headers,
         params: {
           startDate: formatDate(startDate),

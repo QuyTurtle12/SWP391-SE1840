@@ -35,7 +35,7 @@ export default function Voucher() {
 
     const fetchPromotions = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/api/customer-promotions', {
+            const response = await axios.get('https://jewelrysalesystem-backend.onrender.com/api/customer-promotions', {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -66,7 +66,7 @@ export default function Voucher() {
 
         try {
             const { id, discountName, discountType, discountCondition, discountDescription, discountRate } = editingPromotion;
-            await axios.put(`http://localhost:8080/api/customer-promotions/${id}?discountName=${discountName}&discountType=${discountType}&discountCondition=${discountCondition}&discountDescription=${discountDescription}&discountRate=${discountRate}`, null, {
+            await axios.put(`https://jewelrysalesystem-backend.onrender.com/api/customer-promotions/${id}?discountName=${discountName}&discountType=${discountType}&discountCondition=${discountCondition}&discountDescription=${discountDescription}&discountRate=${discountRate}`, null, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -81,7 +81,7 @@ export default function Voucher() {
 
     const handleChangeStatus = async (id) => {
         try {
-            await axios.put(`http://localhost:8080/api/customer-promotions/${id}/status`, {}, {
+            await axios.put(`https://jewelrysalesystem-backend.onrender.com/api/customer-promotions/${id}/status`, {}, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -98,7 +98,7 @@ export default function Voucher() {
 
         try {
             const { discountName, discountDescription, discountType, discountCondition, discountRate } = newPromotion;
-            await axios.post(`http://localhost:8080/api/customer-promotions?discountName=${discountName}&discountDescription=${discountDescription}&discountType=${discountType}&discountCondition=${discountCondition}&discountRate=${discountRate}`, null, {
+            await axios.post(`https://jewelrysalesystem-backend.onrender.com/api/customer-promotions?discountName=${discountName}&discountDescription=${discountDescription}&discountType=${discountType}&discountCondition=${discountCondition}&discountRate=${discountRate}`, null, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }

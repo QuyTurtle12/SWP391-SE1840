@@ -18,7 +18,7 @@ export default function ProductListManager() {
   const fetchProducts = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get("http://localhost:8080/api/v2/products", {
+      const response = await axios.get("https://jewelrysalesystem-backend.onrender.com/api/v2/products", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -33,7 +33,7 @@ export default function ProductListManager() {
   const handleSearch = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get("http://localhost:8080/api/v2/products/search", {
+      const response = await axios.get("https://jewelrysalesystem-backend.onrender.com/api/v2/products/search", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -65,7 +65,7 @@ export default function ProductListManager() {
   const handleChangeStatus = async (id, status) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.put(`http://localhost:8080/api/v2/products/${id}/status`, null, {
+      const response = await axios.put(`https://jewelrysalesystem-backend.onrender.com/api/v2/products/${id}/status`, null, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

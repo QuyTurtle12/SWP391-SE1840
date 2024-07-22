@@ -46,7 +46,7 @@ export default function ViewStaffList() {
     try {
       const token = localStorage.getItem('token');
       const headers = { Authorization: `Bearer ${token}` };
-      const response = await axios.get('http://localhost:8080/api/v2/accounts/STAFF', {
+      const response = await axios.get('https://jewelrysalesystem-backend.onrender.com/api/v2/accounts/STAFF', {
         headers,
         params: {
           startDate: formatDate(startDate),

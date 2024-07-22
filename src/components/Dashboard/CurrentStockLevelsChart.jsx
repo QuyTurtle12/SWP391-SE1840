@@ -17,7 +17,7 @@ const CurrentStockLevelsChart = () => {
             const token = localStorage.getItem('token'); // Retrieve the token from localStorage
 
             try {
-                const response = await axios.get('http://localhost:8080/api/v2/products', {
+                const response = await axios.get('https://jewelrysalesystem-backend.onrender.com/api/v2/products', {
                     headers: {
                         Authorization: `Bearer ${token}`, // Add the token to the headers
                     },

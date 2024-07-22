@@ -37,7 +37,7 @@ const ProductDetailManager = () => {
   const fetchProductDetails = async () => {
     const token = localStorage.getItem('token');
     try {
-      const response = await axios.get(`http://localhost:8080/api/v2/products/${id}`, {
+      const response = await axios.get(`https://jewelrysalesystem-backend.onrender.com/api/v2/products/${id}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -65,7 +65,7 @@ const ProductDetailManager = () => {
   const fetchCategories = async () => {
     const token = localStorage.getItem('token');
     try {
-      const response = await axios.get('http://localhost:8080/api/categories', {
+      const response = await axios.get('https://jewelrysalesystem-backend.onrender.com/api/categories', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -81,7 +81,7 @@ const ProductDetailManager = () => {
     const token = localStorage.getItem('token');
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:8080/api/v2/promotions', {
+      const response = await axios.get('https://jewelrysalesystem-backend.onrender.com/api/v2/promotions', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -150,7 +150,7 @@ const ProductDetailManager = () => {
     });
 
     try {
-      const response = await axios.put(`http://localhost:8080/api/v2/products/${id}?${params.toString()}`, null, {
+      const response = await axios.put(`https://jewelrysalesystem-backend.onrender.com/api/v2/products/${id}?${params.toString()}`, null, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

@@ -20,7 +20,7 @@ const SalesByStaffChart = () => {
         const fetchChartData = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get('http://localhost:8080/api/v2/orders', {
+                const response = await axios.get('https://jewelrysalesystem-backend.onrender.com/api/v2/orders', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

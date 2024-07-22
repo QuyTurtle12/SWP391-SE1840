@@ -19,7 +19,7 @@ const SalesChart = () => {
 
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/api/v2/counters/sales', {
+                const response = await axios.get('https://jewelrysalesystem-backend.onrender.com/api/v2/counters/sales', {
                     headers: {
                         Authorization: `Bearer ${token}`, // Thêm token vào header
                     },

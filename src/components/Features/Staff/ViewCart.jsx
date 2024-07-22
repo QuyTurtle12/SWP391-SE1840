@@ -60,7 +60,7 @@ function ViewCart() {
 
   const fetchDiscounts = () => {
     axiosInstance
-      .get(`http://localhost:8080/api/customer-promotions/customer-coupons?totalPrice=${subtotal}`, {})
+      .get(`https://jewelrysalesystem-backend.onrender.com/api/customer-promotions/customer-coupons?totalPrice=${subtotal}`, {})
       .then((response) => {
         setVouchers(response.data);
         console.log(response.data);
@@ -72,7 +72,7 @@ function ViewCart() {
 
   const fetchPoint = () => {
     axiosInstance
-      .get(`http://localhost:8080/api/v2/customers/customer/point?customerPhone=${cusphone}`, {})
+      .get(`https://jewelrysalesystem-backend.onrender.com/api/v2/customers/customer/point?customerPhone=${cusphone}`, {})
       .then((response) => {
         setPoint(response.data);
         console.log(response.data);
@@ -130,7 +130,7 @@ function ViewCart() {
 
   const checkStock = () => {
     axiosInstance
-      .post(`http://localhost:8080/api/v2/products/stock-checking`, cart)
+      .post(`https://jewelrysalesystem-backend.onrender.com/api/v2/products/stock-checking`, cart)
       .then((response) => {
         setStockValid(response.data);
         console.log(response.data);
@@ -243,7 +243,7 @@ function ViewCart() {
   const handleCreatePayment = (amount) => {
     axiosInstance
       .post(
-        `http://localhost:8080/api/create_payment?amount=${amount}&totalPrice=${subtotal}&staffId=${staffId}&counterId=${counterID}&customerPhone=${cusphone}&customerName=${customerName}&customerGender=${customerGender}&discountRate=${discountRate}&pointApplied=${pointsToApply}&discountName=${discountName}`
+        `https://jewelrysalesystem-backend.onrender.com/api/create_payment?amount=${amount}&totalPrice=${subtotal}&staffId=${staffId}&counterId=${counterID}&customerPhone=${cusphone}&customerName=${customerName}&customerGender=${customerGender}&discountRate=${discountRate}&pointApplied=${pointsToApply}&discountName=${discountName}`
       )
       .then((response) => {
         const { data } = response;
@@ -275,7 +275,7 @@ function ViewCart() {
           setNewCart(response.data);
           axiosInstance
             .post(
-              `http://localhost:8080/api/v2/orders?totalPrice=${subtotalonline}&staffID=${staffId}&counterID=${counterID}&customerPhone=${customerPhone}&customerName=${customerName}&customerGender=${customerGender}&discountRate=${discountRate}&pointApplied=${pointApplied}&discountName=${discountName}`,
+              `https://jewelrysalesystem-backend.onrender.com/api/v2/orders?totalPrice=${subtotalonline}&staffID=${staffId}&counterID=${counterID}&customerPhone=${customerPhone}&customerName=${customerName}&customerGender=${customerGender}&discountRate=${discountRate}&pointApplied=${pointApplied}&discountName=${discountName}`,
               cartnew
             )
             .then((res) => {
@@ -334,7 +334,7 @@ function ViewCart() {
     } else if (paymentMethod === "offline") {
       axiosInstance
         .post(
-          `http://localhost:8080/api/v2/orders?totalPrice=${subtotal}&staffID=${staffId}&counterID=${counterID}&customerPhone=${cusphone}&customerName=${customerName}&customerGender=${customerGender}&discountRate=${discountRate}&pointApplied=${pointsToApply}&discountName=${discountName}`,
+          `https://jewelrysalesystem-backend.onrender.com/api/v2/orders?totalPrice=${subtotal}&staffID=${staffId}&counterID=${counterID}&customerPhone=${cusphone}&customerName=${customerName}&customerGender=${customerGender}&discountRate=${discountRate}&pointApplied=${pointsToApply}&discountName=${discountName}`,
           cart
         )
         .then((response) => {

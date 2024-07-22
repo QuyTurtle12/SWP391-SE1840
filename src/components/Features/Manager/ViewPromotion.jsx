@@ -23,7 +23,7 @@ const ViewPromotion = () => {
     try {
       const token = localStorage.getItem('token'); // Retrieve token from localStorage
       const headers = { Authorization: `Bearer ${token}` };
-      const response = await axios.get('http://localhost:8080/api/v2/promotions', { headers });
+      const response = await axios.get('https://jewelrysalesystem-backend.onrender.com/api/v2/promotions', { headers });
       setPromotions(response.data);
     } catch (err) {
       setError('Error fetching promotions');
@@ -101,7 +101,7 @@ const ViewPromotion = () => {
     try {
       const token = localStorage.getItem('token');
       const headers = { Authorization: `Bearer ${token}` };
-      await axios.put(`http://localhost:8080/api/v2/promotions/${selectedPromotion.id}`, null, {
+      await axios.put(`https://jewelrysalesystem-backend.onrender.com/api/v2/promotions/${selectedPromotion.id}`, null, {
         headers,
         params: {
           description,

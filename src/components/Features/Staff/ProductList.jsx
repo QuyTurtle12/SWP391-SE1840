@@ -21,7 +21,7 @@ function ProductList() {
 const fetchProduct = () => {
   if (token) {
     axios
-      .get("http://localhost:8080/api/v2/products/available-products", {
+      .get("https://jewelrysalesystem-backend.onrender.com/api/v2/products/available-products", {
         headers: {
           Authorization: `Bearer ${token}`,
         },

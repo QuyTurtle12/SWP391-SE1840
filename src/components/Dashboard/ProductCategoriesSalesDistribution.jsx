@@ -19,7 +19,7 @@ const ProductCategoriesSalesDistribution = () => {
                 const tokenFromStorage = localStorage.getItem('token');
                 setToken(tokenFromStorage);
 
-                const response = await axios.get('http://localhost:8080/api/v2/orders/categories/sales', {
+                const response = await axios.get('https://jewelrysalesystem-backend.onrender.com/api/v2/orders/categories/sales', {
                     headers: {
                         Authorization: `Bearer ${tokenFromStorage}`,
                     },

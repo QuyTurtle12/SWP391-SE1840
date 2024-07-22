@@ -38,7 +38,7 @@ function EditStaff() {
 
       try {
         const response = await axios.get(
-          "http://localhost:8080/api/v2/counters/no-sale", {
+          "https://jewelrysalesystem-backend.onrender.com/api/v2/counters/no-sale", {
             headers: {
               'Authorization': `Bearer ${token}`
             }

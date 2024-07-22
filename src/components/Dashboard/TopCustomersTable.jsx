@@ -11,7 +11,7 @@ const TopCustomersTable = () => {
 
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/api/v2/customers/top', {
+                const response = await axios.get('https://jewelrysalesystem-backend.onrender.com/api/v2/customers/top', {
                     headers: {
                         Authorization: `Bearer ${token}`, // Include token in headers
                     },

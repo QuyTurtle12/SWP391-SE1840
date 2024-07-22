@@ -29,7 +29,7 @@ function ProductDetailStaff() {
     const fetchProduct = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/api/v2/products/${id}`,
+          `https://jewelrysalesystem-backend.onrender.com/api/v2/products/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -141,7 +141,7 @@ function ProductDetailStaff() {
     if (token) {
       axios
         .get(
-          `http://localhost:8080/api/v2/promotions/promotion?promotionID=${promotionId}`,
+          `https://jewelrysalesystem-backend.onrender.com/api/v2/promotions/promotion?promotionID=${promotionId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

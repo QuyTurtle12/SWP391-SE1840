@@ -18,7 +18,7 @@ function ViewCategory() {
     const token = localStorage.getItem('token');
     
     axios
-      .get("http://localhost:8080/api/categories", {
+      .get("https://jewelrysalesystem-backend.onrender.com/api/categories", {
         headers: {
           'Authorization': `Bearer ${token}`
         }

@@ -31,7 +31,7 @@ export default function Login() {
 
   const fetchUser = async (jwt) => {
     try {
-      const response = await axios.get("http://localhost:8080/api/this-info", {
+      const response = await axios.get("https://jewelrysalesystem-backend.onrender.com/api/this-info", {
         headers: {
           Authorization: `Bearer ${jwt}`,
         },
