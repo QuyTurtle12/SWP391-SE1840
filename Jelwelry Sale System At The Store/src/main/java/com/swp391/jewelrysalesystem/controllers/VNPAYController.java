@@ -13,10 +13,12 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/api")
 public class VNPAYController {
+    private static final Logger LOGGER = Logger.getLogger(AuthController.class.getName());
 
     @PostMapping("/create_payment")
     public String createPayment(HttpServletRequest req, @RequestParam("amount") double amount,
@@ -74,8 +76,11 @@ public class VNPAYController {
         // String vnp_CreateDate = formatter.format(cld.getTime());
         vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
 
-        cld.add(Calendar.MINUTE, 15);
+        cld.add(Calendar.DAY_OF_MONTH, 1);
+
+        // cld.add(Calendar.MINUTE, 15);
         String vnp_ExpireDate = formatter.format(cld.getTime());
+        LOGGER.info("This is time: " + vnp_ExpireDate);
         vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
 
         List<String> fieldNames = new ArrayList<>(vnp_Params.keySet());
