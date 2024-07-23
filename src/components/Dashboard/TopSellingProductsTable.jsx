@@ -43,8 +43,8 @@ const TopSellingProductsTable = () => {
                 <thead>
                     <tr>
                         <th>Rank</th>
-                        <th>Product Name</th>
-                        <th>Total Sales</th>
+                        <th className='text-nowrap'>Product Name</th>
+                        <th className='text-nowrap'>Total Sold Amount </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -52,12 +52,12 @@ const TopSellingProductsTable = () => {
                         <tr key={index}>
                             <td>{index + 1}</td>
                             <td>{product.productName}</td>
-                            <td>{product.totalAmount}</td>
+                            <td>{product.totalAmount} pcs</td>
                         </tr>
                     ))}
                 </tbody>
             </table>
-        </div>
+        </div >
     );
 };
 

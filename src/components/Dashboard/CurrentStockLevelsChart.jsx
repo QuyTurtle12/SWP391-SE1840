@@ -31,8 +31,8 @@ const CurrentStockLevelsChart = () => {
                     labels: productNames,
                     datasets: [
                         {
-                            label: 'Stock Levels',
-                            data: stockLevels + "pcs",
+                            label: 'Stock Levels (pcs)',
+                            data: stockLevels,
                             backgroundColor: stockLevels.map(stock => stock <= 10 ? 'rgba(255, 99, 132, 0.6)' : 'rgba(75, 192, 192, 0.6)'),
                             borderColor: stockLevels.map(stock => stock <= 10 ? 'rgba(255, 99, 132, 1)' : 'rgba(75, 192, 192, 1)'),
                             borderWidth: 1,

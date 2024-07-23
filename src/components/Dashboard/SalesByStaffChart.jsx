@@ -7,7 +7,7 @@ const SalesByStaffChart = () => {
         labels: [],
         datasets: [
             {
-                label: 'Total Sales',
+                label: 'Total Sales ($)',
                 data: [],
                 backgroundColor: 'rgba(75,192,192,0.6)',
             }
