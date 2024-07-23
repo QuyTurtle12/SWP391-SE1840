@@ -356,8 +356,8 @@ public class OrderController {
             Map<String, Double> salesByCategory = new HashMap<>();
 
             for (OrderDTO orderDetail : orderDetails) {
-                int productId = orderDetail.getProductID();
-                String category = productCategories.getOrDefault(productId, "Unknown");
+                int categoryId = productService.getProductByID(orderDetail.getProductID()).getCategoryID();
+                String category = productCategories.getOrDefault(categoryId, "Unknown");
 
                 double amount = orderDetail.getAmount();
                 salesByCategory.put(category, salesByCategory.getOrDefault(category, 0.0) + amount);
