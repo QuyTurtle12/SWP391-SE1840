@@ -66,7 +66,7 @@ const ProductCategoriesSalesDistribution = () => {
 
     return (
         <div>
-            <h2>Product Categories Sales Distribution</h2>
+            <h2>Product Categories Sales Distribution(pcs)</h2>
             <Pie
                 data={chartData}
                 options={{

@@ -32,7 +32,7 @@ const CurrentStockLevelsChart = () => {
                     datasets: [
                         {
                             label: 'Stock Levels',
-                            data: stockLevels,
+                            data: stockLevels + "pcs",
                             backgroundColor: stockLevels.map(stock => stock <= 10 ? 'rgba(255, 99, 132, 0.6)' : 'rgba(75, 192, 192, 0.6)'),
                             borderColor: stockLevels.map(stock => stock <= 10 ? 'rgba(255, 99, 132, 1)' : 'rgba(75, 192, 192, 1)'),
                             borderWidth: 1,
@@ -55,7 +55,7 @@ const CurrentStockLevelsChart = () => {
 
     return (
         <div>
-            <h2>Current Stock Levels</h2>
+            <h2>Current Stock Levels (pcs)</h2>
             <Bar
                 data={chartData}
                 options={{
