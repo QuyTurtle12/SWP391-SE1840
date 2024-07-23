@@ -65,7 +65,7 @@ const fetchProduct = () => {
     if (token) {
       axios
         .get(
-          `https://jewelrysalesystem-backend.onrender.com/api/v2/products/search?input=${searchInput}&filter=${filter}`,
+          `https://jewelrysalesystem-backend.onrender.com/api/v2/products/available-products-searching?input=${searchInput}&filter=${filter}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
