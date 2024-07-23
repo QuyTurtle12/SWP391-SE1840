@@ -84,7 +84,7 @@ function ViewCart() {
 
   const handlePointApply = () => {
     fetchPoint();
-    if (pointsToApply === 0 || pointsToApply > point || pointsToApply <10 || pointsToApply >101) {
+    if (pointsToApply === 0 || pointsToApply > point || pointsToApply < 10 || pointsToApply > 101) {
       toast.error(
         "Invalid points input. Points must be greater than 10 and less than or equal to 100."
       );
@@ -147,7 +147,7 @@ function ViewCart() {
   };
 
   const handleCheckout = () => {
-    console.log(subtotal +"sub ne")
+    console.log(subtotal + "sub ne")
     console.log(finalPrice)
     // Update all quantities before checking stock
     cart.forEach((item) => {
@@ -282,11 +282,11 @@ function ViewCart() {
               console.log("debug1");
               console.log(res.data)
               console.log(subtotalonline)
-          
+
               handleClearCart();
-               // Prevent future order creation
-               navigate(`/orderdetail/${res.data}`)
-               toast.success("Order created successfully!");
+              // Prevent future order creation
+              navigate(`/orderdetail/${res.data}`)
+              toast.success("Order created successfully!");
 
             })
             .catch((error) => {
@@ -454,7 +454,7 @@ function ViewCart() {
                   </button>
                 </a>
                 <div className="bg-white rounded-lg shadow-md p-6 mb-4">
-                  
+
                   <table className="w-full">
                     <thead>
                       <tr>
@@ -526,14 +526,14 @@ function ViewCart() {
                       ))}
                     </tbody>
                   </table>
-                 
+
                 </div>
                 <button
-                    className=" bg-emerald-600 text-white py-2 px-4 rounded "
-                    onClick={handlePhone}
-                  >
-                    Add customer phone
-                  </button>
+                  className=" bg-emerald-600 text-white py-2 px-4 rounded "
+                  onClick={handlePhone}
+                >
+                  Add customer phone
+                </button>
               </div>
               <div className="md:w-1/4">
                 <div className="bg-white rounded-lg shadow-md p-6">
@@ -593,15 +593,15 @@ function ViewCart() {
                   >
                     Checkout
                   </button>
-               
-                  
+
+
                 </div>
               </div>
             </div>
           )}
-          
+
         </div>
-        
+
       </div>
       <Modal show={showModal} onHide={handleClose}>
         <Modal.Header closeButton>
@@ -611,10 +611,10 @@ function ViewCart() {
           <Form>
             <Form.Group controlId="formPhoneNumber">
               <Form.Label>Phone Number</Form.Label>
-        
-        <div className="font-bold">    {cusphone}</div>
-            
-          
+
+              <div className="font-bold">    {cusphone}</div>
+
+
             </Form.Group>
             <Form.Group controlId="formCustomerName">
               <Form.Label>Customer Name</Form.Label>
@@ -637,17 +637,17 @@ function ViewCart() {
                 <option value="Female">Female</option>
               </Form.Control>
               <Form.Group controlId="paymentMethod">
-              <Form.Label>Payment Method</Form.Label>
-              <Form.Control
-                as="select"
-                value={paymentMethod}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-              >
-                <option value="">Select Payment Method</option>
-                <option value="online">Online</option>
-                <option value="offline">Offline</option>
-              </Form.Control>
-            </Form.Group>
+                <Form.Label>Payment Method</Form.Label>
+                <Form.Control
+                  as="select"
+                  value={paymentMethod}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                >
+                  <option value="">Select Payment Method</option>
+                  <option value="online">Online</option>
+                  <option value="offline">Offline</option>
+                </Form.Control>
+              </Form.Group>
             </Form.Group>
           </Form>
         </Modal.Body>
@@ -694,71 +694,71 @@ function ViewCart() {
         </Modal.Footer>
       </Modal>
       <Modal show={showModalPoint} onHide={handleClosePoint}>
-  <Modal.Header closeButton>
-    <Modal.Title>Apply Points</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    <Form.Group controlId="customerPhonePoints">
-      <Form.Label>Customer Phone</Form.Label>
-      <Form.Control
-        type="text"
-        placeholder="Enter customer phone"
-        value={cusphone}
-        onChange={(e) => setCusphone(e.target.value)}
-      />
-    </Form.Group>
-    <Button variant="primary" onClick={fetchPoint}>
-      Fetch Points
-    </Button>
-    {point > 0 && (
-      <>
-        <p>Customer Points: {point}</p>
-        <Form.Group controlId="pointsToApply">
-          <Form.Label>Points to Apply</Form.Label>
-          <Form.Control
-            type="number"
-            placeholder="Enter points to apply"
-            value={pointsToApply}
-            
-            onChange={(e) => setPointsToApply(parseInt(e.target.value))}
-          />
-        </Form.Group>
-      </>
-    )}
-  </Modal.Body>
-  <Modal.Footer>
-    <Button variant="secondary" onClick={handleClosePoint}>
-      Close
-    </Button>
-    <Button variant="primary" onClick={handlePointApply}>
-      Apply Points
-    </Button>
-  </Modal.Footer>
-</Modal>
-<Modal show={showModalPhone} onHide={handleClosePhone}>
-  <Modal.Header closeButton>
-    <Modal.Title>Add Customer Phone</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    <Form.Group controlId="customerPhonePoints">
-      <Form.Label>Customer Phone</Form.Label>
-      <Form.Control
-        type="text"
-        placeholder="Enter customer phone"
-        value={cusphone}
-        onChange={(e) => setCusphone(e.target.value)}
-      />
-    </Form.Group>
-     </Modal.Body>
-  <Modal.Footer>
-    <Button variant="secondary" onClick={handleClosePhone}>
-      Close
-    </Button>
-    <Button variant="primary" onClick={handleApplyPhone}>
-      Apply
-    </Button>
-  </Modal.Footer>
-</Modal>
+        <Modal.Header closeButton>
+          <Modal.Title>Apply Points</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Group controlId="customerPhonePoints">
+            <Form.Label>Customer Phone</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter customer phone"
+              value={cusphone}
+              onChange={(e) => setCusphone(e.target.value)}
+            />
+          </Form.Group>
+          <Button variant="primary" onClick={fetchPoint}>
+            Fetch Points
+          </Button>
+          {point > 0 && (
+            <>
+              <p>Customer Points: {point}</p>
+              <Form.Group controlId="pointsToApply">
+                <Form.Label>Points to Apply</Form.Label>
+                <Form.Control
+                  type="number"
+                  placeholder="Enter points to apply"
+                  value={pointsToApply}
+
+                  onChange={(e) => setPointsToApply(parseInt(e.target.value))}
+                />
+              </Form.Group>
+            </>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClosePoint}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handlePointApply}>
+            Apply Points
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={showModalPhone} onHide={handleClosePhone}>
+        <Modal.Header closeButton>
+          <Modal.Title>Add Customer Phone</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Group controlId="customerPhonePoints">
+            <Form.Label>Customer Phone</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter customer phone"
+              value={cusphone}
+              onChange={(e) => setCusphone(e.target.value)}
+            />
+          </Form.Group>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClosePhone}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleApplyPhone}>
+            Apply
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
     </>
   );

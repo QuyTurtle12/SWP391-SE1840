@@ -27,7 +27,7 @@ const ProductDetailManager = () => {
 
   const navigate = useNavigate();
   const { id } = useParams(); // Assuming you're using React Router v6
-  
+
   useEffect(() => {
     fetchProductDetails();
     fetchCategories();
@@ -207,7 +207,7 @@ const ProductDetailManager = () => {
                   />
                 </div>
               </div>
-              
+
               <div className='mt-6'>
                 <label className="block text-sm font-medium text-gray-700">
                   Description
@@ -363,13 +363,19 @@ const ProductDetailManager = () => {
                   Stone Type
                 </label>
                 <div className="mt-1">
-                  <input
-                    type="text"
-                    placeholder="Enter stone type"
+                  <select
                     value={stoneType}
                     onChange={(e) => setStoneType(e.target.value)}
-                    className="block w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  />
+                    className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    required
+                  >
+                    <option value="" disabled>
+                      Select Stone type
+                    </option>
+                    <option>Normal Stone</option>
+                    <option>Jewel</option>
+                  </select>
+
                 </div>
               </div>
 

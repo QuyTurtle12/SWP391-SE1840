@@ -52,7 +52,7 @@ const TopCustomersTable = () => {
                         <tr key={index}>
                             <td>{index + 1}</td>
                             <td>{customer.name}</td>
-                            <td>{customer.totalPurchases}</td>
+                            <td>{customer.totalPurchases} $</td>
                         </tr>
                     ))}
                 </tbody>

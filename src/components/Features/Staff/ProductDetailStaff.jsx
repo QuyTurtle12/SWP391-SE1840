@@ -234,14 +234,6 @@ function ProductDetailStaff() {
                 </div>
                 <div className="mr-4">
                   <span className="text-2xl font-bold text-gray-700">
-                    Refund Price:
-                  </span>
-                  <span className="text-gray-800 text-xl ml-6">
-                    {product.refundPrice.toLocaleString("en-US")}$
-                  </span>
-                </div>
-                <div className="mr-4">
-                  <span className="text-2xl font-bold text-gray-700">
                     Gold Weight:
                   </span>
                   <span className="text-gray-800 text-xl ml-6">

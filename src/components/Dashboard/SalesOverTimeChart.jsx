@@ -42,12 +42,11 @@ const SalesOverTimeChart = () => {
 
                 const dates = Object.keys(salesByDate).sort();
                 const totalSales = dates.map(date => salesByDate[date]);
-
                 setChartData({
                     labels: dates,
                     datasets: [
                         {
-                            label: 'Total Sales',
+                            label: 'Total Sales ($)',
                             data: totalSales,
                             backgroundColor: 'rgba(75, 192, 192, 0.6)',
                             borderColor: 'rgba(75, 192, 192, 1)',
@@ -73,7 +72,7 @@ const SalesOverTimeChart = () => {
 
     return (
         <div>
-            <h2>Sales Over Time</h2>
+            <h2>Sales Over Time </h2>
             <Line
                 data={chartData}
                 options={{

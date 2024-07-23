@@ -8,7 +8,7 @@ const RefundTrendsChart = () => {
         labels: [],
         datasets: [
             {
-                label: 'Refund Amount',
+                label: 'Refund Amount ($)',
                 data: [],
                 borderColor: 'rgba(75,192,192,1)',
                 backgroundColor: 'rgba(75,192,192,0.2)',

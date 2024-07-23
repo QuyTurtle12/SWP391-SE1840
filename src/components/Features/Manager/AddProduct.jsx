@@ -35,7 +35,7 @@ const AddProduct = () => {
   const fetchCategories = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await axios.get("https://jewelry-sale-system.vercel.app/api/categories", {
+      const response = await axios.get("https://jewelrysalesystem-backend.onrender.com/api/categories", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -52,7 +52,7 @@ const AddProduct = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        "https://jewelry-sale-system.vercel.app/api/v2/promotions/available-promotion",
+        "https://jewelrysalesystem-backend.onrender.com/api/v2/promotions/available-promotion",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -132,7 +132,7 @@ const AddProduct = () => {
 
     try {
       const response = await axios.post(
-        `https://jewelry-sale-system.vercel.app/api/v2/products?${params.toString()}`,
+        `https://jewelrysalesystem-backend.onrender.com/api/v2/products?${params.toString()}`,
         null,
         {
           headers: {
