@@ -60,9 +60,18 @@ public class VNPAYController {
         vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
         vnp_Params.put("vnp_Locale", vnp_Locale);
 
-        Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
+        Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("America/Los_Angeles"));
+
+        // Set the SimpleDateFormat to the desired time zone (GMT+7)
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+        formatter.setTimeZone(TimeZone.getTimeZone("Etc/GMT+7"));
+
+        // Format the current date/time in GMT+7
         String vnp_CreateDate = formatter.format(cld.getTime());
+
+        // Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
+        // SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+        // String vnp_CreateDate = formatter.format(cld.getTime());
         vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
 
         cld.add(Calendar.MINUTE, 15);
