@@ -15,7 +15,7 @@ function GoldPrice() {
         `https://www.goldapi.io/api/XAU/USD`,
         {
           headers: {
-            "x-access-token": "goldapi-19h9qslwfndmur-io",
+            "x-access-token": "goldapi-zpgpue19lyy67c0i-io",
             "Content-Type": "application/json",
           },
         }
@@ -52,56 +52,56 @@ function GoldPrice() {
             <tbody>
               <tr className="bg-white border-b border-blue-500">
                 <td className="py-2 px-4 font-bold text-nowrap">24k Gold</td>
-        
+
                 <td className="py-2 px-4">{gold.price_gram_24k}$</td>
 
 
               </tr>
               <tr className="bg-white border-b border-blue-500">
                 <td className="py-2 px-4 font-bold text-nowrap">22k Gold</td>
-        
+
                 <td className="py-2 px-4">{gold.price_gram_22k}$</td>
 
 
               </tr>
               <tr className="bg-white border-b border-blue-500">
                 <td className="py-2 px-4 font-bold text-nowrap">21k Gold</td>
-        
+
                 <td className="py-2 px-4">{gold.price_gram_21k}$</td>
 
 
               </tr>
               <tr className="bg-white border-b border-blue-500">
                 <td className="py-2 px-4 font-bold text-nowrap">20k Gold</td>
-        
+
                 <td className="py-2 px-4">{gold.price_gram_20k}$</td>
 
 
               </tr>
               <tr className="bg-white border-b border-blue-500">
                 <td className="py-2 px-4 font-bold text-nowrap">18k Gold</td>
-        
+
                 <td className="py-2 px-4">{gold.price_gram_18k}$</td>
 
 
               </tr>
               <tr className="bg-white border-b border-blue-500">
                 <td className="py-2 px-4 font-bold text-nowrap">16k Gold</td>
-        
+
                 <td className="py-2 px-4">{gold.price_gram_16k}$</td>
 
 
               </tr>
               <tr className="bg-white border-b border-blue-500">
                 <td className="py-2 px-4 font-bold text-nowrap">14k Gold</td>
-        
+
                 <td className="py-2 px-4">{gold.price_gram_14k}$</td>
 
 
               </tr>
               <tr className="bg-white border-b border-blue-500">
                 <td className="py-2 px-4 font-bold text-nowrap">10k Gold</td>
-        
+
                 <td className="py-2 px-4">{gold.price_gram_10k}$</td>
 
 
