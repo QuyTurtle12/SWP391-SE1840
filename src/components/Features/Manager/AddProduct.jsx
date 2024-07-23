@@ -35,7 +35,7 @@ const AddProduct = () => {
   const fetchCategories = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await axios.get("http://localhost:8080/api/categories", {
+      const response = await axios.get("https://jewelry-sale-system.vercel.app/api/categories", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -52,7 +52,7 @@ const AddProduct = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        "http://localhost:8080/api/v2/promotions/available-promotion",
+        "https://jewelry-sale-system.vercel.app/api/v2/promotions/available-promotion",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -72,7 +72,7 @@ const AddProduct = () => {
   const notifyError = (message) => toast.error(message);
 
   const validateInputs = () => {
-    const specialCharPattern = /[!@#$%^&*().":{}|<>]/;
+    const specialCharPattern = /[!@#$%^&*":{}|<>]/;
     if (
       parseFloat(goldWeight) < 0 ||
       parseFloat(laborCost) < 0 ||
@@ -132,7 +132,7 @@ const AddProduct = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:8080/api/v2/products?${params.toString()}`,
+        `https://jewelry-sale-system.vercel.app/api/v2/products?${params.toString()}`,
         null,
         {
           headers: {
