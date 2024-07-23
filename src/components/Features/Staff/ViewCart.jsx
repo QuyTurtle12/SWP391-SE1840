@@ -243,7 +243,7 @@ function ViewCart() {
   const handleCreatePayment = (amount) => {
     axiosInstance
       .post(
-        `http://localhost:8080/api/create_payment?amount=${amount}&totalPrice=${subtotal}&staffId=${staffId}&counterId=${counterID}&customerPhone=${cusphone}&customerName=${customerName}&customerGender=${customerGender}&discountRate=${discountRate}&pointApplied=${pointsToApply}&discountName=${discountName}`
+        `https://jewelrysalesystem-backend.onrender.com/api/create_payment?amount=${amount}&totalPrice=${subtotal}&staffId=${staffId}&counterId=${counterID}&customerPhone=${cusphone}&customerName=${customerName}&customerGender=${customerGender}&discountRate=${discountRate}&pointApplied=${pointsToApply}&discountName=${discountName}`
       )
       .then((response) => {
         const { data } = response;
