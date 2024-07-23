@@ -99,7 +99,7 @@ const ProductDetailManager = () => {
   const notifyError = (message) => toast.error(message);
 
   const validateInputs = () => {
-    const specialCharPattern = /[!@#$%^&*().":{}|<>]/;
+    const specialCharPattern = /[!@#$%^&*":{}|<>]/;
     if (
       parseFloat(goldWeight) < 0 ||
       parseFloat(laborCost) < 0 ||
