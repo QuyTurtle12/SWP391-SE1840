@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ManagerMenu from './ManagerMenu';
 import Modal from './Modal';  // Import the Modal component
@@ -136,6 +136,7 @@ export default function Voucher() {
     return (
         <div className="container mx-auto p-6">
             <ManagerMenu />
+            <ToastContainer></ToastContainer>
             <h1 className="text-3xl font-bold mb-6 text-center">Customer Promotions</h1>
             <button
                 className="bg-green-500 text-white px-4 py-2 mb-4 rounded hover:bg-green-600"
