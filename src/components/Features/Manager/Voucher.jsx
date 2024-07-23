@@ -75,7 +75,6 @@ export default function Voucher() {
         return true;
     };
 
-
     const handleUpdate = async () => {
         if (!editingPromotion || !validateInputs(editingPromotion)) return;
 
@@ -190,168 +189,167 @@ export default function Voucher() {
             </table>
 
             <Modal isOpen={isEditing} onClose={() => setIsEditing(false)}>
-                <h2 className="text-xl font-bold mb-4">Edit Promotion</h2>
-                <div className="mb-4">
-                    <label className="block mb-2 font-medium">Name</label>
-                    <input
-                        type="text"
-                        className="border p-2 w-full rounded"
-                        value={editingPromotion?.discountName || ''}
-                        onChange={(e) =>
-                            setEditingPromotion({ ...editingPromotion, discountName: e.target.value })
-                        }
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block mb-2 font-medium">Type</label>
-                    <select
-                        className="border p-2 w-full rounded"
-                        value={editingPromotion?.discountType || ''}
-                        onChange={(e) => {
-                            const newType = e.target.value;
-                            setEditingPromotion({
-                                ...editingPromotion,
-                                discountType: newType,
-                                discountCondition: newType === 'Normal' ? 'None' : editingPromotion.discountCondition
-                            });
-                        }}
+                <div className="relative">
+                    <button
+                        className="absolute top-0 right-0 text-gray-500 hover:text-gray-700"
+                        onClick={() => setIsEditing(false)}
                     >
-                        <option value="Accepted Price">Accepted Price</option>
-                        <option value="Normal">Normal</option>
-                    </select>
-                </div>
-                <div className="mb-4">
-                    <label className="block mb-2 font-medium">Condition</label>
-                    <input
-                        type="number"
-                        className="border p-2 w-full rounded"
-                        value={editingPromotion?.discountCondition || ''}
-                        onChange={(e) => {
-                            const value = e.target.value;
-                            if (editingPromotion?.discountType === 'Accepted Price') {
-                                if (value === '' || /^[0-9]+$/.test(value)) {
-                                    setEditingPromotion({ ...editingPromotion, discountCondition: value });
-                                }
-                            } else {
-                                setEditingPromotion({ ...editingPromotion, discountCondition: value });
+                        &times;
+                    </button>
+                    <h2 className="text-xl font-bold mb-4">Edit Promotion</h2>
+                    <div className="mb-4">
+                        <label className="block mb-2 font-medium">Name</label>
+                        <input
+                            type="text"
+                            className="border p-2 w-full rounded"
+                            value={editingPromotion?.discountName || ''}
+                            onChange={(e) =>
+                                setEditingPromotion({ ...editingPromotion, discountName: e.target.value })
                             }
-                        }}
-                        readOnly={editingPromotion?.discountType === 'Normal'}
-                        min={editingPromotion?.discountType === 'Accepted Price' ? "0" : undefined}
-                    />
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label className="block mb-2 font-medium">Type</label>
+                        <select
+                            className="border p-2 w-full rounded"
+                            value={editingPromotion?.discountType || ''}
+                            onChange={(e) => {
+                                const newType = e.target.value;
+                                setEditingPromotion({
+                                    ...editingPromotion,
+                                    discountType: newType,
+                                    discountCondition: newType === 'Normal' ? 'None' : editingPromotion.discountCondition
+                                });
+                            }}
+                        >
+                            <option value="Accepted Price">Accepted Price</option>
+                            <option value="Normal">Normal</option>
+                        </select>
+                    </div>
+                    <div className="mb-4">
+                        <label className="block mb-2 font-medium">Condition</label>
+                        <input
+                            type="text"
+                            className="border p-2 w-full rounded"
+                            value={editingPromotion?.discountCondition || ''}
+                            disabled={editingPromotion?.discountType === 'Normal'}
+                            onChange={(e) =>
+                                setEditingPromotion({ ...editingPromotion, discountCondition: e.target.value })
+                            }
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label className="block mb-2 font-medium">Description</label>
+                        <input
+                            type="text"
+                            className="border p-2 w-full rounded"
+                            value={editingPromotion?.discountDescription || ''}
+                            onChange={(e) =>
+                                setEditingPromotion({ ...editingPromotion, discountDescription: e.target.value })
+                            }
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label className="block mb-2 font-medium">Rate</label>
+                        <input
+                            type="number"
+                            step="0.01"
+                            className="border p-2 w-full rounded"
+                            value={editingPromotion?.discountRate || ''}
+                            onChange={(e) =>
+                                setEditingPromotion({ ...editingPromotion, discountRate: parseFloat(e.target.value) })
+                            }
+                        />
+                    </div>
+                    <button
+                        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                        onClick={handleUpdate}
+                    >
+                        Save
+                    </button>
                 </div>
-                <div className="mb-4">
-                    <label className="block mb-2 font-medium">Description</label>
-                    <input
-                        type="text"
-                        className="border p-2 w-full rounded"
-                        value={editingPromotion?.discountDescription || ''}
-                        onChange={(e) =>
-                            setEditingPromotion({ ...editingPromotion, discountDescription: e.target.value })
-                        }
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block mb-2 font-medium">Rate</label>
-                    <input
-                        type="number"
-                        className="border p-2 w-full rounded"
-                        value={editingPromotion?.discountRate || ''}
-                        onChange={(e) =>
-                            setEditingPromotion({ ...editingPromotion, discountRate: parseFloat(e.target.value) })
-                        }
-                        min="0" step="0.01"
-                    />
-                </div>
-                <button
-                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                    onClick={handleUpdate}
-                >
-                    Update
-                </button>
             </Modal>
 
-
             <Modal isOpen={isAdding} onClose={() => setIsAdding(false)}>
-                <h2 className="text-xl font-bold mb-4">Add Promotion</h2>
-                <div className="mb-4">
-                    <label className="block mb-2 font-medium">Name</label>
-                    <input
-                        type="text"
-                        className="border p-2 w-full rounded"
-                        value={newPromotion.discountName}
-                        onChange={(e) =>
-                            setNewPromotion({ ...newPromotion, discountName: e.target.value })
-                        }
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block mb-2 font-medium">Type</label>
-                    <select
-                        className="border p-2 w-full rounded"
-                        value={newPromotion.discountType}
-                        onChange={(e) => {
-                            const newType = e.target.value;
-                            setNewPromotion({
-                                ...newPromotion,
-                                discountType: newType,
-                                discountCondition: newType === 'Normal' ? 'None' : newPromotion.discountCondition
-                            });
-                        }}
+                <div className="relative">
+                    <button
+                        className="absolute top-0 right-0 text-gray-500 hover:text-gray-700"
+                        onClick={() => setIsAdding(false)}
                     >
-                        <option value="Accepted Price">Accepted Price</option>
-                        <option value="Normal">Normal</option>
-                    </select>
-                </div>
-                <div className="mb-4">
-                    <label className="block mb-2 font-medium">Condition</label>
-                    <input
-                        type="number"
-                        className="border p-2 w-full rounded"
-                        value={newPromotion.discountCondition || ''}
-                        onChange={(e) => {
-                            const value = e.target.value;
-                            if (newPromotion.discountType === 'Accepted Price') {
-                                if (value === '' || /^[0-9]+$/.test(value)) {
-                                    setNewPromotion({ ...newPromotion, discountCondition: value });
-                                }
-                            } else {
-                                setNewPromotion({ ...newPromotion, discountCondition: value });
+                        &times;
+                    </button>
+                    <h2 className="text-xl font-bold mb-4">Add Promotion</h2>
+                    <div className="mb-4">
+                        <label className="block mb-2 font-medium">Name</label>
+                        <input
+                            type="text"
+                            className="border p-2 w-full rounded"
+                            value={newPromotion.discountName}
+                            onChange={(e) =>
+                                setNewPromotion({ ...newPromotion, discountName: e.target.value })
                             }
-                        }}
-                        readOnly={newPromotion.discountType === 'Normal'}
-                        min={newPromotion.discountType === 'Accepted Price' ? "0" : undefined}
-                    />
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label className="block mb-2 font-medium">Type</label>
+                        <select
+                            className="border p-2 w-full rounded"
+                            value={newPromotion.discountType}
+                            onChange={(e) => {
+                                const newType = e.target.value;
+                                setNewPromotion({
+                                    ...newPromotion,
+                                    discountType: newType,
+                                    discountCondition: newType === 'Normal' ? 'None' : newPromotion.discountCondition
+                                });
+                            }}
+                        >
+                            <option value="Accepted Price">Accepted Price</option>
+                            <option value="Normal">Normal</option>
+                        </select>
+                    </div>
+                    <div className="mb-4">
+                        <label className="block mb-2 font-medium">Condition</label>
+                        <input
+                            type="text"
+                            className="border p-2 w-full rounded"
+                            value={newPromotion.discountCondition}
+                            disabled={newPromotion.discountType === 'Normal'}
+                            onChange={(e) =>
+                                setNewPromotion({ ...newPromotion, discountCondition: e.target.value })
+                            }
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label className="block mb-2 font-medium">Description</label>
+                        <input
+                            type="text"
+                            className="border p-2 w-full rounded"
+                            value={newPromotion.discountDescription}
+                            onChange={(e) =>
+                                setNewPromotion({ ...newPromotion, discountDescription: e.target.value })
+                            }
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label className="block mb-2 font-medium">Rate</label>
+                        <input
+                            type="number"
+                            step="0.01"
+                            className="border p-2 w-full rounded"
+                            value={newPromotion.discountRate}
+                            onChange={(e) =>
+                                setNewPromotion({ ...newPromotion, discountRate: parseFloat(e.target.value) })
+                            }
+                        />
+                    </div>
+                    <button
+                        className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                        onClick={handleAddPromotion}
+                    >
+                        Add
+                    </button>
                 </div>
-                <div className="mb-4">
-                    <label className="block mb-2 font-medium">Description</label>
-                    <input
-                        type="text"
-                        className="border p-2 w-full rounded"
-                        value={newPromotion.discountDescription}
-                        onChange={(e) =>
-                            setNewPromotion({ ...newPromotion, discountDescription: e.target.value })
-                        }
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block mb-2 font-medium">Rate</label>
-                    <input
-                        type="number"
-                        className="border p-2 w-full rounded"
-                        value={newPromotion.discountRate || ''}
-                        onChange={(e) =>
-                            setNewPromotion({ ...newPromotion, discountRate: parseFloat(e.target.value) })
-                        }
-                        min="0" step="0.01"
-                    />
-                </div>
-                <button
-                    className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-                    onClick={handleAddPromotion}
-                >
-                    Add
-                </button>
             </Modal>
         </div>
     );
