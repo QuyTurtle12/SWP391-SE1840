@@ -8,7 +8,6 @@ import com.swp391.jewelrysalesystem.models.Customer;
 import com.swp391.jewelrysalesystem.models.ProductPurity;
 import com.swp391.jewelrysalesystem.models.Refund;
 import com.swp391.jewelrysalesystem.models.RefundDTO;
-import com.swp391.jewelrysalesystem.services.GoldPriceService;
 import com.swp391.jewelrysalesystem.services.ICustomerService;
 import com.swp391.jewelrysalesystem.services.IProductService;
 import com.swp391.jewelrysalesystem.services.IRefundService;

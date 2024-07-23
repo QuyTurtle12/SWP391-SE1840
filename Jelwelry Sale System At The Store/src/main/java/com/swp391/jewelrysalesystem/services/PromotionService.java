@@ -7,7 +7,6 @@ import java.util.concurrent.ExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.swp391.jewelrysalesystem.models.Product;
 import com.swp391.jewelrysalesystem.models.Promotion;
 
 @Service
