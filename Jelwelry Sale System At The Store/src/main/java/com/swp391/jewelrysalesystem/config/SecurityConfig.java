@@ -66,7 +66,8 @@ public class SecurityConfig {
                                                 .requestMatchers("/api/auth/staff/**", "/cart/**",
                                                                 "/api/v2/accounts/staff",
                                                                 "/api/v2/products/stock-checking",
-                                                                "/v2/products/available-products")
+                                                                "/v2/products/available-products",
+                                                                "/v2/products/available-products-searching")
                                                 .hasAuthority("ROLE_STAFF")
 
                                                 .anyRequest().authenticated()) // Secure other endpoints

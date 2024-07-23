@@ -404,6 +404,40 @@ public class ProductController {
         }
     }
 
+    @GetMapping("/v2/products/available-products-searching")
+    public ResponseEntity<List<Map<String, Object>>> searchAvailableProductv2(
+            @RequestParam String input,
+            @RequestParam String filter) {
+
+        try {
+            List<Product> products = new ArrayList<>();
+            for (Product product : productService.getProductList()) {
+                if (product.getStatus() == true) {
+                    products.add(product);
+                }
+            }
+            List<Product> productList = productService.searchProduct(input, filter, products);
+            if (productList.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+
+            List<Map<String, Object>> productMaps = new ArrayList<>();
+            for (Product product : productList) {
+                String categoryName = categoryService.getCategory(product.getCategoryID()).getName();
+
+                Map<String, Object> productMap = product.toMap();
+
+                productMap.put("categoryName", categoryName);
+
+                productMaps.add(productMap);
+            }
+
+            return ResponseEntity.ok(productMaps);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
     @GetMapping("/v2/products/search/sort")
     public ResponseEntity<List<Map<String, Object>>> sortSearchedProductV2(
             @RequestParam String input,
